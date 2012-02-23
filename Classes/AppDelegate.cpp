@@ -6,6 +6,7 @@ using namespace CocosDenshion;
 
 
 #include "HelloWorldScene.h"
+#include "Gameplay.h"
 
 #include "CCEGLView.h"
 
@@ -117,7 +118,12 @@ bool AppDelegate::applicationDidFinishLaunching()
     pDirector->setAnimationInterval(1.0 / 60);
 
     // create a scene. it's an autorelease object
-    CCScene *pScene = HelloWorld::scene();
+    //CCScene *pScene = HelloWorld::scene();
+	CCScene * pScene = CCScene::node();
+    CCLayer * pLayer = new Gameplay();
+    pLayer->autorelease();
+
+    pScene->addChild(pLayer);
 
     // run
     pDirector->runWithScene(pScene);
