@@ -1,8 +1,24 @@
 #include "Gameplay.h"
 
+int game_map[8][12]={
+	{0,0,0,0,0,0,0,0,0,0,0,0},
+	{0,0,0,0,0,1,1,1,0,0,0,0},
+	{0,0,0,1,0,0,0,0,0,1,0,0},
+	{0,0,0,1,0,0,0,0,0,1,0,0},
+	{0,0,0,1,0,0,-1,0,0,1,0,0},
+	{0,0,0,1,0,0,0,0,0,1,0,0},
+	{0,0,0,0,0,0,0,0,0,0,0,0},
+	{0,0,0,0,0,0,0,0,0,0,0,0}
+};
+
+int r = 8;
+int c = 12;
+int w = 40;
+
 
 Gameplay::Gameplay(void)
 {
+	setIsTouchEnabled(true);
 }
 
 
@@ -19,27 +35,29 @@ void Gameplay::draw()
 
 
 
-	int r = 8;
-	int c = 12;
-	int w = 40;
-	int map[8][12]={
-		{0,0,0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,1,1,1,0,0,0,0},
-		{0,0,0,1,0,0,0,0,0,1,0,0},
-		{0,0,0,1,0,0,0,0,0,1,0,0},
-		{0,0,0,1,0,0,0,0,0,1,0,0},
-		{0,0,0,1,0,0,0,0,0,1,0,0},
-		{0,0,0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0,0,0},
-	};
+
+
 
 	glPointSize(36);
-	glColor4f(0.4, 0.4, 0.4, 1);
+	glColor4f(0.4f, 0.4f, 0.4f, 1.0f);
 
 	for (int i=0;i<r;i++){
 		for (int j=0;j<c;j++){
-			if (map[i][j]==0)
-				ccDrawPoint( CCPointMake((j+0.5) * w, (i+0.5) * w ));
+			switch(game_map[i][j]){
+				case -1:
+					glColor4f(0.9f, 0.4f, 0.4f, 1.0f);
+					break;
+				case 0:
+					glColor4f(0.4f, 0.4f, 0.4f, 1.0f);
+					break;
+				case 1:
+					glColor4f(0.1f, 0.1f, 0.1f, 1.0f);
+					break;
+				case 2:
+					glColor4f(0.9f, 0.9f, 0.4f, 1.0f);
+					break;
+			}	
+			ccDrawPoint( CCPointMake((j+0.5f) * w, (i+0.5f) * w ));
 		}
 	}
 
@@ -118,5 +136,28 @@ void Gameplay::draw()
 	///*glColor4ub(255,255,255,255);*/
 	//glColor4f(1.0, 1.0, 1.0, 1.0);
 	//glPointSize(1); 
+
+}
+
+void Gameplay::ccTouchesEnded(CCSet* touches, CCEvent* event)
+{
+	//clear
+	for (int i=0;i<r;i++){
+		for (int j=0;j<c;j++){
+			if (game_map[i][j] == 2)
+			{
+				game_map[i][j] = 0;
+			}
+		}
+	}
+
+	CCSetIterator it = touches->begin();
+	CCTouch* touch = (CCTouch*)(*it);
+
+	CCPoint m_tTouchPos;
+	m_tTouchPos = touch->locationInView( touch->view() );	
+	m_tTouchPos = CCDirector::sharedDirector()->convertToGL( m_tTouchPos );
+
+	game_map[int(m_tTouchPos.y / w)][int(m_tTouchPos.x / w)] = 2;
 
 }
