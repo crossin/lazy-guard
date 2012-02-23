@@ -13,6 +13,8 @@ public:
 
 	virtual void draw();
 
+	void ccTouchesEnded(CCSet* touches, CCEvent* event);
+
  //   void menuCallback(CCObject * pSender);
  //   void closeCallback(CCObject * pSender);
 
