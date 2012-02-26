@@ -8,10 +8,15 @@ using namespace cocos2d;
 class Gameplay : public CCLayer
 {
 public:
-	Gameplay(void);
-	~Gameplay(void);
+/*	Gameplay(void);
+	~Gameplay(void);*/
 
+	static cocos2d::CCScene* scene();
+
+	virtual bool init();  
 	virtual void draw();
+
+	LAYER_NODE_FUNC(Gameplay);
 
 	void ccTouchesEnded(CCSet* touches, CCEvent* event);
 
