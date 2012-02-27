@@ -8,8 +8,8 @@ using namespace cocos2d;
 class Gameplay : public CCLayer
 {
 public:
-/*	Gameplay(void);
-	~Gameplay(void);*/
+	Gameplay(void);
+	~Gameplay(void);
 
 	static cocos2d::CCScene* scene();
 
@@ -25,8 +25,9 @@ public:
 
 	//virtual void ccTouchesBegan(CCSet *pTouches, CCEvent *pEvent);
  //   virtual void ccTouchesMoved(CCSet *pTouches, CCEvent *pEvent);
-
+	CCMutableArray<CCSprite*> *thieves;
 private:
+	void addThief();
     //CCPoint m_tBeginPos;
     //CCMenu* m_pItmeMenu;
 };
