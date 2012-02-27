@@ -1,10 +1,11 @@
 #include "Gameplay.h"
 #include "aStarLibrary.h"
 #include "ccMacros.h"
+#include "CCMutableDictionary.h"
 
 using namespace cocos2d;
 
-int game_map[32][48];
+int game_map[10][15];
 /*={
 	{0,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,1,1,1,0,0,0,0},
@@ -74,7 +75,37 @@ bool Gameplay::init()
 		// load the tile map
 		CCTMXTiledMap *pDesertTileMap = CCTMXTiledMap::tiledMapWithTMXFile("background.tmx");
 		pDesertTileMap->setPosition(ccp(0,0));
-		//addChild(pDesertTileMap, 0, 1);
+		addChild(pDesertTileMap, 0, 1);
+
+		CCTMXLayer *meta=pDesertTileMap->layerNamed("Meta");
+		meta->setIsVisible(false);
+
+		r = (sizeof(game_map)/sizeof(game_map[0]));
+		c = (sizeof(game_map[0])/sizeof(game_map[0][0]));
+		int tileGID;
+		CCDictionary<std::string, CCString*>* props;
+		CCString* colli;
+		for (int i=0;i<r;i++){
+			for (int j=0;j<c;j++){
+				if (tileGID = meta->tileGIDAt(ccp(j,r-i-1)))
+				{
+					if (props = pDesertTileMap->propertiesForGID(tileGID))
+					{
+						colli = props->objectForKey("Collidable");
+						if (colli->m_sString.compare("True") == 0)
+						{
+							game_map[i][j] = 1;
+							walkability [j][i] = unwalkable;
+						}
+					}
+				}
+			
+				//if ( ){
+				//	game_map[i][j] = 1;
+				//	
+				//}
+			}
+		}
 
 		// 2. Add a label shows "Hello World".
 
@@ -94,6 +125,7 @@ bool Gameplay::init()
 		//CC_BREAK_IF(! pSprite);
 
 		//// Place the sprite on the center of the screen
+		player->setAnchorPoint(ccp(0,0));//(ccp(player->getContentSize().width/2,player->getContentSize().height/2));
 		player->setPosition(ccp(size.width/2, size.height/2));
 
 		//// Add the sprite to HelloWorld layer as a child layer.
@@ -107,16 +139,16 @@ bool Gameplay::init()
 	setIsTouchEnabled(true);
 
 	// init map
-	r = (sizeof(game_map)/sizeof(game_map[0]));
-	c = (sizeof(game_map[0])/sizeof(game_map[0][0]));
-	for (int i=0;i<r;i++){
-		for (int j=0;j<c;j++){
-			if (CCRANDOM_0_1() < 0.15){
-				game_map[i][j] = 1;
-				walkability [j][i] = unwalkable;
-			}
-		}
-	}
+	//r = (sizeof(game_map)/sizeof(game_map[0]));
+	//c = (sizeof(game_map[0])/sizeof(game_map[0][0]));
+	//for (int i=0;i<r;i++){
+	//	for (int j=0;j<c;j++){
+	//		if (CCRANDOM_0_1() < 0.15){
+	//			game_map[i][j] = 1;
+	//			walkability [j][i] = unwalkable;
+	//		}
+	//	}
+	//}
 	w = 480/c;
 	_itoa_s(w,textout,10);
 	pLabel->setString(textout);
