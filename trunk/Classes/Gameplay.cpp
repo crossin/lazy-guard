@@ -74,7 +74,7 @@ bool Gameplay::init()
 		// load the tile map
 		CCTMXTiledMap *pDesertTileMap = CCTMXTiledMap::tiledMapWithTMXFile("background.tmx");
 		pDesertTileMap->setPosition(ccp(0,0));
-		addChild(pDesertTileMap, 0, 1);
+		//addChild(pDesertTileMap, 0, 1);
 
 		// 2. Add a label shows "Hello World".
 
@@ -263,11 +263,28 @@ void Gameplay::ccTouchesEnded(CCSet* touches, CCEvent* event)
 
 	//_itoa_s((*(pathBank[1]-4)),textout,10);
 	//itoa(pathLength[1],textout,10);
-	for (int i=0;i<pathLength[1];i++)
+	CCArray* path = CCArray::array();
+	CCPoint target, from;
+	CCPoint moveDifference = ccpSub(target,m_tTouchPos);
+	float distanceToMove = ccpLength(moveDifference);
+	float moveDuration;
+	CCFiniteTimeAction* actionMove;
+
+	for (int i=1;i<pathLength[1];i++)
 	{
 		game_map[pathBank[1][2*i+1]][pathBank[1][2*i]] = 2;
+		from = ccp(pathBank[1][2*i-2] * w, pathBank[1][2*i-1] * w);
+		target = ccp(pathBank[1][2*i] * w, pathBank[1][2*i+1] * w);
+		moveDifference = ccpSub(target,from);
+		distanceToMove = ccpLength(moveDifference);
+		moveDuration = distanceToMove/100;
+		actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, target);
+		path->addObject(actionMove);
 	}
 	//pLabel->setString(textout);
-
 	player->setPosition(m_tTouchPos);
+
+	
+	//CCFiniteTimeAction* actionMoveDone = CCCallFuncN::actionWithTarget( this, callfuncN_selector(HelloWorld::spriteMoveFinished));
+	player->runAction( CCSequence::actionsWithArray(path) );
 }
