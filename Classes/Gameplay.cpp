@@ -55,6 +55,7 @@ bool Gameplay::init()
 {
 
 	bool bRet = false;
+	srand(time(NULL));
 	do 
 	{
 		//////////////////////////////////////////////////////////////////////////
@@ -77,6 +78,7 @@ bool Gameplay::init()
 
 		r = (sizeof(game_map)/sizeof(game_map[0]));
 		c = (sizeof(game_map[0])/sizeof(game_map[0][0]));
+		w = 480/c;
 		int tileGID;
 		CCDictionary<std::string, CCString*>* props;
 		CCString* colli;
@@ -148,7 +150,7 @@ bool Gameplay::init()
 	//		}
 	//	}
 	//}
-	w = 480/c;
+	
 	_itoa_s(w,textout,10);
 	pLabel->setString(textout);
 
@@ -209,8 +211,8 @@ void Gameplay::ccTouchesEnded(CCSet* touches, CCEvent* event)
 	//itoa(pathLength[1],textout,10);
 	CCArray* path = CCArray::array();
 	CCPoint target, from;
-	CCPoint moveDifference = ccpSub(target,m_tTouchPos);
-	float distanceToMove = ccpLength(moveDifference);
+	CCPoint moveDifference;
+	float distanceToMove;
 	float moveDuration;
 	CCFiniteTimeAction* actionMove;
 
@@ -247,7 +249,23 @@ void Gameplay::addThief()
 
 	// Create the target slightly off-screen along the right edge,
 	// and along a random position along the Y axis as calculated
-	thief->setPosition(ccp(CCRANDOM_0_1()*480, CCRANDOM_0_1()*320) );
+	
+	float ranPos = CCRANDOM_0_1();
+	float startX, startY;
+	//srand(GetTickCount());
+	if (ranPos<0.5)
+	{
+		startX = CCRANDOM_0_1()*480;
+		startY = (ranPos<0.25)?10:310;
+	} 
+	else
+	{
+		startX = (ranPos<0.75)?10:470;
+		startY = CCRANDOM_0_1()*320;
+	}
+	
+	thief->setPosition(ccp(startX,startY) );
+	thief->setAnchorPoint(ccp(0,0));
 	addChild(thief);
 
 // 	// Determine speed of the target
@@ -270,4 +288,40 @@ void Gameplay::addThief()
 	// Add to targets array
 // 	target->setTag(1);
 	thieves->addObject(thief);
+
+	FindPath(1,startX,startY,240,160);
+
+	//_itoa_s((*(pathBank[1]-4)),textout,10);
+	//itoa(pathLength[1],textout,10);
+	CCArray* pathGo = CCArray::array();
+	CCArray* pathBack = CCArray::array();
+	CCPoint target, from;
+	CCPoint moveDifference;
+	float distanceToMove;
+	float moveDuration;
+	CCFiniteTimeAction* actionMove;
+ 	CCFiniteTimeAction* actionGo;
+ 	CCFiniteTimeAction* actionBack;
+
+	for (int i=1;i<pathLength[1];i++)
+	{
+		game_map[pathBank[1][2*i+1]][pathBank[1][2*i]] = 2;
+		from = ccp(pathBank[1][2*i-2] * w, pathBank[1][2*i-1] * w);
+		target = ccp(pathBank[1][2*i] * w, pathBank[1][2*i+1] * w);
+		moveDifference = ccpSub(target,from);
+		distanceToMove = ccpLength(moveDifference);
+		moveDuration = distanceToMove/50;
+		actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, target);
+		pathGo->addObject(actionMove);
+		actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, from);
+		pathBack->addObject(actionMove);
+	}
+	//pLabel->setString(textout);
+	//player->setPosition(m_tTouchPos);
+	pathBack->reverseObjects();
+	actionGo = CCSequence::actionsWithArray(pathGo);
+	actionBack = CCSequence::actionsWithArray(pathBack);
+	//CCFiniteTimeAction* actionMoveDone = CCCallFuncN::actionWithTarget( this, callfuncN_selector(HelloWorld::spriteMoveFinished));
+	thief->runAction( CCSequence::actions(actionGo,actionBack,NULL) );
+	
 }
