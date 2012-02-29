@@ -6,7 +6,7 @@
  */
 
 	//Declare constants
-	const int mapWidth = 15, mapHeight = 10, tileSize = 32, numberPeople = 3;
+	const int mapWidth = 30, mapHeight = 20, tileSize = 16, numberPeople = 1;
 	int onClosedList = 10;
 	const int notfinished = 0, notStarted = 0;// path-related constants
 	const int found = 1, nonexistent = 2; 

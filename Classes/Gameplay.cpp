@@ -5,7 +5,7 @@
 
 using namespace cocos2d;
 
-int game_map[10][15];
+int game_map[20][30];
 
 int r;
 int c;
