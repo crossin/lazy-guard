@@ -184,6 +184,55 @@ void Gameplay::draw()
 	}
 }
 
+void Gameplay::FindThief() 
+{
+
+	CCSprite* closest = thieves->getLastObject();
+
+	// check caught
+	CCRect rectG = CCRectMake(player->getPosition().x,player->getPosition().y,player->getContentSize().width,player->getContentSize().height);
+	CCRect rectT = CCRectMake(closest->getPosition().x,closest->getPosition().y,closest->getContentSize().width,closest->getContentSize().height);
+
+	if (CCRect::CCRectIntersectsRect(rectG,rectT))
+	{
+		return;
+	}
+
+	FindPath(1,player->getPosition().x,player->getPosition().y,closest->getPosition().x,closest->getPosition().y);
+
+	//_itoa_s((*(pathBank[1]-4)),textout,10);
+	//itoa(pathLength[1],textout,10);
+	CCArray* path = CCArray::array();
+	CCPoint target, from;
+	CCPoint moveDifference;
+	float distanceToMove;
+	float moveDuration;
+	CCFiniteTimeAction* actionMove;
+
+	if (pathLength[1]<2)
+	{
+		return;
+	}
+//	game_map[pathBank[1][3]][pathBank[1][2]] = 2;
+	from = ccp(pathBank[1][0] * w, pathBank[1][1] * w);
+	target = ccp(pathBank[1][2] * w, pathBank[1][3] * w);
+	moveDifference = ccpSub(target,from);
+	distanceToMove = ccpLength(moveDifference);
+	moveDuration = distanceToMove/100;
+	actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, target);
+
+	CCFiniteTimeAction* actionMoveDone = CCCallFuncN::actionWithTarget( this, callfuncN_selector(Gameplay::spriteMoveFinished));
+
+	//CCFiniteTimeAction* actionMoveDone = CCCallFuncN::actionWithTarget( this, callfuncN_selector(HelloWorld::spriteMoveFinished));
+	player->runAction( CCSequence::actions(actionMove,actionMoveDone,NULL) );
+}
+
+void Gameplay::spriteMoveFinished(CCNode* sender)
+{
+	CCSprite *sprite = (CCSprite *)sender;
+	this->FindThief();
+}
+
 void Gameplay::ccTouchesEnded(CCSet* touches, CCEvent* event)
 {
 	//clear
@@ -204,35 +253,13 @@ void Gameplay::ccTouchesEnded(CCSet* touches, CCEvent* event)
 	m_tTouchPos = CCDirector::sharedDirector()->convertToGL( m_tTouchPos );
 
 	game_map[int(m_tTouchPos.y / w)][int(m_tTouchPos.x / w)] = 2;
+	
+	FindThief();
 
-	FindPath(1,m_tTouchPos.x,m_tTouchPos.y,240,160);
 
-	//_itoa_s((*(pathBank[1]-4)),textout,10);
-	//itoa(pathLength[1],textout,10);
-	CCArray* path = CCArray::array();
-	CCPoint target, from;
-	CCPoint moveDifference;
-	float distanceToMove;
-	float moveDuration;
-	CCFiniteTimeAction* actionMove;
-
-	for (int i=1;i<pathLength[1];i++)
-	{
-		game_map[pathBank[1][2*i+1]][pathBank[1][2*i]] = 2;
-		from = ccp(pathBank[1][2*i-2] * w, pathBank[1][2*i-1] * w);
-		target = ccp(pathBank[1][2*i] * w, pathBank[1][2*i+1] * w);
-		moveDifference = ccpSub(target,from);
-		distanceToMove = ccpLength(moveDifference);
-		moveDuration = distanceToMove/100;
-		actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, target);
-		path->addObject(actionMove);
-	}
-	//pLabel->setString(textout);
-	player->setPosition(m_tTouchPos);
 
 	
-	//CCFiniteTimeAction* actionMoveDone = CCCallFuncN::actionWithTarget( this, callfuncN_selector(HelloWorld::spriteMoveFinished));
-	player->runAction( CCSequence::actionsWithArray(path) );
+
 }
 
 void Gameplay::addThief()
@@ -310,7 +337,7 @@ void Gameplay::addThief()
 		target = ccp(pathBank[1][2*i] * w, pathBank[1][2*i+1] * w);
 		moveDifference = ccpSub(target,from);
 		distanceToMove = ccpLength(moveDifference);
-		moveDuration = distanceToMove/50;
+		moveDuration = distanceToMove/20;
 		actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, target);
 		pathGo->addObject(actionMove);
 		actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, from);
@@ -325,3 +352,5 @@ void Gameplay::addThief()
 	thief->runAction( CCSequence::actions(actionGo,actionBack,NULL) );
 	
 }
+
+
