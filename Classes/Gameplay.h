@@ -28,8 +28,9 @@ public:
 	CCMutableArray<CCSprite*> *thieves;
 private:
 	void addThief();
-    //CCPoint m_tBeginPos;
-    //CCMenu* m_pItmeMenu;
+    void FindThief();
+	void spriteMoveFinished(CCNode* sender);
+	//CCMenu* m_pItmeMenu;
 };
 
 #endif
