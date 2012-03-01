@@ -1,11 +1,13 @@
 #include "Gameplay.h"
-#include "aStarLibrary.h"
 #include "ccMacros.h"
 #include "CCMutableDictionary.h"
+#include "PathFinder.h"
+#include <stdlib.h>
 
 using namespace cocos2d;
 
 int game_map[20][30];
+PathFinder *pathfinder;
 
 int r;
 int c;
@@ -26,6 +28,7 @@ Gameplay::~Gameplay(void)
 		thieves->release();
 		thieves = NULL;
 	}
+	delete pathfinder;
 }
 
 
@@ -67,18 +70,22 @@ bool Gameplay::init()
 		//////////////////////////////////////////////////////////////////////////
 		// add your codes below...
 		//////////////////////////////////////////////////////////////////////////
-
+		
 		// load the tile map
 		CCTMXTiledMap *pDesertTileMap = CCTMXTiledMap::tiledMapWithTMXFile("background.tmx");
 		pDesertTileMap->setPosition(ccp(0,0));
 		addChild(pDesertTileMap, 0, 1);
-
+		
 		CCTMXLayer *meta=pDesertTileMap->layerNamed("Meta");
 		meta->setIsVisible(false);
 
 		r = (sizeof(game_map)/sizeof(game_map[0]));
 		c = (sizeof(game_map[0])/sizeof(game_map[0][0]));
 		w = 480/c;
+
+		//_itoa_s(pDesertTileMap->getTileSize().height,textout,10);
+		pathfinder = new PathFinder(pDesertTileMap->getMapSize().width, pDesertTileMap->getMapSize().height, pDesertTileMap->getTileSize().width, pDesertTileMap->getTileSize().height);
+
 		int tileGID;
 		CCDictionary<std::string, CCString*>* props;
 		CCString* colli;
@@ -92,7 +99,7 @@ bool Gameplay::init()
 						if (colli->m_sString.compare("True") == 0)
 						{
 							game_map[i][j] = 1;
-							walkability [j][i] = unwalkable;
+							pathfinder->walkability [j][i] = pathfinder->unwalkable;
 						}
 					}
 				}
@@ -151,7 +158,7 @@ bool Gameplay::init()
 	//	}
 	//}
 	
-	_itoa_s(w,textout,10);
+	
 	pLabel->setString(textout);
 
 	return bRet;
@@ -198,7 +205,7 @@ void Gameplay::FindThief()
 		return;
 	}
 
-	FindPath(1,player->getPosition().x,player->getPosition().y,closest->getPosition().x,closest->getPosition().y);
+	pathfinder->FindPath(1,player->getPosition().x,player->getPosition().y,closest->getPosition().x,closest->getPosition().y);
 
 	//_itoa_s((*(pathBank[1]-4)),textout,10);
 	//itoa(pathLength[1],textout,10);
@@ -209,13 +216,13 @@ void Gameplay::FindThief()
 	float moveDuration;
 	CCFiniteTimeAction* actionMove;
 
-	if (pathLength[1]<2)
+	if (pathfinder->pathLength<2)
 	{
 		return;
 	}
 //	game_map[pathBank[1][3]][pathBank[1][2]] = 2;
-	from = ccp(pathBank[1][0] * w, pathBank[1][1] * w);
-	target = ccp(pathBank[1][2] * w, pathBank[1][3] * w);
+	from = ccp(pathfinder->pathBank[0] * w, pathfinder->pathBank[1] * w);
+	target = ccp(pathfinder->pathBank[2] * w, pathfinder->pathBank[3] * w);
 	moveDifference = ccpSub(target,from);
 	distanceToMove = ccpLength(moveDifference);
 	moveDuration = distanceToMove/100;
@@ -316,7 +323,7 @@ void Gameplay::addThief()
 // 	target->setTag(1);
 	thieves->addObject(thief);
 
-	FindPath(1,startX,startY,240,160);
+	pathfinder->FindPath(1,startX,startY,240,160);
 
 	//_itoa_s((*(pathBank[1]-4)),textout,10);
 	//itoa(pathLength[1],textout,10);
@@ -330,11 +337,11 @@ void Gameplay::addThief()
  	CCFiniteTimeAction* actionGo;
  	CCFiniteTimeAction* actionBack;
 
-	for (int i=1;i<pathLength[1];i++)
+	for (int i=1;i<pathfinder->pathLength;i++)
 	{
-		game_map[pathBank[1][2*i+1]][pathBank[1][2*i]] = 2;
-		from = ccp(pathBank[1][2*i-2] * w, pathBank[1][2*i-1] * w);
-		target = ccp(pathBank[1][2*i] * w, pathBank[1][2*i+1] * w);
+		game_map[pathfinder->pathBank[2*i+1]][pathfinder->pathBank[2*i]] = 2;
+		from = ccp(pathfinder->pathBank[2*i-2] * w, pathfinder->pathBank[2*i-1] * w);
+		target = ccp(pathfinder->pathBank[2*i] * w, pathfinder->pathBank[2*i+1] * w);
 		moveDifference = ccpSub(target,from);
 		distanceToMove = ccpLength(moveDifference);
 		moveDuration = distanceToMove/20;
