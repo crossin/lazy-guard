@@ -3,6 +3,7 @@
 
 #include "cocos2d.h"
 #include "Thief.h"
+#include "Guard.h"
 
 using namespace cocos2d;
 
@@ -27,10 +28,12 @@ public:
 	//virtual void ccTouchesBegan(CCSet *pTouches, CCEvent *pEvent);
  //   virtual void ccTouchesMoved(CCSet *pTouches, CCEvent *pEvent);
 	CCMutableArray<Thief*> *thieves;
+
+	Guard* guard;
 private:
 	void addThief();
-    void FindThief();
-	void spriteMoveFinished(CCNode* sender);
+//     void FindThief();
+// 	void spriteMoveFinished(CCNode* sender);
 	//CCMenu* m_pItmeMenu;
 };
 
