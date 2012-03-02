@@ -1,13 +1,20 @@
+// #define _CRTDBG_MAP_ALLOC 
+// #include<stdlib.h> 
+// #include<crtdbg.h> 
+
+// #include <vld.h>
+
 #include "Gameplay.h"
 #include "ccMacros.h"
 #include "CCMutableDictionary.h"
 #include "PathFinder.h"
 #include <stdlib.h>
 
+
 using namespace cocos2d;
 
 int game_map[20][30];
-PathFinder *pathfinder;
+//PathFinder *pathfinder;
 
 int r;
 int c;
@@ -28,7 +35,12 @@ Gameplay::~Gameplay(void)
 		thieves->release();
 		thieves = NULL;
 	}
-	delete pathfinder;
+
+	PathFinder::release();
+
+	//delete pathfinder;
+
+	//_CrtDumpMemoryLeaks();
 }
 
 
@@ -84,7 +96,9 @@ bool Gameplay::init()
 		w = 480/c;
 
 		//_itoa_s(pDesertTileMap->getTileSize().height,textout,10);
-		pathfinder = new PathFinder(pDesertTileMap->getMapSize().width, pDesertTileMap->getMapSize().height, pDesertTileMap->getTileSize().width, pDesertTileMap->getTileSize().height);
+		//pathfinder = new PathFinder(pDesertTileMap->getMapSize().width, pDesertTileMap->getMapSize().height, pDesertTileMap->getTileSize().width, pDesertTileMap->getTileSize().height);
+		PathFinder* pathfinder = PathFinder::getInstance();
+		pathfinder->initWithSize(pDesertTileMap->getMapSize().width, pDesertTileMap->getMapSize().height, pDesertTileMap->getTileSize().width, pDesertTileMap->getTileSize().height);
 
 		int tileGID;
 		CCDictionary<std::string, CCString*>* props;
@@ -99,7 +113,8 @@ bool Gameplay::init()
 						if (colli->m_sString.compare("True") == 0)
 						{
 							game_map[i][j] = 1;
-							pathfinder->walkability [j][i] = pathfinder->unwalkable;
+							//pathfinder->walkability [j][i] = pathfinder->unwalkable;
+							pathfinder->setUnwalkable(j, i);
 						}
 					}
 				}
@@ -135,8 +150,7 @@ bool Gameplay::init()
 		//// Add the sprite to HelloWorld layer as a child layer.
 		this->addChild(player);
 
-
-		thieves = new CCMutableArray<CCSprite*>;
+		thieves = new CCMutableArray<Thief*>;
 		addThief();
 		addThief();
 		addThief();
@@ -194,7 +208,7 @@ void Gameplay::draw()
 void Gameplay::FindThief() 
 {
 
-	CCSprite* closest = thieves->getLastObject();
+	Thief* closest = thieves->getLastObject();
 
 	// check caught
 	CCRect rectG = CCRectMake(player->getPosition().x,player->getPosition().y,player->getContentSize().width,player->getContentSize().height);
@@ -205,6 +219,7 @@ void Gameplay::FindThief()
 		return;
 	}
 
+	PathFinder* pathfinder = PathFinder::getInstance();
 	pathfinder->FindPath(1,player->getPosition().x,player->getPosition().y,closest->getPosition().x,closest->getPosition().y);
 
 	//_itoa_s((*(pathBank[1]-4)),textout,10);
@@ -271,93 +286,10 @@ void Gameplay::ccTouchesEnded(CCSet* touches, CCEvent* event)
 
 void Gameplay::addThief()
 {
-	CCSprite *thief = CCSprite::spriteWithFile("Target.png");
-
-	//// Determine where to spawn the target along the Y axis
-	//CCSize winSize = CCDirector::sharedDirector()->getWinSize();
-	//float minY = target->getContentSize().height/2;
-	//float maxY = winSize.height -  target->getContentSize().height/2;
-	//int rangeY = (int)(maxY - minY);
-	//// srand( TimGetTicks() );
-	//int actualY = ( rand() % rangeY ) + (int)minY;
-
-	// Create the target slightly off-screen along the right edge,
-	// and along a random position along the Y axis as calculated
-	
-	float ranPos = CCRANDOM_0_1();
-	float startX, startY;
-	//srand(GetTickCount());
-	if (ranPos<0.5)
-	{
-		startX = CCRANDOM_0_1()*480;
-		startY = (ranPos<0.25)?10:310;
-	} 
-	else
-	{
-		startX = (ranPos<0.75)?10:470;
-		startY = CCRANDOM_0_1()*320;
-	}
-	
-	thief->setPosition(ccp(startX,startY) );
-	thief->setAnchorPoint(ccp(0,0));
-	addChild(thief);
-
-// 	// Determine speed of the target
-// 	int minDuration = (int)2.0;
-// 	int maxDuration = (int)4.0;
-// 	int rangeDuration = maxDuration - minDuration;
-// 	// srand( TimGetTicks() );
-// 	int actualDuration = ( rand() % rangeDuration ) + minDuration;
-
-// 	// Create the actions
-// 	CCFiniteTimeAction* actionMove = 
-// 		CCMoveTo::actionWithDuration( (ccTime)actualDuration, 
-// 		ccp(0 - target->getContentSize().width/2, actualY) );
-// 	CCFiniteTimeAction* actionMoveDone = 
-// 		CCCallFuncN::actionWithTarget( this, 
-// 		callfuncN_selector(HelloWorld::spriteMoveFinished));
-// 	target->runAction( CCSequence::actions(actionMove, 
-// 		actionMoveDone, NULL) );
-
-	// Add to targets array
-// 	target->setTag(1);
+	Thief *thief = Thief::thief();
 	thieves->addObject(thief);
-
-	pathfinder->FindPath(1,startX,startY,240,160);
-
-	//_itoa_s((*(pathBank[1]-4)),textout,10);
-	//itoa(pathLength[1],textout,10);
-	CCArray* pathGo = CCArray::array();
-	CCArray* pathBack = CCArray::array();
-	CCPoint target, from;
-	CCPoint moveDifference;
-	float distanceToMove;
-	float moveDuration;
-	CCFiniteTimeAction* actionMove;
- 	CCFiniteTimeAction* actionGo;
- 	CCFiniteTimeAction* actionBack;
-
-	for (int i=1;i<pathfinder->pathLength;i++)
-	{
-		game_map[pathfinder->pathBank[2*i+1]][pathfinder->pathBank[2*i]] = 2;
-		from = ccp(pathfinder->pathBank[2*i-2] * w, pathfinder->pathBank[2*i-1] * w);
-		target = ccp(pathfinder->pathBank[2*i] * w, pathfinder->pathBank[2*i+1] * w);
-		moveDifference = ccpSub(target,from);
-		distanceToMove = ccpLength(moveDifference);
-		moveDuration = distanceToMove/20;
-		actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, target);
-		pathGo->addObject(actionMove);
-		actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, from);
-		pathBack->addObject(actionMove);
-	}
-	//pLabel->setString(textout);
-	//player->setPosition(m_tTouchPos);
-	pathBack->reverseObjects();
-	actionGo = CCSequence::actionsWithArray(pathGo);
-	actionBack = CCSequence::actionsWithArray(pathBack);
-	//CCFiniteTimeAction* actionMoveDone = CCCallFuncN::actionWithTarget( this, callfuncN_selector(HelloWorld::spriteMoveFinished));
-	thief->runAction( CCSequence::actions(actionGo,actionBack,NULL) );
-	
+	addChild(thief);	
+	thief->findPath();
 }
 
 

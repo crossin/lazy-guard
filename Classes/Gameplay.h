@@ -2,6 +2,7 @@
 #define _GAMEPLAY_H_
 
 #include "cocos2d.h"
+#include "Thief.h"
 
 using namespace cocos2d;
 
@@ -25,7 +26,7 @@ public:
 
 	//virtual void ccTouchesBegan(CCSet *pTouches, CCEvent *pEvent);
  //   virtual void ccTouchesMoved(CCSet *pTouches, CCEvent *pEvent);
-	CCMutableArray<CCSprite*> *thieves;
+	CCMutableArray<Thief*> *thieves;
 private:
 	void addThief();
     void FindThief();

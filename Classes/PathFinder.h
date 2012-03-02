@@ -9,14 +9,15 @@
 #ifndef _PATHFINDING_H_
 #define _PATHFINDING_H_
 
+#include "Singleton.h"
 
-
-class PathFinder
+class PathFinder : public Singleton<PathFinder>
 {
 public:
-	PathFinder(int mWeight, int mHeight, int tWeight, int tHeight);
+	PathFinder(void);
 	~PathFinder(void);
 
+	bool initWithSize(int mWeight, int mHeight, int tWeight, int tHeight);
 	void ReadPath(int pathfinderID,int currentX,int currentY, int pixelsPerFrame);
 	int ReadPathX(int pathfinderID,int pathLocation);
 	int ReadPathY(int pathfinderID,int pathLocation);
@@ -24,7 +25,7 @@ public:
 	void InitializePathfinder (void);
 	void EndPathfinder (void);
 	int FindPath (int pathfinderID,int startingX, int startingY, int targetX, int targetY);
-
+	void setUnwalkable(int gridX, int gridY);
 
 	//Declare constants
 	static const int notfinished = 0, notStarted = 0;// path-related constants
