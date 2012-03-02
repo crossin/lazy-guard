@@ -10,7 +10,37 @@
 #include <malloc.h>
 
 
-PathFinder::PathFinder(int mWeight=30, int mHeight=20, int tWeight=16, int tHeight=16)
+PathFinder::PathFinder(void)
+{
+}
+
+
+PathFinder::~PathFinder(void)
+{
+	for (int i = 0; i < mapWidth; i++)
+	{
+		delete []walkability[i];
+		delete []whichList[i];
+		delete []parentX[i];
+		delete []parentY[i];
+		delete []Gcost[i];
+	}
+	delete []walkability;
+	delete []whichList;
+	delete []parentX;
+	delete []parentY;
+	delete []Gcost;
+
+	delete []openList;
+	delete []openX;
+	delete []openY;
+	delete []Fcost;
+	delete []Hcost;
+
+	delete []pathBank;
+}
+
+bool PathFinder::initWithSize(int mWeight=30, int mHeight=20, int tWeight=16, int tHeight=16)
 {
 	// init map size
 	mapWidth = mWeight;
@@ -39,29 +69,26 @@ PathFinder::PathFinder(int mWeight=30, int mHeight=20, int tWeight=16, int tHeig
 	Fcost = new int[mapWidth*mapHeight+2];
 	Hcost = new int[mapWidth*mapHeight+2];
 
-	InitializePathfinder();
+	pathBank = new int[2*(mapWidth*mapHeight)];
+	//InitializePathfinder();
+	
+	return true;
 }
 
-
-PathFinder::~PathFinder(void)
-{
-
-}
-
-void PathFinder::InitializePathfinder (void)
-{
-	pathBank = (int*) malloc(4);
-}
+// void PathFinder::InitializePathfinder (void)
+// {
+// 	pathBank = (int*) malloc(4);
+// }
 
 
 //-----------------------------------------------------------------------------
 // Name: EndPathfinder
 // Desc: Frees memory used by the pathfinder.
 //-----------------------------------------------------------------------------
-void PathFinder::EndPathfinder (void)
-{
-	free (pathBank);
-}
+// void PathFinder::EndPathfinder (void)
+// {
+// 	free (pathBank);
+// }
 
 
 //-----------------------------------------------------------------------------
@@ -372,7 +399,7 @@ int PathFinder::FindPath (int pathfinderID,int startingX, int startingY,
 		while (pathX != startX || pathY != startY);
 
 		//b.Resize the data bank to the right size in bytes
-		pathBank = (int*) realloc (pathBank, pathLength*8);
+		//pathBank = (int*) realloc (pathBank, pathLength*8);
 
 		//c. Now copy the path information over to the databank. Since we are
 		//	working backwards from the target to the start location, we copy
@@ -535,4 +562,9 @@ int PathFinder::ReadPathY(int pathfinderID,int pathLocation)
 
 	}
 	return y;
+}
+
+void PathFinder::setUnwalkable(int gridX, int gridY)
+{
+	walkability [gridX][gridY] = unwalkable;
 }

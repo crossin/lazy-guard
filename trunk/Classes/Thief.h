@@ -5,9 +5,16 @@
 using namespace cocos2d;
 
 class Thief :
-	public CCSprite
+	public CCNode
 {
 public:
 	Thief(void);
 	~Thief(void);
+
+	static Thief* thief();
+	bool init();
+
+	void findPath();
+
+	CCSprite * sprite;
 };
