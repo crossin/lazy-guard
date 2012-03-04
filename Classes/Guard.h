@@ -16,6 +16,7 @@ public:
 
 	void findThief();
 	void spriteMoveFinished(CCNode* sender);
+	CCRect getRect();
 
 	CCSprite * sprite;
 };

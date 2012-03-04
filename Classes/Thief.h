@@ -15,6 +15,9 @@ public:
 	bool init();
 
 	void findPath();
+	void moveFinished(CCNode* sender);
+	void kill();
+	CCRect getRect();
 
 	CCSprite * sprite;
 };

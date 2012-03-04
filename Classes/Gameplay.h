@@ -30,9 +30,11 @@ public:
 	CCMutableArray<Thief*> *thieves;
 
 	Guard* guard;
+	int countThief;
 private:
 	void addThief();
-//     void FindThief();
+	void gameLogic(ccTime dt);
+	//     void FindThief();
 // 	void spriteMoveFinished(CCNode* sender);
 	//CCMenu* m_pItmeMenu;
 };
