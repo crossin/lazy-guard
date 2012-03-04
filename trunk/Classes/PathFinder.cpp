@@ -110,6 +110,10 @@ int PathFinder::FindPath (int pathfinderID,int startingX, int startingY,
 	targetX = targetX/tileWidth;
 	targetY = targetY/tileHeight;
 
+	startX = (startX<0) ? 0 : ((startX>=mapWidth) ? (mapWidth-1) : startX);
+	startY = (startY<0) ? 0 : ((startY>=mapHeight) ? (mapHeight-1) : startY);
+	targetX = (targetX<0) ? 0 : ((targetX>=mapWidth) ? (mapWidth-1) : targetX);
+	targetY = (targetY<0) ? 0 : ((targetY>=mapHeight) ? (mapHeight-1) : targetY);
 	//2.Quick Path Checks: Under the some circumstances no path needs to
 	//	be generated ...
 

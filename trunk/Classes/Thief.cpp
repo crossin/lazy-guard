@@ -1,8 +1,7 @@
 #include "Thief.h"
 #include "PathFinder.h"
-#include "CCAction.h"
-#include "CCPointExtension.h"
-#include "CCActionInterval.h"
+#include "Gameplay.h"
+#include "cocos2d.h"
 
 Thief::Thief(void)
 {
@@ -41,13 +40,13 @@ bool Thief::init()
 		//srand(GetTickCount());
 		if (ranPos<0.5)
 		{
-			startX = CCRANDOM_0_1()*480;
-			startY = (ranPos<0.25)?10:310;
+			startX = CCRANDOM_0_1()*500;
+			startY = (ranPos<0.25)?-20:340;
 		} 
 		else
 		{
-			startX = (ranPos<0.75)?10:470;
-			startY = CCRANDOM_0_1()*320;
+			startX = (ranPos<0.75)?-20:500;
+			startY = CCRANDOM_0_1()*340;
 		}
 
 		setPosition(ccp(startX,startY));
@@ -81,10 +80,10 @@ void Thief::findPath()
 	CCFiniteTimeAction* actionGo;
 	CCFiniteTimeAction* actionBack;
 
-	for (int i=1;i<pathfinder->pathLength;i++)
+	for (int i = 0; i < pathfinder->pathLength; i++)
 	{
 		//game_map[pathfinder->pathBank[2*i+1]][pathfinder->pathBank[2*i]] = 2;
-		from = ccp(pathfinder->pathBank[2*i-2] * w, pathfinder->pathBank[2*i-1] * w);
+		from = (i == 0) ? getPosition() : (ccp(pathfinder->pathBank[2*i-2] * w, pathfinder->pathBank[2*i-1] * w));
 		target = ccp(pathfinder->pathBank[2*i] * w, pathfinder->pathBank[2*i+1] * w);
 		moveDifference = ccpSub(target,from);
 		distanceToMove = ccpLength(moveDifference);
@@ -100,5 +99,23 @@ void Thief::findPath()
 	actionGo = CCSequence::actionsWithArray(pathGo);
 	actionBack = CCSequence::actionsWithArray(pathBack);
 	//CCFiniteTimeAction* actionMoveDone = CCCallFuncN::actionWithTarget( this, callfuncN_selector(HelloWorld::spriteMoveFinished));
-	runAction( CCSequence::actions(actionGo,actionBack,NULL) );
+	CCFiniteTimeAction* actionOver = CCCallFuncN::actionWithTarget( this, callfuncN_selector(Thief::moveFinished));
+	
+	runAction( CCSequence::actions(actionGo, actionBack, actionOver, NULL) );
+}
+
+void Thief::moveFinished(CCNode* sender)
+{
+	kill();
+}
+
+void Thief::kill()
+{
+	((Gameplay*)getParent())->thieves->removeObject(this);
+	removeFromParentAndCleanup(true);
+}
+
+CCRect Thief::getRect()
+{
+	return CCRectMake(getPosition().x, getPosition().y, sprite->getContentSize().width, sprite->getContentSize().height);
 }

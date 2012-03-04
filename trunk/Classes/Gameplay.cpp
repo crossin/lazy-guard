@@ -8,6 +8,7 @@
 #include "ccMacros.h"
 #include "CCMutableDictionary.h"
 #include "PathFinder.h"
+#include "GameOverScene.h"
 #include <stdlib.h>
 
 
@@ -129,7 +130,7 @@ bool Gameplay::init()
 		// 2. Add a label shows "Hello World".
 
 		// Create a label and initialize with string "Hello World".
-		pLabel = CCLabelTTF::labelWithString("Hello World", "Thonburi", 64);
+		pLabel = CCLabelTTF::labelWithString("10", "Thonburi", 64);
 		CC_BREAK_IF(! pLabel);
 
 		// Get window size and place the label upper. 
@@ -146,14 +147,16 @@ bool Gameplay::init()
 		this->addChild(guard);
 
 		thieves = new CCMutableArray<Thief*>;
-		addThief();
-		addThief();
-		addThief();
+
+		countThief = 10;
 
 		bRet = true;
 	} while (0);
 
 	setIsTouchEnabled(true);
+
+	this->schedule( schedule_selector(Gameplay::gameLogic), 1 );
+
 
 	// init map
 	//r = (sizeof(game_map)/sizeof(game_map[0]));
@@ -168,7 +171,7 @@ bool Gameplay::init()
 	//}
 	
 	
-	pLabel->setString(textout);
+	//pLabel->setString(textout);
 
 	return bRet;
 }
@@ -198,6 +201,22 @@ void Gameplay::draw()
 			ccDrawPoint( CCPointMake((j+0.5f) * w, (i+0.5f) * w ));
 		}
 	}
+
+// 	CCPoint vertices[4];
+// 	if (thieves->count()>2)
+// 	{
+// 		CCRect r = thieves->getObjectAtIndex(1)->getRect();
+// 		//CCRect r = guard->getRect();
+// 		vertices[0]=ccp(CCRect::CCRectGetMinX(r),CCRect::CCRectGetMinY(r));
+// 		vertices[1]=ccp(CCRect::CCRectGetMaxX(r),CCRect::CCRectGetMinY(r));
+// 		vertices[2]=ccp(CCRect::CCRectGetMaxX(r),CCRect::CCRectGetMaxY(r));
+// 		vertices[3]=ccp(CCRect::CCRectGetMinX(r),CCRect::CCRectGetMaxY(r));
+// 		glPointSize(5);
+// 		glColor4f(1,1,1,1);
+// 		ccDrawPoly(vertices,4,true,false);
+// 	}
+
+
 }
 
 // void Gameplay::FindThief() 
@@ -266,13 +285,19 @@ void Gameplay::ccTouchesEnded(CCSet* touches, CCEvent* event)
 	CCTouch* touch = (CCTouch*)(*it);
 
 	CCPoint m_tTouchPos;
-	m_tTouchPos = touch->locationInView( touch->view() );	
+	m_tTouchPos = touch->locationInView( touch->view() );
 	m_tTouchPos = CCDirector::sharedDirector()->convertToGL( m_tTouchPos );
 
-	game_map[int(m_tTouchPos.y / w)][int(m_tTouchPos.x / w)] = 2;
+	//game_map[int(m_tTouchPos.y / w)][int(m_tTouchPos.x / w)] = 2;
 	
 	guard->findThief();
 	
+	if (thieves->count()==0)
+	{
+		GameOverScene *gameOverScene = GameOverScene::node();
+		gameOverScene->getLayer()->getLabel()->setString("You Win!");
+		CCDirector::sharedDirector()->replaceScene(gameOverScene);
+	}
 }
 
 void Gameplay::addThief()
@@ -281,6 +306,19 @@ void Gameplay::addThief()
 	thieves->addObject(thief);
 	addChild(thief);	
 	thief->findPath();
+
+// 	char a[10];
+// 	sprintf(a,"%d",thieves->count());
+// 	OutputDebugStringA(a);
 }
 
-
+void Gameplay::gameLogic(ccTime dt)
+{
+	if (countThief > 0)
+	{
+		addThief();
+		countThief--;
+		_itoa_s(countThief,textout,10);
+		pLabel->setString(textout);
+	}
+}
