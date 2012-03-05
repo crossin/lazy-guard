@@ -13,7 +13,9 @@ public:
 
 	static Gem* gem();
 	bool init();
-
+	void updatePosition(ccTime dt);
+	void kill();
 	CCSprite* sprite;
+	//Thief* owner;
 };
 

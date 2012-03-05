@@ -37,7 +37,11 @@ Gameplay::~Gameplay(void)
 		thieves->release();
 		thieves = NULL;
 	}
-
+	if (gems)
+	{
+		gems->release();
+		gems = NULL;
+	}
 	PathFinder::release();
 
 	//delete pathfinder;
@@ -145,18 +149,21 @@ bool Gameplay::init()
 		
 		
 		//gem
+		countGem = 5;
+		gems = CCArray::arrayWithCapacity(5);
+		gems->retain();
 		for (int i = 0; i < 5; i++)
 		{
-			gems[i] = Gem::gem();
-			gems[i]->setPosition(ccp(240+8*sin(i*6.28/5),160+8*cos(i*6.28/5)));
-			addChild(gems[i]);
+			Gem* g = Gem::gem();
+			g->setPosition(ccp(240+8*sin(i*6.28/5),160+8*cos(i*6.28/5)));
+			addChild(g, 1000);
+			gems->addObject(g);
 		}
 		//guard
 		guard = Guard::guard();
 		this->addChild(guard);
 		//thief
 		thieves = new CCMutableArray<Thief*>;
-
 		countThief = 10;
 
 		bRet = true;
