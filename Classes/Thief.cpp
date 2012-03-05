@@ -2,6 +2,7 @@
 #include "PathFinder.h"
 #include "Gameplay.h"
 #include "cocos2d.h"
+#include "GameOverScene.h"
 
 Thief::Thief(void)
 {
@@ -87,7 +88,7 @@ void Thief::findPath()
 		target = ccp(pathfinder->pathBank[2*i] * w, pathfinder->pathBank[2*i+1] * w);
 		moveDifference = ccpSub(target,from);
 		distanceToMove = ccpLength(moveDifference);
-		moveDuration = distanceToMove/20;
+		moveDuration = distanceToMove/120;
 		actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, target);
 		pathGo->addObject(actionMove);
 		actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, from);
@@ -100,17 +101,42 @@ void Thief::findPath()
 	actionBack = CCSequence::actionsWithArray(pathBack);
 	//CCFiniteTimeAction* actionMoveDone = CCCallFuncN::actionWithTarget( this, callfuncN_selector(HelloWorld::spriteMoveFinished));
 	CCFiniteTimeAction* actionOver = CCCallFuncN::actionWithTarget( this, callfuncN_selector(Thief::moveFinished));
-	
-	runAction( CCSequence::actions(actionGo, actionBack, actionOver, NULL) );
+	CCFiniteTimeAction* steal = CCCallFuncN::actionWithTarget( this, callfuncN_selector(Thief::getGem));
+
+	runAction( CCSequence::actions(actionGo, steal, actionBack, actionOver, NULL) );
+}
+
+void Thief::getGem(CCNode* sender)
+{
+	CCArray* gems = ((Gameplay*)getParent())->gems;
+
+	if (gem = (Gem*)gems->lastObject())
+	{
+		gems->removeLastObject();
+		schedule( schedule_selector(Thief::updateGem));
+	}
+
 }
 
 void Thief::moveFinished(CCNode* sender)
 {
+
 	kill();
 }
 
 void Thief::kill()
 {
+	if (gem)
+	{
+		gem->kill();
+		((Gameplay*)getParent())->countGem--;
+		if (((Gameplay*)getParent())->countGem==0)
+		{
+			GameOverScene *gameOverScene = GameOverScene::node();
+			gameOverScene->getLayer()->getLabel()->setString("You Lose!");
+			CCDirector::sharedDirector()->replaceScene(gameOverScene);
+		}
+	}
 	((Gameplay*)getParent())->thieves->removeObject(this);
 	removeFromParentAndCleanup(true);
 }
@@ -118,4 +144,12 @@ void Thief::kill()
 CCRect Thief::getRect()
 {
 	return CCRectMake(getPosition().x, getPosition().y, sprite->getContentSize().width, sprite->getContentSize().height);
+}
+
+void Thief::updateGem(ccTime dt)
+{
+	if (gem)
+	{
+		gem->setPosition(getPosition());
+	}
 }

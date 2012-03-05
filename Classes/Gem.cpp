@@ -1,5 +1,7 @@
 #include "Gem.h"
 
+#include "Gameplay.h"
+using namespace cocos2d;
 
 Gem::Gem(void)
 {
@@ -33,7 +35,17 @@ bool Gem::init()
 		sprite->setAnchorPoint(CCPointZero);
 		this->addChild(sprite);
 
+		//owner = NULL;
+
 		bRet=true;
 	}while(0);
+	
 	return bRet;
+}
+
+
+void Gem::kill()
+{
+	//owner = NULL;
+	removeFromParentAndCleanup(true);
 }

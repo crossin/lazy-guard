@@ -28,10 +28,11 @@ public:
 
 	//virtual void ccTouchesBegan(CCSet *pTouches, CCEvent *pEvent);
  //   virtual void ccTouchesMoved(CCSet *pTouches, CCEvent *pEvent);
-	CCMutableArray<Thief*> *thieves;
+	CCMutableArray<Thief*>* thieves;
 	Guard* guard;
-	Gem* gems[5];
+	CCArray* gems;
 	int countThief;
+	int countGem;
 private:
 	void addThief();
 	void gameLogic(ccTime dt);
