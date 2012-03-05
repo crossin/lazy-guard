@@ -40,7 +40,7 @@ bool Guard::init()
 		sprite->setAnchorPoint(CCPointZero);
 		this->addChild(sprite);
 
-		setPosition(ccp(240,160));
+		setPosition(ccp(220,160));
 
 		//behaviour=STAND;
 		//direction=DOWN;

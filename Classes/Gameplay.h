@@ -4,6 +4,7 @@
 #include "cocos2d.h"
 #include "Thief.h"
 #include "Guard.h"
+#include "Gem.h"
 
 using namespace cocos2d;
 
@@ -28,8 +29,8 @@ public:
 	//virtual void ccTouchesBegan(CCSet *pTouches, CCEvent *pEvent);
  //   virtual void ccTouchesMoved(CCSet *pTouches, CCEvent *pEvent);
 	CCMutableArray<Thief*> *thieves;
-
 	Guard* guard;
+	Gem* gems[5];
 	int countThief;
 private:
 	void addThief();

@@ -10,6 +10,7 @@
 #include "PathFinder.h"
 #include "GameOverScene.h"
 #include <stdlib.h>
+#include <math.h>
 
 
 using namespace cocos2d;
@@ -143,9 +144,17 @@ bool Gameplay::init()
 		//// 3. Add add a splash screen, show the cocos2d splash image.
 		
 		
+		//gem
+		for (int i = 0; i < 5; i++)
+		{
+			gems[i] = Gem::gem();
+			gems[i]->setPosition(ccp(240+8*sin(i*6.28/5),160+8*cos(i*6.28/5)));
+			addChild(gems[i]);
+		}
+		//guard
 		guard = Guard::guard();
 		this->addChild(guard);
-
+		//thief
 		thieves = new CCMutableArray<Thief*>;
 
 		countThief = 10;
