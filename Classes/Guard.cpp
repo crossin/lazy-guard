@@ -85,6 +85,13 @@ void Guard::findThief()
 
 	if (CCRect::CCRectIntersectsRect(rectG,rectT))
 	{
+		if (closest->gem)
+		{
+			((Gameplay*)getParent())->gems->addObject(closest->gem);
+			int i = ((Gameplay*)getParent())->gems->indexOfObject(closest->gem);
+			closest->gem->setPosition(ccp(240+8*sin(i*6.28/5),160+8*cos(i*6.28/5)));
+			closest->gem = NULL;
+		}
 		closest->kill();
 		return;
 	}
@@ -125,7 +132,7 @@ game_map[pathfinder->pathBank[2*i+1]][pathfinder->pathBank[2*i]] = 2;
 	target = ccp(pathfinder->pathBank[0] * w, pathfinder->pathBank[1] * w);
 	moveDifference = ccpSub(target,from);
 	distanceToMove = ccpLength(moveDifference);
-	moveDuration = distanceToMove/100;
+	moveDuration = distanceToMove/200;
 	actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, target);
 
 // char a[20];
