@@ -52,6 +52,7 @@ bool Thief::init()
 
 		setPosition(ccp(startX,startY));
 		
+		gem = NULL;
 		//behaviour=STAND;
 		//direction=DOWN;
 
