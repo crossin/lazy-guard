@@ -32,6 +32,6 @@ inline void Singleton<T>::release()
 }
 
 template <typename T> 
-typename T* Singleton<T>::t = 0;
+T* Singleton<T>::t = 0;
 
 #endif // __SINGLE_H__

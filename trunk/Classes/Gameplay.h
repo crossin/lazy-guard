@@ -29,7 +29,7 @@ public:
 	//virtual void ccTouchesBegan(CCSet *pTouches, CCEvent *pEvent);
  //   virtual void ccTouchesMoved(CCSet *pTouches, CCEvent *pEvent);
 	CCMutableArray<Thief*>* thieves;
-	Guard* guard;
+	Guard* guard[2];
 	CCArray* gems;
 	int countThief;
 	int countGem;
@@ -41,6 +41,7 @@ private:
 	//     void FindThief();
 // 	void spriteMoveFinished(CCNode* sender);
 	//CCMenu* m_pItmeMenu;
+	virtual void keyBackClicked();
 };
 
 #endif
