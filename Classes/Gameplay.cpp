@@ -160,9 +160,10 @@ bool Gameplay::init()
 		}
 		//guard
 		guard[0] = Guard::guard();
+		guard[0]->setPosition(ccp(100,100));
 		this->addChild(guard[0], 1001);
 		guard[1] = Guard::guard();
-		guard[1]->setPosition(ccp(300,160));
+		guard[1]->setPosition(ccp(300,200));
 		this->addChild(guard[1], 1002);
 		//thief
 		thieves = new CCMutableArray<Thief*>;
