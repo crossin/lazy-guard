@@ -40,7 +40,7 @@ bool Guard::init()
 		sprite->setAnchorPoint(CCPointZero);
 		this->addChild(sprite);
 
-		setPosition(ccp(220,160));
+		setPosition(ccp(200,160));
 
 		isAwake = false;
 		//behaviour=STAND;
@@ -119,7 +119,7 @@ void Guard::findThief()
 	target = ccp(pathfinder->pathBank[0] * w, pathfinder->pathBank[1] * w);
 	moveDifference = ccpSub(target,from);
 	distanceToMove = ccpLength(moveDifference);
-	moveDuration = distanceToMove/200;
+	moveDuration = distanceToMove/40;
 	actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, target);
 
 // char a[20];

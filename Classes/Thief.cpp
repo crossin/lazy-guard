@@ -88,7 +88,7 @@ void Thief::findPath()
 		target = ccp(pathfinder->pathBank[2*i] * w, pathfinder->pathBank[2*i+1] * w);
 		moveDifference = ccpSub(target,from);
 		distanceToMove = ccpLength(moveDifference);
-		moveDuration = distanceToMove/120;
+		moveDuration = distanceToMove/50;
 		actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, target);
 		pathGo->addObject(actionMove);
 		actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, from);

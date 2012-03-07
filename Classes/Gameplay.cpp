@@ -9,7 +9,7 @@
 #include "CCMutableDictionary.h"
 #include "PathFinder.h"
 #include "GameOverScene.h"
-#include <stdlib.h>
+//#include <stdlib.h>
 #include <math.h>
 
 
@@ -74,7 +74,6 @@ CCScene* Gameplay::scene()
 
 bool Gameplay::init()
 {
-
 	bool bRet = false;
 	srand(time(NULL));
 	do 
@@ -143,7 +142,7 @@ bool Gameplay::init()
 		pLabel->setPosition(ccp(size.width / 2, size.height - 20));
 
 		// Add the label to HelloWorld layer as a child layer.
-		this->addChild(pLabel, 1);
+		//this->addChild(pLabel, 1);
 
 		//// 3. Add add a splash screen, show the cocos2d splash image.
 		
@@ -160,8 +159,11 @@ bool Gameplay::init()
 			gems->addObject(g);
 		}
 		//guard
-		guard = Guard::guard();
-		this->addChild(guard);
+		guard[0] = Guard::guard();
+		this->addChild(guard[0]);
+		guard[1] = Guard::guard();
+		guard[1]->setPosition(ccp(280,160));
+		this->addChild(guard[1]);
 		//thief
 		thieves = new CCMutableArray<Thief*>;
 		countThief = 10;
@@ -170,6 +172,7 @@ bool Gameplay::init()
 	} while (0);
 
 	setIsTouchEnabled(true);
+	setIsKeypadEnabled(true);
 
 	schedule( schedule_selector(Gameplay::gameLogic), 1 );
 	schedule( schedule_selector(Gameplay::updateFrame));
@@ -305,12 +308,15 @@ void Gameplay::ccTouchesEnded(CCSet* touches, CCEvent* event)
 	m_tTouchPos = CCDirector::sharedDirector()->convertToGL( m_tTouchPos );
 
 	//game_map[int(m_tTouchPos.y / w)][int(m_tTouchPos.x / w)] = 2;
-
-	if (!guard->isAwake && CCRect::CCRectContainsPoint(guard->getRect(), m_tTouchPos))
+	for (int i = 0; i < 2; i++)
 	{
-		guard->isAwake = true;
-		guard->findThief();
+		if (!guard[i]->isAwake && CCRect::CCRectContainsPoint(guard[i]->getRect(), m_tTouchPos))
+		{
+			guard[i]->isAwake = true;
+			guard[i]->findThief();
+		}
 	}
+	
 }
 
 void Gameplay::addThief()
@@ -331,8 +337,8 @@ void Gameplay::gameLogic(ccTime dt)
 	{
 		addThief();
 		countThief--;
-		_itoa_s(countThief,textout,10);
-		pLabel->setString(textout);
+		//_itoa_s(countThief,textout,10);
+		//pLabel->setString(textout);
 	}
 }
 
@@ -352,18 +358,21 @@ void Gameplay::updateFrame(ccTime dt)
 		// check caught
 		//CCRect rectG = guard->getRect();
 		//CCRect rectT = thief->getRect();
-		if (guard->isAwake && CCRect::CCRectIntersectsRect(guard->getRect(), thief->getRect()))
+		for (int i = 0; i < 2; i++)
 		{
-			if (thief->gem)
+			if (guard[i]->isAwake && CCRect::CCRectIntersectsRect(guard[i]->getRect(), thief->getRect()))
 			{
-				gems->addObject(thief->gem);
-				int i = gems->indexOfObject(thief->gem);
-				thief->gem->setPosition(ccp(240+8*sin(i*6.28/5),160+8*cos(i*6.28/5)));
-				thief->gem = NULL;
+				if (thief->gem)
+				{
+					gems->addObject(thief->gem);
+					int i = gems->indexOfObject(thief->gem);
+					thief->gem->setPosition(ccp(240+8*sin(i*6.28/5),160+8*cos(i*6.28/5)));
+					thief->gem = NULL;
+				}
+				thievesToDelete->addObject(thief);
+				guard[i]->stopAllActions();
+				guard[i]->isAwake = false;
 			}
-			thievesToDelete->addObject(thief);
-			guard->stopAllActions();
-			guard->isAwake = false;
 		}
 	}
 	for (it = thievesToDelete->begin(); it != thievesToDelete->end(); it++ )
@@ -387,4 +396,13 @@ void Gameplay::updateFrame(ccTime dt)
 		gameOverScene->getLayer()->getLabel()->setString("You Lose!");
 		CCDirector::sharedDirector()->replaceScene(gameOverScene);
 	}
+}
+
+void Gameplay::keyBackClicked()
+{
+	CCDirector::sharedDirector()->end();
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+	exit(0);
+#endif
 }
