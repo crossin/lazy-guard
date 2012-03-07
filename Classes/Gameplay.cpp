@@ -15,7 +15,7 @@
 
 using namespace cocos2d;
 
-int game_map[20][30];
+int game_map[10][15];
 //PathFinder *pathfinder;
 
 int r;
@@ -160,10 +160,10 @@ bool Gameplay::init()
 		}
 		//guard
 		guard[0] = Guard::guard();
-		this->addChild(guard[0]);
+		this->addChild(guard[0], 1001);
 		guard[1] = Guard::guard();
-		guard[1]->setPosition(ccp(280,160));
-		this->addChild(guard[1]);
+		guard[1]->setPosition(ccp(300,160));
+		this->addChild(guard[1], 1002);
 		//thief
 		thieves = new CCMutableArray<Thief*>;
 		countThief = 10;

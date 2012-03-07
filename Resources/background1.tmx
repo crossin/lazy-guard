@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="30" height="20" tilewidth="16" tileheight="16">
+ <tileset firstgid="1" name="tmw_desert_spacing" tilewidth="16" tileheight="16" spacing="1" margin="1">
+  <image source="tmw_desert_spacing.png" width="51" height="35"/>
+ </tileset>
+ <tileset firstgid="7" name="tmw_desert_spacing" tilewidth="16" tileheight="16" spacing="1" margin="1">
+  <image source="tmw_desert_spacing.png" width="51" height="35"/>
+ </tileset>
+ <tileset firstgid="13" name="tmw_desert_spacing" tilewidth="16" tileheight="16" spacing="1" margin="1">
+  <image source="tmw_desert_spacing.png" width="51" height="35"/>
+ </tileset>
+ <tileset firstgid="19" name="meta_tiles" tilewidth="16" tileheight="16" spacing="1" margin="1">
+  <image source="meta_tiles.png" width="35" height="18"/>
+ </tileset>
+ <tileset firstgid="21" name="meta_tiles" tilewidth="16" tileheight="16" spacing="1" margin="1">
+  <image source="meta_tiles.png" width="35" height="18"/>
+  <tile id="0">
+   <properties>
+    <property name="Collidable" value="True"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="块层 1" width="30" height="20" opacity="0.87">
+  <data encoding="base64" compression="zlib">
+   eJzNVTESwCAI4wOK/39tF6ceUiHBOmTyCEk4sIlIS2IAtSvoBNqnQhvLH5tzbHB7b/0SH4j3LN7eI3xfGTAy2pnN37PIZHZas4p9W6L6vdyrPVXctMzuR3V5uSC1J2D1Z2RWqW+VLfO2WXzorG79sxFdD+nwHto=
+  </data>
+ </layer>
+ <layer name="Meta" width="30" height="20" opacity="0.61">
+  <data encoding="base64" compression="zlib">
+   eJzNlEsSACAIQr1E979q+6bpw0OLbYkMKhE6GqhdcY68Sp8MbQ5kebbjVt+cNRmgOsiu7f46PDrheD0LxbNqzS3m2UK0OHKK9PuFk9xBxQ0ROPclAzfeOrON8qs9X4Do6t/oA4g=
+  </data>
+ </layer>
+</map>

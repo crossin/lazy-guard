@@ -121,7 +121,7 @@ int PathFinder::FindPath (int pathfinderID,int startingX, int startingY,
 	if (startX == targetX && startY == targetY && pathLocation > 0)
 		return found;
 	if (startX == targetX && startY == targetY && pathLocation == 0)
-		return nonexistent;
+		return same;
 
 	//	If target square is unwalkable, return that it's a nonexistent path.
 	if (walkability[targetX][targetY] == unwalkable)
