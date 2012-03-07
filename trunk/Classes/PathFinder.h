@@ -29,7 +29,7 @@ public:
 
 	//Declare constants
 	static const int notfinished = 0, notStarted = 0;// path-related constants
-	static const int found = 1, nonexistent = 2; 
+	static const int found = 1, nonexistent = 2, same = 3; 
 	static const int walkable = 0, unwalkable = 1;// walkability array constants
 
 	int mapWidth;

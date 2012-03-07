@@ -40,7 +40,7 @@ bool Guard::init()
 		sprite->setAnchorPoint(CCPointZero);
 		this->addChild(sprite);
 
-		setPosition(ccp(200,160));
+		setPosition(ccp(160,160));
 
 		isAwake = false;
 		//behaviour=STAND;
@@ -82,14 +82,20 @@ void Guard::findThief()
 	}
 
 
+
 	PathFinder* pathfinder = PathFinder::getInstance();
-	if ((pathfinder->FindPath(1,getPosition().x,getPosition().y,closest->getPosition().x,closest->getPosition().y)) == PathFinder::nonexistent)
+	int result = pathfinder->FindPath(1,getPosition().x,getPosition().y,closest->getPosition().x,closest->getPosition().y);
+	if (result == PathFinder::nonexistent)
 	{
 		isAwake = false;
 		return;
 	}
+	if (result == PathFinder::same)
+	{
+		return;
+	}
 
-	int w = 16;
+	int w = 32;
 	//_itoa_s((*(pathBank[1]-4)),textout,10);
 	//itoa(pathLength[1],textout,10);
 	//CCArray* path = CCArray::array();

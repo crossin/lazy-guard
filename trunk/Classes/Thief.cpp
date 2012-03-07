@@ -68,7 +68,7 @@ void Thief::findPath()
 {
 	PathFinder *pathfinder = PathFinder::getInstance();
 	pathfinder->FindPath(1, getPosition().x, getPosition().y, 240, 160);
-	int w = 16;
+	int w = 32;
 	//_itoa_s((*(pathBank[1]-4)),textout,10);
 	//itoa(pathLength[1],textout,10);
 	CCArray* pathGo = CCArray::array();
