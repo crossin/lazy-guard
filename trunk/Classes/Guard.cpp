@@ -40,7 +40,7 @@ bool Guard::init()
 		sprite->setAnchorPoint(CCPointZero);
 		this->addChild(sprite);
 
-		setPosition(ccp(160,160));
+		//setPosition(ccp(160,160));
 
 		isAwake = false;
 		//behaviour=STAND;
