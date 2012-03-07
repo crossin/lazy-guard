@@ -171,8 +171,8 @@ bool Gameplay::init()
 
 	setIsTouchEnabled(true);
 
-	this->schedule( schedule_selector(Gameplay::gameLogic), 1 );
-
+	schedule( schedule_selector(Gameplay::gameLogic), 1 );
+	schedule( schedule_selector(Gameplay::updateFrame));
 
 	// init map
 	//r = (sizeof(game_map)/sizeof(game_map[0]));
@@ -305,14 +305,11 @@ void Gameplay::ccTouchesEnded(CCSet* touches, CCEvent* event)
 	m_tTouchPos = CCDirector::sharedDirector()->convertToGL( m_tTouchPos );
 
 	//game_map[int(m_tTouchPos.y / w)][int(m_tTouchPos.x / w)] = 2;
-	
-	guard->findThief();
-	
-	if (thieves->count()==0)
+
+	if (!guard->isAwake && CCRect::CCRectContainsPoint(guard->getRect(), m_tTouchPos))
 	{
-		GameOverScene *gameOverScene = GameOverScene::node();
-		gameOverScene->getLayer()->getLabel()->setString("You Win!");
-		CCDirector::sharedDirector()->replaceScene(gameOverScene);
+		guard->isAwake = true;
+		guard->findThief();
 	}
 }
 
@@ -336,5 +333,58 @@ void Gameplay::gameLogic(ccTime dt)
 		countThief--;
 		_itoa_s(countThief,textout,10);
 		pLabel->setString(textout);
+	}
+}
+
+void Gameplay::updateFrame(ccTime dt)
+{
+	CCMutableArray<Thief*> *thievesToDelete = new CCMutableArray<Thief*>;
+	CCMutableArray<Thief*>::CCMutableArrayIterator it;
+	Thief* thief;
+	for (it = thieves->begin(); it != thieves->end(); it++ )
+	{
+		thief = *it;
+		if (thief->gem)
+		{
+			thief->gem->setPosition(thief->getPosition());
+		}
+
+		// check caught
+		//CCRect rectG = guard->getRect();
+		//CCRect rectT = thief->getRect();
+		if (guard->isAwake && CCRect::CCRectIntersectsRect(guard->getRect(), thief->getRect()))
+		{
+			if (thief->gem)
+			{
+				gems->addObject(thief->gem);
+				int i = gems->indexOfObject(thief->gem);
+				thief->gem->setPosition(ccp(240+8*sin(i*6.28/5),160+8*cos(i*6.28/5)));
+				thief->gem = NULL;
+			}
+			thievesToDelete->addObject(thief);
+			guard->stopAllActions();
+			guard->isAwake = false;
+		}
+	}
+	for (it = thievesToDelete->begin(); it != thievesToDelete->end(); it++ )
+	{
+		thief = *it;
+		thief->kill();
+	}
+
+	// check win
+	if (countThief == 0 && thieves->count() == 0)
+	{
+		GameOverScene *gameOverScene = GameOverScene::node();
+		gameOverScene->getLayer()->getLabel()->setString("You Win!");
+		CCDirector::sharedDirector()->replaceScene(gameOverScene);
+	}
+
+	// check lose
+	if (countGem == 0)
+	{
+		GameOverScene *gameOverScene = GameOverScene::node();
+		gameOverScene->getLayer()->getLabel()->setString("You Lose!");
+		CCDirector::sharedDirector()->replaceScene(gameOverScene);
 	}
 }

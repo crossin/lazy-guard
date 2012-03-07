@@ -2,7 +2,6 @@
 #include "PathFinder.h"
 #include "Gameplay.h"
 #include "cocos2d.h"
-#include "GameOverScene.h"
 
 Thief::Thief(void)
 {
@@ -114,7 +113,6 @@ void Thief::getGem(CCNode* sender)
 	if (gem = (Gem*)gems->lastObject())
 	{
 		gems->removeLastObject();
-		schedule( schedule_selector(Thief::updateGem));
 	}
 
 }
@@ -131,12 +129,6 @@ void Thief::kill()
 	{
 		gem->kill();
 		((Gameplay*)getParent())->countGem--;
-		if (((Gameplay*)getParent())->countGem==0)
-		{
-			GameOverScene *gameOverScene = GameOverScene::node();
-			gameOverScene->getLayer()->getLabel()->setString("You Lose!");
-			CCDirector::sharedDirector()->replaceScene(gameOverScene);
-		}
 	}
 	((Gameplay*)getParent())->thieves->removeObject(this);
 	removeFromParentAndCleanup(true);
@@ -147,10 +139,3 @@ CCRect Thief::getRect()
 	return CCRectMake(getPosition().x, getPosition().y, sprite->getContentSize().width, sprite->getContentSize().height);
 }
 
-void Thief::updateGem(ccTime dt)
-{
-	if (gem)
-	{
-		gem->setPosition(getPosition());
-	}
-}
