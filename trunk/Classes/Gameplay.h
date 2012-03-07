@@ -33,9 +33,11 @@ public:
 	CCArray* gems;
 	int countThief;
 	int countGem;
+
 private:
 	void addThief();
 	void gameLogic(ccTime dt);
+	void updateFrame(ccTime dt);
 	//     void FindThief();
 // 	void spriteMoveFinished(CCNode* sender);
 	//CCMenu* m_pItmeMenu;

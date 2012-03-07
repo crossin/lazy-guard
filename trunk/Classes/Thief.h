@@ -20,7 +20,6 @@ public:
 	void getGem(CCNode* sender);
 	void kill();
 	CCRect getRect();
-	void updateGem(ccTime dt);
 	CCSprite * sprite;
 	Gem* gem;
 };

@@ -19,5 +19,6 @@ public:
 	CCRect getRect();
 
 	CCSprite * sprite;
+	bool isAwake;
 };
 

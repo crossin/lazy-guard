@@ -6,7 +6,7 @@
 // #include "selector_protocol.h"
 #include "cocos2d.h"
 
-		extern int game_map[20][30];
+//		extern int game_map[20][30];
 
 Guard::Guard(void)
 {
@@ -42,6 +42,7 @@ bool Guard::init()
 
 		setPosition(ccp(220,160));
 
+		isAwake = false;
 		//behaviour=STAND;
 		//direction=DOWN;
 
@@ -57,13 +58,13 @@ bool Guard::init()
 
 void Guard::findThief() 
 {
-	CCMutableArray<Thief*>* thieives = ((Gameplay*)getParent())->thieves;
+	CCMutableArray<Thief*>* thieves = ((Gameplay*)getParent())->thieves;
 	CCMutableArray<Thief*>::CCMutableArrayIterator it;
 	Thief* closest = NULL;
 	Thief* thiefTemp;
 	float dist;
 	float dist_min = 100000;
-	for (it = thieives->begin(); it != thieives->end(); it++ )
+	for (it = thieves->begin(); it != thieves->end(); it++ )
 	{
 		thiefTemp = *it;
 		dist = ccpDistance(getPosition(), thiefTemp->getPosition());
@@ -76,29 +77,15 @@ void Guard::findThief()
 
 	if (!closest)
 	{
+		isAwake = false;
 		return;
 	}
 
-	// check caught
-	CCRect rectG = getRect();//CCRectMake(getPosition().x,getPosition().y,getContentSize().width,getContentSize().height);
-	CCRect rectT = closest->getRect();//CCRectMake(closest->getPosition().x,closest->getPosition().y,closest->getContentSize().width,closest->getContentSize().height);
-
-	if (CCRect::CCRectIntersectsRect(rectG,rectT))
-	{
-		if (closest->gem)
-		{
-			((Gameplay*)getParent())->gems->addObject(closest->gem);
-			int i = ((Gameplay*)getParent())->gems->indexOfObject(closest->gem);
-			closest->gem->setPosition(ccp(240+8*sin(i*6.28/5),160+8*cos(i*6.28/5)));
-			closest->gem = NULL;
-		}
-		closest->kill();
-		return;
-	}
 
 	PathFinder* pathfinder = PathFinder::getInstance();
 	if ((pathfinder->FindPath(1,getPosition().x,getPosition().y,closest->getPosition().x,closest->getPosition().y)) == PathFinder::nonexistent)
 	{
+		isAwake = false;
 		return;
 	}
 
@@ -118,15 +105,15 @@ void Guard::findThief()
 // 	}
 
 
-for (int i=0;i<20;i++){
-	for (int j=0;j<30;j++){
-			game_map[i][j] = 0;
-	}
-}
-for (int i = 0; i < pathfinder->pathLength; i++)
-{
-game_map[pathfinder->pathBank[2*i+1]][pathfinder->pathBank[2*i]] = 2;
-}
+// for (int i=0;i<20;i++){
+// 	for (int j=0;j<30;j++){
+// 			game_map[i][j] = 0;
+// 	}
+// }
+// for (int i = 0; i < pathfinder->pathLength; i++)
+// {
+// game_map[pathfinder->pathBank[2*i+1]][pathfinder->pathBank[2*i]] = 2;
+// }
 
 	from = getPosition();//ccp(pathfinder->pathBank[0] * w, pathfinder->pathBank[1] * w);
 	target = ccp(pathfinder->pathBank[0] * w, pathfinder->pathBank[1] * w);
