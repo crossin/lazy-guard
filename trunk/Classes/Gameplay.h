@@ -17,15 +17,15 @@ public:
 	static cocos2d::CCScene* scene();
 
 	virtual bool init();  
-	virtual void draw();
+
 
 	LAYER_NODE_FUNC(Gameplay);
 
 	void ccTouchesEnded(CCSet* touches, CCEvent* event);
 
+	//	virtual void draw();
  //   void menuCallback(CCObject * pSender);
  //   void closeCallback(CCObject * pSender);
-
 	//virtual void ccTouchesBegan(CCSet *pTouches, CCEvent *pEvent);
  //   virtual void ccTouchesMoved(CCSet *pTouches, CCEvent *pEvent);
 	CCMutableArray<Thief*>* thieves;

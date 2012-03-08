@@ -15,9 +15,9 @@
 
 using namespace cocos2d;
 
+/*
 int game_map[10][15];
 //PathFinder *pathfinder;
-
 int r;
 int c;
 int w;
@@ -25,6 +25,7 @@ int w;
 char textout[8];
 CCLabelTTF* pLabel;
 //CCSprite *player;
+*/
 
 Gameplay::Gameplay(void):thieves(NULL)
 {
@@ -95,10 +96,13 @@ bool Gameplay::init()
 		
 		CCTMXLayer *meta=pDesertTileMap->layerNamed("Meta");
 		meta->setIsVisible(false);
-
+/*
 		r = (sizeof(game_map)/sizeof(game_map[0]));
 		c = (sizeof(game_map[0])/sizeof(game_map[0][0]));
 		w = 480/c;
+*/
+		int r = pDesertTileMap->getMapSize().height;
+		int c = pDesertTileMap->getMapSize().width;
 
 		//_itoa_s(pDesertTileMap->getTileSize().height,textout,10);
 		//pathfinder = new PathFinder(pDesertTileMap->getMapSize().width, pDesertTileMap->getMapSize().height, pDesertTileMap->getTileSize().width, pDesertTileMap->getTileSize().height);
@@ -117,7 +121,7 @@ bool Gameplay::init()
 						colli = props->objectForKey("Collidable");
 						if (colli->m_sString.compare("True") == 0)
 						{
-							game_map[i][j] = 1;
+							//game_map[i][j] = 1;
 							//pathfinder->walkability [j][i] = pathfinder->unwalkable;
 							pathfinder->setUnwalkable(j, i);
 						}
@@ -132,7 +136,7 @@ bool Gameplay::init()
 		}
 
 		// 2. Add a label shows "Hello World".
-
+/*
 		// Create a label and initialize with string "Hello World".
 		pLabel = CCLabelTTF::labelWithString("10", "Thonburi", 64);
 		CC_BREAK_IF(! pLabel);
@@ -143,7 +147,7 @@ bool Gameplay::init()
 
 		// Add the label to HelloWorld layer as a child layer.
 		//this->addChild(pLabel, 1);
-
+*/
 		//// 3. Add add a splash screen, show the cocos2d splash image.
 		
 		
@@ -196,6 +200,7 @@ bool Gameplay::init()
 	return bRet;
 }
 
+/*
 void Gameplay::draw()
 {
 	CCLayer::draw();
@@ -235,9 +240,8 @@ void Gameplay::draw()
 // 		glColor4f(1,1,1,1);
 // 		ccDrawPoly(vertices,4,true,false);
 // 	}
-
-
 }
+*/
 
 // void Gameplay::FindThief() 
 // {
@@ -291,6 +295,7 @@ void Gameplay::draw()
 
 void Gameplay::ccTouchesEnded(CCSet* touches, CCEvent* event)
 {
+/*
 	//clear
 	for (int i=0;i<r;i++){
 		for (int j=0;j<c;j++){
@@ -300,7 +305,7 @@ void Gameplay::ccTouchesEnded(CCSet* touches, CCEvent* event)
 			}
 		}
 	}
-
+*/
 	CCSetIterator it = touches->begin();
 	CCTouch* touch = (CCTouch*)(*it);
 

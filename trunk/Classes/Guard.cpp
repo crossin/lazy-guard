@@ -95,7 +95,8 @@ void Guard::findThief()
 		return;
 	}
 
-	int w = 32;
+	//int tileWidth = pathfinder->tileWidth;
+	//int tileHeight = pathfinder->tileHeight;
 	//_itoa_s((*(pathBank[1]-4)),textout,10);
 	//itoa(pathLength[1],textout,10);
 	//CCArray* path = CCArray::array();
@@ -122,7 +123,7 @@ void Guard::findThief()
 // }
 
 	from = getPosition();//ccp(pathfinder->pathBank[0] * w, pathfinder->pathBank[1] * w);
-	target = ccp(pathfinder->pathBank[0] * w, pathfinder->pathBank[1] * w);
+	target = ccp(pathfinder->pathBank[0] * pathfinder->tileWidth, pathfinder->pathBank[1] * pathfinder->tileHeight);
 	moveDifference = ccpSub(target,from);
 	distanceToMove = ccpLength(moveDifference);
 	moveDuration = distanceToMove/40;

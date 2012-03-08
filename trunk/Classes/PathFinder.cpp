@@ -40,7 +40,7 @@ PathFinder::~PathFinder(void)
 	delete []pathBank;
 }
 
-bool PathFinder::initWithSize(int mWeight=30, int mHeight=20, int tWeight=16, int tHeight=16)
+bool PathFinder::initWithSize(int mWeight, int mHeight, int tWeight, int tHeight)
 {
 	// init map size
 	mapWidth = mWeight;
