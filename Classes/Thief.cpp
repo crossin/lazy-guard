@@ -68,7 +68,7 @@ void Thief::findPath()
 {
 	PathFinder *pathfinder = PathFinder::getInstance();
 	pathfinder->FindPath(1, getPosition().x, getPosition().y, 240, 160);
-	int w = 32;
+	//int w = 32;
 	//_itoa_s((*(pathBank[1]-4)),textout,10);
 	//itoa(pathLength[1],textout,10);
 	CCArray* pathGo = CCArray::array();
@@ -84,8 +84,8 @@ void Thief::findPath()
 	for (int i = 0; i < pathfinder->pathLength; i++)
 	{
 		//game_map[pathfinder->pathBank[2*i+1]][pathfinder->pathBank[2*i]] = 2;
-		from = (i == 0) ? getPosition() : (ccp(pathfinder->pathBank[2*i-2] * w, pathfinder->pathBank[2*i-1] * w));
-		target = ccp(pathfinder->pathBank[2*i] * w, pathfinder->pathBank[2*i+1] * w);
+		from = (i == 0) ? getPosition() : (ccp(pathfinder->pathBank[2*i-2] * pathfinder->tileWidth, pathfinder->pathBank[2*i-1] * pathfinder->tileHeight));
+		target = ccp(pathfinder->pathBank[2*i] * pathfinder->tileWidth, pathfinder->pathBank[2*i+1] * pathfinder->tileHeight);
 		moveDifference = ccpSub(target,from);
 		distanceToMove = ccpLength(moveDifference);
 		moveDuration = distanceToMove/50;
