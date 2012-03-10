@@ -17,8 +17,16 @@ public:
 	void findThief();
 	void spriteMoveFinished(CCNode* sender);
 	CCRect getRect();
-
+	void onHit();
+	void updateFrame(ccTime dt);
+	void setAwake(bool w);
 	CCSprite * sprite;
+	CCSprite * bar;
 	bool isAwake;
+	float pointSleep;
+	float pointSleepMax;
+	float pointWake;
+	float pointWakeMax;
+	int speed;
 };
 
