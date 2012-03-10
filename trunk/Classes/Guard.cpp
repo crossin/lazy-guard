@@ -40,9 +40,18 @@ bool Guard::init()
 		sprite->setAnchorPoint(CCPointZero);
 		this->addChild(sprite);
 
+		bar = CCSprite::spriteWithFile("bar.png");
+		bar->setAnchorPoint(CCPointZero);
+		bar->setPosition(ccp(5,38));
+		this->addChild(bar);
 		//setPosition(ccp(160,160));
 
 		isAwake = false;
+		pointSleepMax = 100;
+		pointSleep = 0;
+		pointWakeMax = 100;
+		pointWake = 0;
+		speed = 40;
 		//behaviour=STAND;
 		//direction=DOWN;
 
@@ -50,6 +59,8 @@ bool Guard::init()
 		//spirte->runAction(CCRepeatForever::actionWithAction(action));
 
 		//this->schedule(schedule_selector(Monster::moveUpdate));
+		schedule( schedule_selector(Guard::updateFrame));
+
 		bRet=true;
 	}while(0);
 	return bRet;
@@ -126,7 +137,7 @@ void Guard::findThief()
 	target = ccp(pathfinder->pathBank[0] * pathfinder->tileWidth, pathfinder->pathBank[1] * pathfinder->tileHeight);
 	moveDifference = ccpSub(target,from);
 	distanceToMove = ccpLength(moveDifference);
-	moveDuration = distanceToMove/40;
+	moveDuration = distanceToMove/speed;
 	actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, target);
 
 // char a[20];
@@ -144,6 +155,45 @@ void Guard::findThief()
 	runAction( CCSequence::actions(actionMove,actionMoveDone,NULL) );
 }
 
+void Guard::updateFrame(ccTime dt)
+{
+	if (isAwake)
+	{
+		if (pointWake <= 0)
+		{
+			stopAllActions();
+			setAwake(false);
+			bar->setIsVisible(false);
+		}
+		else
+		{
+			bar->setTextureRect(CCRectMake(0, 0, 16*pointWake/pointWakeMax, bar->getContentSize().height));
+			bar->setIsVisible(true);
+			pointWake -= (20 * dt);
+			
+			if (this->numberOfRunningActions() == 0)
+			{
+				findThief();
+			}
+		}
+	}
+	else
+	{
+		if (pointSleep <= 0)
+		{
+			bar->setIsVisible(false);
+		}
+		else
+		{
+			bar->setTextureRect(CCRectMake(0, 0, 16*pointSleep/pointSleepMax, bar->getContentSize().height));
+			bar->setIsVisible(true);
+			pointSleep -= (50 * dt);
+		}
+		
+	}
+	
+}
+
 void Guard::spriteMoveFinished(CCNode* sender)
 {
 	//CCSprite *sprite = (CCSprite *)sender;
@@ -153,4 +203,29 @@ void Guard::spriteMoveFinished(CCNode* sender)
 CCRect Guard::getRect()
 {
 	return CCRectMake(getPosition().x, getPosition().y, sprite->getContentSize().width, sprite->getContentSize().height);
+}
+
+void Guard::onHit()
+{
+	pointSleep += 20;
+	if (pointSleep >= pointSleepMax)
+	{
+		setAwake(true);
+		findThief();
+	}
+}
+
+void Guard::setAwake(bool w)
+{
+	if (w)
+	{
+		isAwake = true;
+		pointWake = pointWakeMax;
+	}
+	else
+	{
+		isAwake = false;
+		pointSleep = 0;
+	}
+
 }

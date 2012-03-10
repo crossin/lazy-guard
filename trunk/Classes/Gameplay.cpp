@@ -318,8 +318,9 @@ void Gameplay::ccTouchesEnded(CCSet* touches, CCEvent* event)
 	{
 		if (!guard[i]->isAwake && CCRect::CCRectContainsPoint(guard[i]->getRect(), m_tTouchPos))
 		{
-			guard[i]->isAwake = true;
-			guard[i]->findThief();
+			guard[i]->onHit();
+// 			guard[i]->isAwake = true;
+// 			guard[i]->findThief();
 		}
 	}
 	
@@ -376,11 +377,13 @@ void Gameplay::updateFrame(ccTime dt)
 					thief->gem = NULL;
 				}
 				thievesToDelete->addObject(thief);
+				
 				guard[i]->stopAllActions();
-				guard[i]->isAwake = false;
+				//guard[i]->isAwake = false;
 			}
 		}
 	}
+
 	for (it = thievesToDelete->begin(); it != thievesToDelete->end(); it++ )
 	{
 		thief = *it;
