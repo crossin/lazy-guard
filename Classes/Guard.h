@@ -20,13 +20,19 @@ public:
 	void onHit();
 	void updateFrame(ccTime dt);
 	void setAwake(bool w);
+	void patrol();
+
+	static const int SLEEPING = 0, WAKING = 1, CHASING = 2, PATROLING = 3; 
+
 	CCSprite * sprite;
 	CCSprite * bar;
-	bool isAwake;
+	//bool isAwake;
+	int status;
 	float pointSleep;
 	float pointSleepMax;
 	float pointWake;
 	float pointWakeMax;
 	int speed;
+	int range;
 };
 

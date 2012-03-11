@@ -95,7 +95,7 @@ bool PathFinder::initWithSize(int mWeight, int mHeight, int tWeight, int tHeight
 // Name: FindPath
 // Desc: Finds a path using A*
 //-----------------------------------------------------------------------------
-int PathFinder::FindPath (int pathfinderID,int startingX, int startingY,
+int PathFinder::FindPath (int startingX, int startingY,
 	int targetX, int targetY)
 {
 	int onOpenList=0, parentXval=0, parentYval=0,
@@ -121,7 +121,7 @@ int PathFinder::FindPath (int pathfinderID,int startingX, int startingY,
 	if (startX == targetX && startY == targetY && pathLocation > 0)
 		return found;
 	if (startX == targetX && startY == targetY && pathLocation == 0)
-		return same;
+		return nonexistent;
 
 	//	If target square is unwalkable, return that it's a nonexistent path.
 	if (walkability[targetX][targetY] == unwalkable)
@@ -428,7 +428,7 @@ int PathFinder::FindPath (int pathfinderID,int startingX, int startingY,
 		while (pathX != startX || pathY != startY);	
 
 		//11.Read the first path step into xPath/yPath arrays
-		ReadPath(pathfinderID,startingX,startingY,1);
+		ReadPath(startingX,startingY,1);
 
 	}
 	return path;
@@ -449,7 +449,7 @@ noPath:
 //==========================================================
 //READ PATH DATA: These functions read the path data and convert
 //it to screen pixel coordinates.
-void PathFinder::ReadPath(int pathfinderID,int currentX,int currentY,
+void PathFinder::ReadPath(int currentX,int currentY,
 	int pixelsPerFrame)
 {
 	/*
@@ -476,7 +476,7 @@ void PathFinder::ReadPath(int pathfinderID,int currentX,int currentY,
 	;	to being a problem.
 	*/
 
-	int ID = pathfinderID; //redundant, but makes the following easier to read
+	//int ID = pathfinderID; //redundant, but makes the following easier to read
 
 	//If a path has been found for the pathfinder	...
 	if (pathStatus == found)
@@ -493,8 +493,8 @@ void PathFinder::ReadPath(int pathfinderID,int currentX,int currentY,
 		}
 
 		//Read the path data.		
-		xPath = ReadPathX(ID,pathLocation);
-		yPath = ReadPathY(ID,pathLocation);
+		xPath = ReadPathX(pathLocation);
+		yPath = ReadPathY(pathLocation);
 
 		//If the center of the last path square on the path has been 
 		//reached then reset.
@@ -525,7 +525,7 @@ void PathFinder::ReadPath(int pathfinderID,int currentX,int currentY,
 // Name: ReadPathX
 // Desc: Reads the x coordinate of the next path step
 //-----------------------------------------------------------------------------
-int PathFinder::ReadPathX(int pathfinderID,int pathLocation)
+int PathFinder::ReadPathX(int pathLocation)
 {
 	int x;
 	if (pathLocation <= pathLength)
@@ -549,7 +549,7 @@ int PathFinder::ReadPathX(int pathfinderID,int pathLocation)
 // Name: ReadPathY
 // Desc: Reads the y coordinate of the next path step
 //-----------------------------------------------------------------------------
-int PathFinder::ReadPathY(int pathfinderID,int pathLocation)
+int PathFinder::ReadPathY(int pathLocation)
 {
 	int y;
 	if (pathLocation <= pathLength)

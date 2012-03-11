@@ -1,12 +1,9 @@
 #include "Guard.h"
 #include "PathFinder.h"
-/*#include "CCPointExtension.h"*/
 #include "Gameplay.h"
-// #include "CCGeometry.h"
-// #include "selector_protocol.h"
 #include "cocos2d.h"
 
-//		extern int game_map[20][30];
+extern int game_map[10][15];
 
 Guard::Guard(void)
 {
@@ -46,12 +43,14 @@ bool Guard::init()
 		this->addChild(bar);
 		//setPosition(ccp(160,160));
 
-		isAwake = false;
+		//isAwake = false;
+		status = SLEEPING;
 		pointSleepMax = 100;
 		pointSleep = 0;
 		pointWakeMax = 100;
 		pointWake = 0;
-		speed = 40;
+		speed = 140;
+		range = 50;
 		//behaviour=STAND;
 		//direction=DOWN;
 
@@ -78,31 +77,30 @@ void Guard::findThief()
 	for (it = thieves->begin(); it != thieves->end(); it++ )
 	{
 		thiefTemp = *it;
-		dist = ccpDistance(getPosition(), thiefTemp->getPosition());
-		if (dist < dist_min)
+		if (!thiefTemp->isFleeing)
 		{
-			dist_min = dist;
-			closest = thiefTemp;
+			dist = ccpDistance(getPosition(), thiefTemp->getPosition());
+			if (dist < dist_min)
+			{
+				dist_min = dist;
+				closest = thiefTemp;
+			}
 		}
 	}
 
 	if (!closest)
 	{
-		isAwake = false;
+		if (status != PATROLING)
+		{
+			patrol();
+		}
 		return;
 	}
-
-
 
 	PathFinder* pathfinder = PathFinder::getInstance();
-	int result = pathfinder->FindPath(1,getPosition().x,getPosition().y,closest->getPosition().x,closest->getPosition().y);
-	if (result == PathFinder::nonexistent)
+	if (PathFinder::nonexistent == pathfinder->FindPath(getPosition().x,getPosition().y,closest->getPosition().x,closest->getPosition().y))
 	{
-		isAwake = false;
-		return;
-	}
-	if (result == PathFinder::same)
-	{
+		//isAwake = false;
 		return;
 	}
 
@@ -152,12 +150,75 @@ void Guard::findThief()
 	CCFiniteTimeAction* actionMoveDone = CCCallFuncN::actionWithTarget( this, callfuncN_selector(Guard::spriteMoveFinished));
 
 	//CCFiniteTimeAction* actionMoveDone = CCCallFuncN::actionWithTarget( this, callfuncN_selector(HelloWorld::spriteMoveFinished));
+	stopAllActions();
 	runAction( CCSequence::actions(actionMove,actionMoveDone,NULL) );
+	status = CHASING;
+}
+
+void Guard::patrol() 
+{
+	CCSize size = CCDirector::sharedDirector()->getWinSize();
+	int randX = CCRANDOM_0_1() * size.width;
+	int randY = CCRANDOM_0_1() * size.height;
+	PathFinder *pathfinder = PathFinder::getInstance();
+	if (PathFinder::nonexistent == pathfinder->FindPath(getPosition().x, getPosition().y, randX, randY))
+	{
+		return;
+	}
+
+	CCArray* pathGo = CCArray::array();
+	CCPoint target, from;
+	CCPoint moveDifference;
+	float distanceToMove;
+	float moveDuration;
+	CCFiniteTimeAction* actionMove;
+	CCFiniteTimeAction* actionGo;
+
+	for (int i = 0; i < pathfinder->pathLength; i++)
+	{
+		from = (i == 0) ? getPosition() : (ccp(pathfinder->pathBank[2*i-2] * pathfinder->tileWidth, pathfinder->pathBank[2*i-1] * pathfinder->tileHeight));
+		target = ccp(pathfinder->pathBank[2*i] * pathfinder->tileWidth, pathfinder->pathBank[2*i+1] * pathfinder->tileHeight);
+		moveDifference = ccpSub(target,from);
+		distanceToMove = ccpLength(moveDifference);
+		moveDuration = distanceToMove / speed;
+		actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, target);
+		pathGo->addObject(actionMove);
+	}
+
+	actionGo = CCSequence::actionsWithArray(pathGo);
+	CCFiniteTimeAction* actionWait = CCDelayTime::actionWithDuration(1);
+//	CCFiniteTimeAction* actionOver = CCCallFuncN::actionWithTarget( this, callfuncN_selector(Thief::moveFinished));
+	stopAllActions();
+	runAction( CCSequence::actions(actionGo, actionWait, NULL) );
+	status = PATROLING;
+for (int i=0;i<10;i++){
+ 	for (int j=0;j<15;j++){
+ 			game_map[i][j] = 0;
+ 	}
+ }
+ for (int i = 0; i < pathfinder->pathLength; i++)
+ {
+ game_map[pathfinder->pathBank[2*i+1]][pathfinder->pathBank[2*i]] = 2;
+ }
 }
 
 void Guard::updateFrame(ccTime dt)
 {
-	if (isAwake)
+	// update sleep/wake point
+	if (status == SLEEPING)
+	{
+		if (pointSleep <= 0)
+		{
+			bar->setIsVisible(false);
+		}
+		else
+		{
+			bar->setTextureRect(CCRectMake(0, 0, 16*pointSleep/pointSleepMax, bar->getContentSize().height));
+			bar->setIsVisible(true);
+			pointSleep -= (50 * dt);
+		}
+	}
+	else
 	{
 		if (pointWake <= 0)
 		{
@@ -170,26 +231,16 @@ void Guard::updateFrame(ccTime dt)
 			bar->setTextureRect(CCRectMake(0, 0, 16*pointWake/pointWakeMax, bar->getContentSize().height));
 			bar->setIsVisible(true);
 			pointWake -= (20 * dt);
-			
+
 			if (this->numberOfRunningActions() == 0)
+			{
+				status = WAKING;
+			}
+			if (status == WAKING || status == PATROLING)
 			{
 				findThief();
 			}
 		}
-	}
-	else
-	{
-		if (pointSleep <= 0)
-		{
-			bar->setIsVisible(false);
-		}
-		else
-		{
-			bar->setTextureRect(CCRectMake(0, 0, 16*pointSleep/pointSleepMax, bar->getContentSize().height));
-			bar->setIsVisible(true);
-			pointSleep -= (50 * dt);
-		}
-		
 	}
 	
 }
@@ -207,7 +258,7 @@ CCRect Guard::getRect()
 
 void Guard::onHit()
 {
-	pointSleep += 20;
+	pointSleep += 50;
 	if (pointSleep >= pointSleepMax)
 	{
 		setAwake(true);
@@ -219,12 +270,14 @@ void Guard::setAwake(bool w)
 {
 	if (w)
 	{
-		isAwake = true;
+		status = WAKING;
+		//isAwake = true;
 		pointWake = pointWakeMax;
 	}
 	else
 	{
-		isAwake = false;
+		status = SLEEPING;
+		//isAwake = false;
 		pointSleep = 0;
 	}
 
