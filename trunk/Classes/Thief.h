@@ -15,11 +15,18 @@ public:
 	static Thief* thief();
 	bool init();
 
-	void findPath();
+	void findGem();
+	void findHome();
 	void moveFinished(CCNode* sender);
 	void getGem(CCNode* sender);
 	void kill();
 	CCRect getRect();
+	void fleeHome();
+
 	CCSprite * sprite;
 	Gem* gem;
+	float startX;
+	float startY;
+	bool isFleeing;
+	int speed;
 };

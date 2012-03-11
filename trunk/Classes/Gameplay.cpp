@@ -15,8 +15,9 @@
 
 using namespace cocos2d;
 
-/*
+
 int game_map[10][15];
+/*
 //PathFinder *pathfinder;
 int r;
 int c;
@@ -179,7 +180,7 @@ bool Gameplay::init()
 	setIsTouchEnabled(true);
 	setIsKeypadEnabled(true);
 
-	schedule( schedule_selector(Gameplay::gameLogic), 1 );
+	schedule( schedule_selector(Gameplay::gameLogic), 10 );
 	schedule( schedule_selector(Gameplay::updateFrame));
 
 	// init map
@@ -200,11 +201,14 @@ bool Gameplay::init()
 	return bRet;
 }
 
-/*
+
 void Gameplay::draw()
 {
 	CCLayer::draw();
 	CCSize s = CCDirector::sharedDirector()->getWinSize();
+	int w = 32;
+	int r = 10;
+	int c = 15;
 	glPointSize(w);
 	glColor4f(0.4f, 0.4f, 0.4f, 1.0f);
 	for (int i=0;i<r;i++){
@@ -226,7 +230,6 @@ void Gameplay::draw()
 			ccDrawPoint( CCPointMake((j+0.5f) * w, (i+0.5f) * w ));
 		}
 	}
-
 // 	CCPoint vertices[4];
 // 	if (thieves->count()>2)
 // 	{
@@ -241,7 +244,7 @@ void Gameplay::draw()
 // 		ccDrawPoly(vertices,4,true,false);
 // 	}
 }
-*/
+
 
 // void Gameplay::FindThief() 
 // {
@@ -316,7 +319,7 @@ void Gameplay::ccTouchesEnded(CCSet* touches, CCEvent* event)
 	//game_map[int(m_tTouchPos.y / w)][int(m_tTouchPos.x / w)] = 2;
 	for (int i = 0; i < 2; i++)
 	{
-		if (!guard[i]->isAwake && CCRect::CCRectContainsPoint(guard[i]->getRect(), m_tTouchPos))
+		if (!guard[i]->status != Guard::SLEEPING && CCRect::CCRectContainsPoint(guard[i]->getRect(), m_tTouchPos))
 		{
 			guard[i]->onHit();
 // 			guard[i]->isAwake = true;
@@ -331,7 +334,7 @@ void Gameplay::addThief()
 	Thief *thief = Thief::thief();
 	thieves->addObject(thief);
 	addChild(thief);	
-	thief->findPath();
+	thief->findGem();
 
 // 	char a[10];
 // 	sprintf(a,"%d",thieves->count());
@@ -351,44 +354,46 @@ void Gameplay::gameLogic(ccTime dt)
 
 void Gameplay::updateFrame(ccTime dt)
 {
-	CCMutableArray<Thief*> *thievesToDelete = new CCMutableArray<Thief*>;
+	//CCMutableArray<Thief*> *thievesToDelete = new CCMutableArray<Thief*>;
 	CCMutableArray<Thief*>::CCMutableArrayIterator it;
 	Thief* thief;
 	for (it = thieves->begin(); it != thieves->end(); it++ )
 	{
 		thief = *it;
-		if (thief->gem)
-		{
-			thief->gem->setPosition(thief->getPosition());
-		}
-
 		// check caught
-		//CCRect rectG = guard->getRect();
-		//CCRect rectT = thief->getRect();
-		for (int i = 0; i < 2; i++)
+		if (!thief->isFleeing)
 		{
-			if (guard[i]->isAwake && CCRect::CCRectIntersectsRect(guard[i]->getRect(), thief->getRect()))
+			if (thief->gem)
 			{
-				if (thief->gem)
+				thief->gem->setPosition(thief->getPosition());
+			}
+
+			for (int i = 0; i < 2; i++)
+			{
+				//if (guard[i]->isAwake && CCRect::CCRectIntersectsRect(guard[i]->getRect(), thief->getRect()))
+				if (guard[i]->status != Guard::SLEEPING && ccpDistance(guard[i]->getPosition(), thief->getPosition()) < guard[i]->range)
 				{
-					gems->addObject(thief->gem);
-					int i = gems->indexOfObject(thief->gem);
-					thief->gem->setPosition(ccp(240+8*sin(i*6.28/5),160+8*cos(i*6.28/5)));
-					thief->gem = NULL;
+					if (thief->gem)
+					{
+						gems->addObject(thief->gem);
+						int i = gems->indexOfObject(thief->gem);
+						thief->gem->setPosition(ccp(240+8*sin(i*6.28/5),160+8*cos(i*6.28/5)));
+						thief->gem = NULL;
+					}
+					//thievesToDelete->addObject(thief);
+					thief->fleeHome();
+					guard[i]->stopAllActions();
+					//guard[i]->isAwake = false;
 				}
-				thievesToDelete->addObject(thief);
-				
-				guard[i]->stopAllActions();
-				//guard[i]->isAwake = false;
 			}
 		}
 	}
 
-	for (it = thievesToDelete->begin(); it != thievesToDelete->end(); it++ )
-	{
-		thief = *it;
-		thief->kill();
-	}
+// 	for (it = thievesToDelete->begin(); it != thievesToDelete->end(); it++ )
+// 	{
+// 		thief = *it;
+// 		thief->kill();
+// 	}
 
 	// check win
 	if (countThief == 0 && thieves->count() == 0)
