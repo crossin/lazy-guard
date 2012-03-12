@@ -39,11 +39,11 @@ Gameplay::~Gameplay(void)
 		thieves->release();
 		thieves = NULL;
 	}
-	if (gems)
-	{
-		gems->release();
-		gems = NULL;
-	}
+// 	if (gems)
+// 	{
+// 		gems->release();
+// 		gems = NULL;
+// 	}
 	PathFinder::release();
 
 	//delete pathfinder;
@@ -97,6 +97,8 @@ bool Gameplay::init()
 		
 		CCTMXLayer *meta=pDesertTileMap->layerNamed("Meta");
 		meta->setIsVisible(false);
+		CCTMXLayer *layerGem = pDesertTileMap->layerNamed("gem");
+		layerGem->setIsVisible(false);
 /*
 		r = (sizeof(game_map)/sizeof(game_map[0]));
 		c = (sizeof(game_map[0])/sizeof(game_map[0][0]));
@@ -112,15 +114,16 @@ bool Gameplay::init()
 
 		int tileGID;
 		CCDictionary<std::string, CCString*>* props;
-		CCString* colli;
+		CCString* result;
+
 		for (int i=0;i<r;i++){
 			for (int j=0;j<c;j++){
 				if (tileGID = meta->tileGIDAt(ccp(j,r-i-1)))
 				{
 					if (props = pDesertTileMap->propertiesForGID(tileGID))
 					{
-						colli = props->objectForKey("Collidable");
-						if (colli->m_sString.compare("True") == 0)
+						result = props->objectForKey("Collidable");
+						if (result->m_sString.compare("True") == 0)
 						{
 							//game_map[i][j] = 1;
 							//pathfinder->walkability [j][i] = pathfinder->unwalkable;
@@ -153,16 +156,33 @@ bool Gameplay::init()
 		
 		
 		//gem
-		countGem = 5;
-		gems = CCArray::arrayWithCapacity(5);
-		gems->retain();
-		for (int i = 0; i < 5; i++)
-		{
-			Gem* g = Gem::gem();
-			g->setPosition(ccp(240+8*sin(i*6.28/5),160+8*cos(i*6.28/5)));
-			addChild(g, 1000);
-			gems->addObject(g);
+// 		countGem = 5;
+// 		gems = CCArray::arrayWithCapacity(5);
+// 		gems->retain();
+// 		for (int i = 0; i < 5; i++)
+// 		{
+// 			Gem* g = Gem::gem();
+// 			g->setPosition(ccp(240+8*sin(i*6.28/5),160+8*cos(i*6.28/5)));
+// 			addChild(g, 1000);
+// 			gems->addObject(g);
+// 		}
+		CCPoint posGem;
+		for (int i=0;i<r;i++){
+			for (int j=0;j<c;j++){
+				if (tileGID = layerGem->tileGIDAt(ccp(j,r-i-1)))
+				{
+					if (props = pDesertTileMap->propertiesForGID(tileGID))
+					{
+						result = props->objectForKey("count");
+						countGem = result->toInt();
+						posGem = ccp((j+0.5)*pDesertTileMap->getTileSize().width, (i+0.5)*pDesertTileMap->getTileSize().height);
+					}
+				}
+			}
 		}
+		treasure = Treasure::treasure(countGem, posGem.x, posGem.y);
+		this->addChild(treasure);
+
 		//guard
 		guard[0] = Guard::guard();
 		guard[0]->setPosition(ccp(100,100));
@@ -180,7 +200,7 @@ bool Gameplay::init()
 	setIsTouchEnabled(true);
 	setIsKeypadEnabled(true);
 
-	schedule( schedule_selector(Gameplay::gameLogic), 10 );
+	schedule( schedule_selector(Gameplay::gameLogic), 3 );
 	schedule( schedule_selector(Gameplay::updateFrame));
 
 	// init map
@@ -375,9 +395,9 @@ void Gameplay::updateFrame(ccTime dt)
 				{
 					if (thief->gem)
 					{
-						gems->addObject(thief->gem);
-						int i = gems->indexOfObject(thief->gem);
-						thief->gem->setPosition(ccp(240+8*sin(i*6.28/5),160+8*cos(i*6.28/5)));
+						treasure->gems->addObject(thief->gem);
+						int i = treasure->gems->indexOfObject(thief->gem);
+						thief->gem->setPosition(ccp(treasure->posX+8*sin(i*6.28/5),treasure->posY+8*cos(i*6.28/5)));
 						thief->gem = NULL;
 					}
 					//thievesToDelete->addObject(thief);

@@ -189,7 +189,7 @@ void Guard::patrol()
 	CCFiniteTimeAction* actionWait = CCDelayTime::actionWithDuration(1);
 //	CCFiniteTimeAction* actionOver = CCCallFuncN::actionWithTarget( this, callfuncN_selector(Thief::moveFinished));
 	stopAllActions();
-	runAction( CCSequence::actions(actionGo, actionWait, NULL) );
+	runAction( CCSequence::actions(actionWait, actionGo, NULL) );
 	status = PATROLING;
 for (int i=0;i<10;i++){
  	for (int j=0;j<15;j++){
