@@ -22,6 +22,7 @@ public:
 	void kill();
 	CCRect getRect();
 	void fleeHome();
+	void updateFrame(ccTime dt);
 
 	CCSprite * sprite;
 	Gem* gem;

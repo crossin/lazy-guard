@@ -57,6 +57,8 @@ bool Thief::init()
 		//behaviour=STAND;
 		//direction=DOWN;
 
+		schedule( schedule_selector(Thief::updateFrame));
+
 		//CCActionInterval *action=getAnimate(MOVE,OVERLOOK);
 		//spirte->runAction(CCRepeatForever::actionWithAction(action));
 
@@ -213,4 +215,18 @@ void Thief::fleeHome()
 	speed *= 2;
 	//this->stopAllActions();
 	this->findHome();
+}
+
+void Thief::updateFrame(ccTime dt)
+{
+	if (gem)
+	{
+		gem->setPosition(getPosition());
+	}
+}
+
+bool Thief::inScreen()
+{
+	bool bRet;CCDirector::sharedDirector()->getWinSize().
+	bRet = (getPosition().x<0 || getPosition().x+sprite->getContentSize().x>)
 }
