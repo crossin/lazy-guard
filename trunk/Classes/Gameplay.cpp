@@ -380,18 +380,14 @@ void Gameplay::updateFrame(ccTime dt)
 	for (it = thieves->begin(); it != thieves->end(); it++ )
 	{
 		thief = *it;
-		// check caught
+		
 		if (!thief->isFleeing)
 		{
-			if (thief->gem)
-			{
-				thief->gem->setPosition(thief->getPosition());
-			}
-
+			// check caught
 			for (int i = 0; i < 2; i++)
 			{
 				//if (guard[i]->isAwake && CCRect::CCRectIntersectsRect(guard[i]->getRect(), thief->getRect()))
-				if (guard[i]->status != Guard::SLEEPING && ccpDistance(guard[i]->getPosition(), thief->getPosition()) < guard[i]->range)
+				if (guard[i]->status != Guard::SLEEPING && ccpDistance(guard[i]->getPosition(), thief->getPosition()) < 10*guard[i]->range)
 				{
 					if (thief->gem)
 					{
