@@ -69,7 +69,8 @@ bool Thief::init()
 void Thief::findGem()
 {
 	PathFinder *pathfinder = PathFinder::getInstance();
-	if (PathFinder::nonexistent == pathfinder->FindPath(getPosition().x, getPosition().y, 240, 160))
+	Treasure* treasure = ((Gameplay*)getParent())->treasure;
+	if (PathFinder::nonexistent == pathfinder->FindPath(getPosition().x, getPosition().y, treasure->posX, treasure->posY))
 	{
 		return;
 	}
@@ -129,9 +130,10 @@ void Thief::findGem()
 
 void Thief::getGem(CCNode* sender)
 {
-	CCArray* gems = ((Gameplay*)getParent())->gems;
+	CCArray* gems = ((Gameplay*)getParent())->treasure->gems;
 	if (gem = (Gem*)gems->lastObject())
 	{
+		((Gameplay*)getParent())->reorderChild(gem, 1000);
 		gems->removeLastObject();
 	}
 	findHome();

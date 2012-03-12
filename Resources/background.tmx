@@ -10,6 +10,11 @@
     <property name="Collidable" value="True"/>
    </properties>
   </tile>
+  <tile id="1">
+   <properties>
+    <property name="count" value="5"/>
+   </properties>
+  </tile>
  </tileset>
  <layer name="块层 1" width="15" height="10" opacity="0.7">
   <data encoding="base64" compression="zlib">
@@ -19,6 +24,11 @@
  <layer name="Meta" width="15" height="10">
   <data encoding="base64" compression="zlib">
    eJxjYKAeMCQghk0elzmkqCVHHS4+seZRSy8x5hISI0YOnzpquxsEABMQA0I=
+  </data>
+ </layer>
+ <layer name="gem" width="15" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFMGA00A4YRgAAQzAAMw==
   </data>
  </layer>
 </map>

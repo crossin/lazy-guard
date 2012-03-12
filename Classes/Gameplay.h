@@ -5,6 +5,7 @@
 #include "Thief.h"
 #include "Guard.h"
 #include "Gem.h"
+#include "Treasure.h"
 
 using namespace cocos2d;
 
@@ -30,7 +31,8 @@ virtual void draw();
  //   virtual void ccTouchesMoved(CCSet *pTouches, CCEvent *pEvent);
 	CCMutableArray<Thief*>* thieves;
 	Guard* guard[2];
-	CCArray* gems;
+	//CCArray* gems;
+	Treasure* treasure;
 	int countThief;
 	int countGem;
 
