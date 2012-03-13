@@ -77,7 +77,7 @@ void Guard::findThief()
 	for (it = thieves->begin(); it != thieves->end(); it++ )
 	{
 		thiefTemp = *it;
-		if (!thiefTemp->isFleeing && thiefTemp->inScreen)
+		if (!thiefTemp->isFleeing && thiefTemp->inScreen())
 		{
 			dist = ccpDistance(getPosition(), thiefTemp->getPosition());
 			if (dist < dist_min)
@@ -251,10 +251,10 @@ void Guard::spriteMoveFinished(CCNode* sender)
 	this->findThief();
 }
 
-CCRect Guard::getRect()
-{
-	return CCRectMake(getPosition().x, getPosition().y, sprite->getContentSize().width, sprite->getContentSize().height);
-}
+// CCRect Guard::getRect()
+// {
+// 	return CCRectMake(getPosition().x, getPosition().y, sprite->getContentSize().width, sprite->getContentSize().height);
+// }
 
 void Guard::onHit()
 {

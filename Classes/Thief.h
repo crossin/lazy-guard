@@ -18,11 +18,12 @@ public:
 	void findGem();
 	void findHome();
 	void moveFinished(CCNode* sender);
-	void getGem(CCNode* sender);
+ 	void getGem(CCNode* sender);
 	void kill();
-	CCRect getRect();
+// 	CCRect getRect();
 	void fleeHome();
 	void updateFrame(ccTime dt);
+	bool inScreen();
 
 	CCSprite * sprite;
 	Gem* gem;
@@ -30,5 +31,4 @@ public:
 	float startY;
 	bool isFleeing;
 	int speed;
-	bool inScreen;
 };
