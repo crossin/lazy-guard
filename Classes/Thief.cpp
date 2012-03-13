@@ -304,7 +304,6 @@ void Thief::updateFrame(ccTime dt)
 bool Thief::inScreen()
 {
 	CCSize winSize = CCDirector::sharedDirector()->getWinSize();
-	
 	return getPosition().x > 0 &&
 		getPosition().x + PathFinder::getInstance()->tileWidth < winSize.width &&
 		getPosition().y > 0 &&
