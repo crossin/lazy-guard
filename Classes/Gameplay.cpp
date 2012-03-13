@@ -39,11 +39,11 @@ Gameplay::~Gameplay(void)
 		thieves->release();
 		thieves = NULL;
 	}
-// 	if (gems)
-// 	{
-// 		gems->release();
-// 		gems = NULL;
-// 	}
+	if (gemsOutside)
+	{
+		gemsOutside->release();
+		gemsOutside = NULL;
+	}
 	PathFinder::release();
 
 	//delete pathfinder;
@@ -182,7 +182,8 @@ bool Gameplay::init()
 		}
 		treasure = Treasure::treasure(countGem, posGem.x, posGem.y);
 		this->addChild(treasure);
-
+		gemsOutside = CCArray::arrayWithCapacity(countGem);
+		gemsOutside->retain();
 		//guard
 		guard[0] = Guard::guard();
 		guard[0]->setPosition(ccp(100,100));
@@ -381,19 +382,21 @@ void Gameplay::updateFrame(ccTime dt)
 	{
 		thief = *it;
 		
-		if (!thief->isFleeing)
+		if (!thief->isFleeing && thief->inScreen)
 		{
 			// check caught
 			for (int i = 0; i < 2; i++)
 			{
 				//if (guard[i]->isAwake && CCRect::CCRectIntersectsRect(guard[i]->getRect(), thief->getRect()))
-				if (guard[i]->status != Guard::SLEEPING && ccpDistance(guard[i]->getPosition(), thief->getPosition()) < 10*guard[i]->range)
+				if (guard[i]->status != Guard::SLEEPING && ccpDistance(guard[i]->getPosition(), thief->getPosition()) < guard[i]->range)
 				{
 					if (thief->gem)
 					{
-						treasure->gems->addObject(thief->gem);
-						int i = treasure->gems->indexOfObject(thief->gem);
-						thief->gem->setPosition(ccp(treasure->posX+8*sin(i*6.28/5),treasure->posY+8*cos(i*6.28/5)));
+						//treasure->gems->addObject(thief->gem);
+						//int i = treasure->gems->indexOfObject(thief->gem);
+						//thief->gem->setPosition(ccp(treasure->posX+8*sin(i*6.28/5),treasure->posY+8*cos(i*6.28/5)));
+						this->reorderChild(thief->gem, 0);
+						gemsOutside->addObject(thief->gem);
 						thief->gem = NULL;
 					}
 					//thievesToDelete->addObject(thief);

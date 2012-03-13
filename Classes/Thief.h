@@ -30,4 +30,5 @@ public:
 	float startY;
 	bool isFleeing;
 	int speed;
+	bool inScreen;
 };

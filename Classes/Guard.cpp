@@ -50,7 +50,7 @@ bool Guard::init()
 		pointWakeMax = 100;
 		pointWake = 0;
 		speed = 140;
-		range = 50;
+		range = 30;
 		//behaviour=STAND;
 		//direction=DOWN;
 
@@ -77,7 +77,7 @@ void Guard::findThief()
 	for (it = thieves->begin(); it != thieves->end(); it++ )
 	{
 		thiefTemp = *it;
-		if (!thiefTemp->isFleeing)
+		if (!thiefTemp->isFleeing && thiefTemp->inScreen)
 		{
 			dist = ccpDistance(getPosition(), thiefTemp->getPosition());
 			if (dist < dist_min)
@@ -98,7 +98,7 @@ void Guard::findThief()
 	}
 
 	PathFinder* pathfinder = PathFinder::getInstance();
-	if (PathFinder::nonexistent == pathfinder->FindPath(getPosition().x,getPosition().y,closest->getPosition().x,closest->getPosition().y))
+	if (PathFinder::found != pathfinder->FindPath(getPosition().x,getPosition().y,closest->getPosition().x,closest->getPosition().y))
 	{
 		//isAwake = false;
 		return;
@@ -161,7 +161,7 @@ void Guard::patrol()
 	int randX = CCRANDOM_0_1() * size.width;
 	int randY = CCRANDOM_0_1() * size.height;
 	PathFinder *pathfinder = PathFinder::getInstance();
-	if (PathFinder::nonexistent == pathfinder->FindPath(getPosition().x, getPosition().y, randX, randY))
+	if (PathFinder::found != pathfinder->FindPath(getPosition().x, getPosition().y, randX, randY))
 	{
 		return;
 	}
