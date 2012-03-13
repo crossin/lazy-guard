@@ -338,9 +338,11 @@ void Gameplay::ccTouchesEnded(CCSet* touches, CCEvent* event)
 	m_tTouchPos = CCDirector::sharedDirector()->convertToGL( m_tTouchPos );
 
 	//game_map[int(m_tTouchPos.y / w)][int(m_tTouchPos.x / w)] = 2;
+	CCRect rectGuard;
 	for (int i = 0; i < 2; i++)
 	{
-		if (!guard[i]->status != Guard::SLEEPING && CCRect::CCRectContainsPoint(guard[i]->getRect(), m_tTouchPos))
+		rectGuard = CCRectMake(guard[i]->getPosition().x, guard[i]->getPosition().y, guard[i]->sprite->getContentSize().width, guard[i]->sprite->getContentSize().height);
+		if (!guard[i]->status != Guard::SLEEPING && CCRect::CCRectContainsPoint(rectGuard, m_tTouchPos))
 		{
 			guard[i]->onHit();
 // 			guard[i]->isAwake = true;
@@ -378,13 +380,13 @@ void Gameplay::updateFrame(ccTime dt)
 	//CCMutableArray<Thief*> *thievesToDelete = new CCMutableArray<Thief*>;
 	CCMutableArray<Thief*>::CCMutableArrayIterator it;
 	Thief* thief;
-	for (it = thieves->begin(); it != thieves->end(); it++ )
+
+	for (it = thieves->begin(); it != thieves->end(); it++)
 	{
 		thief = *it;
-		
-		if (!thief->isFleeing && thief->inScreen)
+		// check caught
+		if (!thief->isFleeing && thief->inScreen())
 		{
-			// check caught
 			for (int i = 0; i < 2; i++)
 			{
 				//if (guard[i]->isAwake && CCRect::CCRectIntersectsRect(guard[i]->getRect(), thief->getRect()))
@@ -407,6 +409,7 @@ void Gameplay::updateFrame(ccTime dt)
 			}
 		}
 	}
+
 
 // 	for (it = thievesToDelete->begin(); it != thievesToDelete->end(); it++ )
 // 	{
