@@ -23,6 +23,7 @@ public:
 	LAYER_NODE_FUNC(Gameplay);
 
 	void ccTouchesEnded(CCSet* touches, CCEvent* event);
+	void updateThieves();
 
 virtual void draw();
  //   void menuCallback(CCObject * pSender);
@@ -44,6 +45,7 @@ private:
 // 	void spriteMoveFinished(CCNode* sender);
 	//CCMenu* m_pItmeMenu;
 	virtual void keyBackClicked();
+
 };
 
 #endif

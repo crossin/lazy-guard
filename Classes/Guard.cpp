@@ -47,9 +47,9 @@ bool Guard::init()
 		status = SLEEPING;
 		pointSleepMax = 100;
 		pointSleep = 0;
-		pointWakeMax = 100;
+		pointWakeMax = 50;
 		pointWake = 0;
-		speed = 140;
+		speed = 120;
 		range = 30;
 		//behaviour=STAND;
 		//direction=DOWN;
@@ -77,7 +77,7 @@ void Guard::findThief()
 	for (it = thieves->begin(); it != thieves->end(); it++ )
 	{
 		thiefTemp = *it;
-		if (!thiefTemp->isFleeing && thiefTemp->inScreen())
+		if (thiefTemp->status != Thief::FLEEING && thiefTemp->inScreen())
 		{
 			dist = ccpDistance(getPosition(), thiefTemp->getPosition());
 			if (dist < dist_min)

@@ -193,7 +193,7 @@ bool Gameplay::init()
 		this->addChild(guard[1], 1002);
 		//thief
 		thieves = new CCMutableArray<Thief*>;
-		countThief = 10;
+		countThief = 20;
 
 		bRet = true;
 	} while (0);
@@ -385,7 +385,7 @@ void Gameplay::updateFrame(ccTime dt)
 	{
 		thief = *it;
 		// check caught
-		if (!thief->isFleeing && thief->inScreen())
+		if (thief->status != Thief::FLEEING  && thief->inScreen())
 		{
 			for (int i = 0; i < 2; i++)
 			{
@@ -431,6 +431,22 @@ void Gameplay::updateFrame(ccTime dt)
 		GameOverScene *gameOverScene = GameOverScene::node();
 		gameOverScene->getLayer()->getLabel()->setString("You Lose!");
 		CCDirector::sharedDirector()->replaceScene(gameOverScene);
+	}
+}
+
+void Gameplay::updateThieves()
+{
+	CCMutableArray<Thief*>::CCMutableArrayIterator it;
+	Thief* thief;
+	for (it = thieves->begin(); it != thieves->end(); it++)
+	{
+		thief = *it;
+// 		thief->updateTarget();
+		// update action
+		if (thief->status == Thief::FINDING || thief->status == Thief::BACKING)
+		{
+			thief->findGem();
+		}
 	}
 }
 

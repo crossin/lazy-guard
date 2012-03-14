@@ -52,9 +52,9 @@ bool Thief::init()
 		}
 		setPosition(ccp(startX,startY));
 		gem = NULL;
-		isFleeing = false;
+// 		isFleeing = false;
 		speed = 50;
-
+		status = FINDING;
 		//behaviour=STAND;
 		//direction=DOWN;
 
@@ -91,7 +91,7 @@ void Thief::findGem()
 				gemY = g->getPosition().y;
 			}
 		}
-		if (trs->gems->count() > 0)
+		if (trs->gems->count() > 0 && status != BACKING)
 		{
 			dist = ccpDistance(getPosition(), ccp(trs->posX,trs->posY));
 			if (dist < dist_min)
@@ -104,6 +104,10 @@ void Thief::findGem()
 	} 
 	else
 	{
+		if (status == BACKING)
+		{
+			return;
+		}
 		gemX = trs->posX;
 		gemY = trs->posY;
 	}
@@ -131,7 +135,7 @@ void Thief::findGem()
 	{
 		//game_map[pathfinder->pathBank[2*i+1]][pathfinder->pathBank[2*i]] = 2;
 		from = (i == 0) ? getPosition() : (ccp(pathfinder->pathBank[2*i-2] * pathfinder->tileWidth, pathfinder->pathBank[2*i-1] * pathfinder->tileHeight));
-		target = ccp(pathfinder->pathBank[2*i] * pathfinder->tileWidth, pathfinder->pathBank[2*i+1] * pathfinder->tileHeight);
+		target = (i == pathfinder->pathLength-1) ? ccp(gemX, gemY) : (ccp(pathfinder->pathBank[2*i] * pathfinder->tileWidth, pathfinder->pathBank[2*i+1] * pathfinder->tileHeight));
 		moveDifference = ccpSub(target,from);
 		distanceToMove = ccpLength(moveDifference);
 		moveDuration = distanceToMove / speed;
@@ -185,6 +189,7 @@ void Thief::getGem(CCNode* sender)
 			((Gameplay*)getParent())->reorderChild(g, 1000);
 						gemsList->removeObject(g);
 			gem = g;
+			status = STEALING;
 			this->findHome();
 			break;
 		}
@@ -193,11 +198,13 @@ void Thief::getGem(CCNode* sender)
 	Treasure* trs = ((Gameplay*)getParent())->treasure;
 	if (gem == NULL && CCRect::CCRectContainsPoint(rectThief, ccp(trs->posX, trs->posY)))
 	{
+		status = BACKING;
 		gemsList = trs->gems;
 		if (gem = (Gem*)gemsList->lastObject())
 		{
 			((Gameplay*)getParent())->reorderChild(gem, 1000);
 			gemsList->removeLastObject();
+			status = STEALING;
 		}
 		this->findHome();
 	}
@@ -248,6 +255,8 @@ void Thief::findHome()
 
 	stopAllActions();
 	runAction( CCSequence::actions(actionGo, actionOver, NULL) );
+
+	((Gameplay*)getParent())->updateThieves();
 /*
 for (int i=0;i<10;i++){
 	for (int j=0;j<15;j++){
@@ -287,7 +296,8 @@ void Thief::kill()
 
 void Thief::fleeHome()
 {
-	isFleeing = true;
+// 	isFleeing = true;
+	status = FLEEING;
 	speed *= 2;
 	//this->stopAllActions();
 	this->findHome();
@@ -304,8 +314,18 @@ void Thief::updateFrame(ccTime dt)
 bool Thief::inScreen()
 {
 	CCSize winSize = CCDirector::sharedDirector()->getWinSize();
-	return getPosition().x > 0 &&
-		getPosition().x + PathFinder::getInstance()->tileWidth < winSize.width &&
-		getPosition().y > 0 &&
-		getPosition().y + PathFinder::getInstance()->tileHeight < winSize.height;
+	int w = PathFinder::getInstance()->tileWidth / 2;
+	int h = PathFinder::getInstance()->tileHeight / 2;
+	return getPosition().x - w > 0 &&
+		getPosition().x + w < winSize.width &&
+		getPosition().y - h > 0 &&
+		getPosition().y + h < winSize.height;
 }
+
+// void Thief::updateTarget()
+// {
+// 	if (status == FINDING || status == BACKING)
+// 	{
+// 		findGem();
+// 	}
+// }
