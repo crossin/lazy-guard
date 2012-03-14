@@ -15,6 +15,8 @@ public:
 	bool init();
 	void updatePosition(ccTime dt);
 	void kill();
+	CCRect getRect();
+
 	CCSprite* sprite;
 	//Thief* owner;
 };

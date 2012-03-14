@@ -16,7 +16,7 @@ public:
 
 	void findThief();
 	void spriteMoveFinished(CCNode* sender);
-// 	CCRect getRect();
+ 	CCRect getRect();
 	void onHit();
 	void updateFrame(ccTime dt);
 	void setAwake(bool w);

@@ -31,7 +31,7 @@ bool Treasure::init(int count, int ix, int iy)
 {
 	bool bRet = false;
 	do{
-		this->setAnchorPoint(CCPointZero);
+		//this->setAnchorPoint(CCPointZero);
 		posX = ix;
 		posY = iy;
 
