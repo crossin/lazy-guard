@@ -338,13 +338,14 @@ void Gameplay::ccTouchesEnded(CCSet* touches, CCEvent* event)
 	m_tTouchPos = CCDirector::sharedDirector()->convertToGL( m_tTouchPos );
 
 	//game_map[int(m_tTouchPos.y / w)][int(m_tTouchPos.x / w)] = 2;
-	CCRect rectGuard;
+// 	CCRect rectGuard;
 	for (int i = 0; i < 2; i++)
 	{
-		rectGuard = CCRectMake(guard[i]->getPosition().x, guard[i]->getPosition().y, guard[i]->sprite->getContentSize().width, guard[i]->sprite->getContentSize().height);
-		if (!guard[i]->status != Guard::SLEEPING && CCRect::CCRectContainsPoint(rectGuard, m_tTouchPos))
+// 		rectGuard = CCRectMake(guard[i]->getPosition().x, guard[i]->getPosition().y, guard[i]->sprite->getContentSize().width, guard[i]->sprite->getContentSize().height);
+		if (!guard[i]->status != Guard::SLEEPING && CCRect::CCRectContainsPoint(guard[i]->getRect(), m_tTouchPos))
 		{
 			guard[i]->onHit();
+			break;
 // 			guard[i]->isAwake = true;
 // 			guard[i]->findThief();
 		}

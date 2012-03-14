@@ -31,15 +31,15 @@ bool Guard::init()
 {
 	bool bRet = false;
 	do{
-		this->setAnchorPoint(CCPointZero);
+		//this->setAnchorPoint(CCPointZero);
 
 		sprite = CCSprite::spriteWithFile("Player.png");
-		sprite->setAnchorPoint(CCPointZero);
+		//sprite->setAnchorPoint(CCPointZero);
 		this->addChild(sprite);
 
 		bar = CCSprite::spriteWithFile("bar.png");
 		bar->setAnchorPoint(CCPointZero);
-		bar->setPosition(ccp(5,38));
+		bar->setPosition(ccp(-bar->getContentSize().width/2, sprite->getContentSize().height/2));
 		this->addChild(bar);
 		//setPosition(ccp(160,160));
 
@@ -132,7 +132,7 @@ void Guard::findThief()
 // }
 
 	from = getPosition();//ccp(pathfinder->pathBank[0] * w, pathfinder->pathBank[1] * w);
-	target = ccp(pathfinder->pathBank[0] * pathfinder->tileWidth, pathfinder->pathBank[1] * pathfinder->tileHeight);
+	target = ccp((pathfinder->pathBank[0]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[1]+0.5) * pathfinder->tileHeight);
 	moveDifference = ccpSub(target,from);
 	distanceToMove = ccpLength(moveDifference);
 	moveDuration = distanceToMove/speed;
@@ -176,8 +176,8 @@ void Guard::patrol()
 
 	for (int i = 0; i < pathfinder->pathLength; i++)
 	{
-		from = (i == 0) ? getPosition() : (ccp(pathfinder->pathBank[2*i-2] * pathfinder->tileWidth, pathfinder->pathBank[2*i-1] * pathfinder->tileHeight));
-		target = ccp(pathfinder->pathBank[2*i] * pathfinder->tileWidth, pathfinder->pathBank[2*i+1] * pathfinder->tileHeight);
+		from = (i == 0) ? getPosition() : (ccp((pathfinder->pathBank[2*i-2]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[2*i-1]+0.5) * pathfinder->tileHeight));
+		target = ccp((pathfinder->pathBank[2*i]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[2*i+1]+0.5) * pathfinder->tileHeight);
 		moveDifference = ccpSub(target,from);
 		distanceToMove = ccpLength(moveDifference);
 		moveDuration = distanceToMove / speed;
@@ -251,10 +251,13 @@ void Guard::spriteMoveFinished(CCNode* sender)
 	this->findThief();
 }
 
-// CCRect Guard::getRect()
-// {
-// 	return CCRectMake(getPosition().x, getPosition().y, sprite->getContentSize().width, sprite->getContentSize().height);
-// }
+CCRect Guard::getRect()
+{
+	return CCRectMake(getPosition().x - sprite->getContentSize().width/2,
+		getPosition().y - sprite->getContentSize().height/2,
+		sprite->getContentSize().width,
+		sprite->getContentSize().height);
+}
 
 void Guard::onHit()
 {

@@ -30,10 +30,10 @@ bool Thief::init()
 {
 	bool bRet = false;
 	do{
-		this->setAnchorPoint(CCPointZero);
+		//this->setAnchorPoint(CCPointZero);
 
 		sprite = CCSprite::spriteWithFile("Target.png");
-		sprite->setAnchorPoint(CCPointZero);
+		//sprite->setAnchorPoint(CCPointZero);
 		this->addChild(sprite);
 
 
@@ -134,8 +134,8 @@ void Thief::findGem()
 	for (int i = 0; i < pathfinder->pathLength; i++)
 	{
 		//game_map[pathfinder->pathBank[2*i+1]][pathfinder->pathBank[2*i]] = 2;
-		from = (i == 0) ? getPosition() : (ccp(pathfinder->pathBank[2*i-2] * pathfinder->tileWidth, pathfinder->pathBank[2*i-1] * pathfinder->tileHeight));
-		target = (i == pathfinder->pathLength-1) ? ccp(gemX, gemY) : (ccp(pathfinder->pathBank[2*i] * pathfinder->tileWidth, pathfinder->pathBank[2*i+1] * pathfinder->tileHeight));
+		from = (i == 0) ? getPosition() : (ccp((pathfinder->pathBank[2*i-2]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[2*i-1]+0.5) * pathfinder->tileHeight));
+		target = (i == pathfinder->pathLength-1) ? ccp(gemX, gemY) : (ccp((pathfinder->pathBank[2*i]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[2*i+1]+0.5) * pathfinder->tileHeight));
 		moveDifference = ccpSub(target,from);
 		distanceToMove = ccpLength(moveDifference);
 		moveDuration = distanceToMove / speed;
@@ -174,17 +174,17 @@ void Thief::findGem()
 
 void Thief::getGem(CCNode* sender)
 {
-	CCRect rectGem;
-	CCRect rectThief;
+// 	CCRect rectGem;
+// 	CCRect rectThief;
 	Gem* g;
 	CCArray* gemsList = ((Gameplay*)getParent())->gemsOutside;
-	rectThief = CCRectMake(this->getPosition().x, this->getPosition().y, this->sprite->getContentSize().width, this->sprite->getContentSize().height);
+// 	rectThief = CCRectMake(this->getPosition().x, this->getPosition().y, this->sprite->getContentSize().width, this->sprite->getContentSize().height);
 	// outside
 	for (int i=0; i<gemsList->count(); i++)
 	{
 		g = (Gem*)gemsList->objectAtIndex(i);
-		rectGem = CCRectMake(g->getPosition().x, g->getPosition().y, g->sprite->getContentSize().width, g->sprite->getContentSize().height);
-		if (CCRect::CCRectIntersectsRect(rectGem, rectThief))
+// 		rectGem = CCRectMake(g->getPosition().x, g->getPosition().y, g->sprite->getContentSize().width, g->sprite->getContentSize().height);
+		if (CCRect::CCRectIntersectsRect(g->getRect(), this->getRect()))
 		{
 			((Gameplay*)getParent())->reorderChild(g, 1000);
 						gemsList->removeObject(g);
@@ -196,7 +196,7 @@ void Thief::getGem(CCNode* sender)
 	}
 	// in treasure
 	Treasure* trs = ((Gameplay*)getParent())->treasure;
-	if (gem == NULL && CCRect::CCRectContainsPoint(rectThief, ccp(trs->posX, trs->posY)))
+	if (gem == NULL && CCRect::CCRectContainsPoint(this->getRect(), ccp(trs->posX, trs->posY)))
 	{
 		status = BACKING;
 		gemsList = trs->gems;
@@ -240,8 +240,8 @@ void Thief::findHome()
 	{
 		for (int i = 0; i < pathfinder->pathLength; i++)
 		{
-			from = (i == 0) ? getPosition() : (ccp(pathfinder->pathBank[2*i-2] * pathfinder->tileWidth, pathfinder->pathBank[2*i-1] * pathfinder->tileHeight));
-			target = (i == pathfinder->pathLength-1) ? ccp(startX, startY) : (ccp(pathfinder->pathBank[2*i] * pathfinder->tileWidth, pathfinder->pathBank[2*i+1] * pathfinder->tileHeight));
+			from = (i == 0) ? getPosition() : (ccp((pathfinder->pathBank[2*i-2]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[2*i-1]+0.5) * pathfinder->tileHeight));
+			target = (i == pathfinder->pathLength-1) ? ccp(startX, startY) : (ccp((pathfinder->pathBank[2*i]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[2*i+1]+0.5) * pathfinder->tileHeight));
 			moveDifference = ccpSub(target,from);
 			distanceToMove = ccpLength(moveDifference);
 			moveDuration = distanceToMove / speed;
@@ -289,10 +289,13 @@ void Thief::kill()
 	removeFromParentAndCleanup(true);
 }
 
-// CCRect Thief::getRect()
-// {
-// 	return CCRectMake(getPosition().x, getPosition().y, sprite->getContentSize().width, sprite->getContentSize().height);
-// }
+CCRect Thief::getRect()
+{
+	return CCRectMake(getPosition().x - sprite->getContentSize().width/2,
+		getPosition().y - sprite->getContentSize().height/2,
+		sprite->getContentSize().width,
+		sprite->getContentSize().height);
+}
 
 void Thief::fleeHome()
 {
@@ -314,12 +317,12 @@ void Thief::updateFrame(ccTime dt)
 bool Thief::inScreen()
 {
 	CCSize winSize = CCDirector::sharedDirector()->getWinSize();
-	int w = PathFinder::getInstance()->tileWidth / 2;
-	int h = PathFinder::getInstance()->tileHeight / 2;
-	return getPosition().x - w > 0 &&
-		getPosition().x + w < winSize.width &&
-		getPosition().y - h > 0 &&
-		getPosition().y + h < winSize.height;
+// 	int w = PathFinder::getInstance()->tileWidth / 2;
+// 	int h = PathFinder::getInstance()->tileHeight / 2;
+	return getPosition().x > 0 &&
+		getPosition().x < winSize.width &&
+		getPosition().y > 0 &&
+		getPosition().y < winSize.height;
 }
 
 // void Thief::updateTarget()
