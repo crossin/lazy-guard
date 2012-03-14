@@ -24,11 +24,15 @@ public:
 	void fleeHome();
 	void updateFrame(ccTime dt);
 	bool inScreen();
+// 	void updateTarget();
+
+	static const int FINDING = 0, STEALING = 1, FLEEING = 2, BACKING = 3; 
 
 	CCSprite * sprite;
 	Gem* gem;
 	float startX;
 	float startY;
-	bool isFleeing;
+// 	bool isFleeing;
 	int speed;
+	int status;
 };
