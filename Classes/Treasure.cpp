@@ -1,4 +1,5 @@
 #include "Treasure.h"
+#include "Gameplay.h"
 #include "Gem.h"
 
 Treasure::Treasure(void)
@@ -41,7 +42,7 @@ bool Treasure::init(int count, int ix, int iy)
 		{
 			Gem* g = Gem::gem();
 			g->setPosition(ccp(posX+8*sin(i*6.28/5), posY+8*cos(i*6.28/5)));
-			this->addChild(g);
+// 			((Gameplay*)this->getParent())->addChild(g);
 			gems->addObject(g);
 		}
 

@@ -125,7 +125,7 @@ bool Gameplay::init()
 						result = props->objectForKey("Collidable");
 						if (result->m_sString.compare("True") == 0)
 						{
-							//game_map[i][j] = 1;
+							game_map[i][j] = 1;
 							//pathfinder->walkability [j][i] = pathfinder->unwalkable;
 							pathfinder->setUnwalkable(j, i);
 						}
@@ -182,6 +182,10 @@ bool Gameplay::init()
 		}
 		treasure = Treasure::treasure(countGem, posGem.x, posGem.y);
 		this->addChild(treasure);
+		for (int i=0; i<countGem; i++)
+		{
+			this->addChild((Gem*)treasure->gems->objectAtIndex(i));
+		}
 		gemsOutside = CCArray::arrayWithCapacity(countGem);
 		gemsOutside->retain();
 		//guard
