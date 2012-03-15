@@ -568,7 +568,7 @@ int PathFinder::ReadPathY(int pathLocation)
 	return y;
 }
 
-void PathFinder::setUnwalkable(int gridX, int gridY)
+void PathFinder::setUnwalkable(int gridX, int gridY, bool isBlock)
 {
-	walkability [gridX][gridY] = unwalkable;
+	walkability [gridX][gridY] = isBlock ? unwalkable : walkable;
 }

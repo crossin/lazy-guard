@@ -25,8 +25,7 @@ public:
 	void InitializePathfinder (void);
 	void EndPathfinder (void);
 	int FindPath (int startingX, int startingY, int targetX, int targetY);
-	void setUnwalkable(int gridX, int gridY);
-
+	void setUnwalkable(int gridX, int gridY, bool isBlock);
 	//Declare constants
 	static const int notfinished = 0, notStarted = 0;// path-related constants
 	static const int found = 1, nonexistent = 2, same = 3; 
