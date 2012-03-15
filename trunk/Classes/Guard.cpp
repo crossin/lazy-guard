@@ -47,9 +47,9 @@ bool Guard::init()
 		status = SLEEPING;
 		pointSleepMax = 100;
 		pointSleep = 0;
-		pointWakeMax = 50;
+		pointWakeMax = 100;
 		pointWake = 0;
-		speed = 120;
+		speed = 60;
 		range = 30;
 		//behaviour=STAND;
 		//direction=DOWN;

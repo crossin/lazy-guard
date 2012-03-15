@@ -3,7 +3,7 @@
 #include "Gameplay.h"
 #include "cocos2d.h"
 
-//extern int game_map[10][15];
+extern int game_map[10][15];
 
 Thief::Thief(void)
 {
@@ -156,7 +156,7 @@ void Thief::findGem()
 	stopAllActions();
 	runAction( CCSequence::actions(actionGo, steal, /*actionBack, actionOver,*/ NULL) );
 
-/*
+
 	for (int i=0;i<10;i++){
 		for (int j=0;j<15;j++){
 			if (game_map[i][j] == 2)
@@ -169,7 +169,7 @@ void Thief::findGem()
 	{
 		game_map[pathfinder->pathBank[2*i+1]][pathfinder->pathBank[2*i]] = 2;
 	}
-*/
+
 }
 
 void Thief::getGem(CCNode* sender)
