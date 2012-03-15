@@ -118,6 +118,7 @@ bool Gameplay::init()
 
 		for (int i=0;i<r;i++){
 			for (int j=0;j<c;j++){
+				pathfinder->setUnwalkable(j, i, false);
 				if (tileGID = meta->tileGIDAt(ccp(j,r-i-1)))
 				{
 					if (props = pDesertTileMap->propertiesForGID(tileGID))
@@ -127,7 +128,7 @@ bool Gameplay::init()
 						{
 							game_map[i][j] = 1;
 							//pathfinder->walkability [j][i] = pathfinder->unwalkable;
-							pathfinder->setUnwalkable(j, i);
+							pathfinder->setUnwalkable(j, i, true);
 						}
 					}
 				}
@@ -323,17 +324,18 @@ void Gameplay::draw()
 
 void Gameplay::ccTouchesEnded(CCSet* touches, CCEvent* event)
 {
-/*
-	//clear
-	for (int i=0;i<r;i++){
-		for (int j=0;j<c;j++){
-			if (game_map[i][j] == 2)
-			{
-				game_map[i][j] = 0;
-			}
+
+//clear
+PathFinder* pathfinder = PathFinder::getInstance();
+for (int i=0;i<10;i++){
+	for (int j=0;j<15;j++){
+		if (pathfinder->walkability[j][i] == PathFinder::unwalkable)
+		{
+			game_map[i][j] = 1;
 		}
 	}
-*/
+}
+
 	CCSetIterator it = touches->begin();
 	CCTouch* touch = (CCTouch*)(*it);
 
