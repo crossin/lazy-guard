@@ -16,7 +16,7 @@
    </properties>
   </tile>
  </tileset>
- <layer name="块层 1" width="15" height="10" opacity="0.5">
+ <layer name="块层 1" width="15" height="10" opacity="0.52">
   <data encoding="base64" compression="zlib">
    eJyTY2BgkKMSViAghk0elzmkqCVHHS4+seZRSy8l4UmrsKAGBgDqlBG3
   </data>
