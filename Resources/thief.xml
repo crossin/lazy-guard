@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <plists>
+        <plist>thief.plist</plist>
+    </plists>
+    <animations>
+        <animation>
+            <name>walk</name>
+            <delay>0.1</delay>
+            <spriteFrame>thief1.png</spriteFrame>
+            <spriteFrame>thief2.png</spriteFrame>
+            <spriteFrame>thief3.png</spriteFrame>
+            <spriteFrame>thief4.png</spriteFrame>
+        </animation>
+    </animations>
+    <sprites>
+        <sprite>thief1.png</sprite>
+        <sprite>thief2.png</sprite>
+        <sprite>thief3.png</sprite>
+        <sprite>thief4.png</sprite>
+    </sprites>
+</root>
