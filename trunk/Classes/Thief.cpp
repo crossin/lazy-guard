@@ -2,6 +2,8 @@
 #include "PathFinder.h"
 #include "Gameplay.h"
 #include "cocos2d.h"
+#include "AnimatePacker.h"
+#include <math.h>
 
 extern int game_map[10][15];
 
@@ -31,10 +33,15 @@ bool Thief::init()
 	bool bRet = false;
 	do{
 		//this->setAnchorPoint(CCPointZero);
+		AnimatePacker::getInstance()->loadAnimate("thief.xml"); 
+		sprite=CCSprite::spriteWithSpriteFrameName("thief1.png"); 
+		//sprite->setAnchorPoint(CCPointZero); 
+		//sprite->setPosition(ccp(size.width/2, size.height/2)); 
+		sprite->runAction(CCRepeatForever::actionWithAction(AnimatePacker::getInstance()->getAnimate("walk"))); 
+		addChild(sprite); 
 
-		sprite = CCSprite::spriteWithFile("Target.png");
-		//sprite->setAnchorPoint(CCPointZero);
-		this->addChild(sprite);
+// 		sprite = CCSprite::spriteWithFile("Target.png");
+// 		this->addChild(sprite);
 
 
 		float ranPos = CCRANDOM_0_1();
@@ -54,6 +61,7 @@ bool Thief::init()
 		gem = NULL;
 // 		isFleeing = false;
 		speed = 50;
+		speedRot = 0.3;
 		status = FINDING;
 		//behaviour=STAND;
 		//direction=DOWN;
@@ -122,14 +130,16 @@ void Thief::findGem()
 	//_itoa_s((*(pathBank[1]-4)),textout,10);
 	//itoa(pathLength[1],textout,10);
 	CCArray* pathGo = CCArray::array();
-	CCArray* pathBack = CCArray::array();
+// 	CCArray* pathBack = CCArray::array();
 	CCPoint target, from;
 	CCPoint moveDifference;
 	float distanceToMove;
 	float moveDuration;
+	float rotAngle;
 	CCFiniteTimeAction* actionMove;
+	CCFiniteTimeAction* actionRot;
 	CCFiniteTimeAction* actionGo;
-	CCFiniteTimeAction* actionBack;
+// 	CCFiniteTimeAction* actionBack;
 
 	for (int i = 0; i < pathfinder->pathLength; i++)
 	{
@@ -140,15 +150,20 @@ void Thief::findGem()
 		distanceToMove = ccpLength(moveDifference);
 		moveDuration = distanceToMove / speed;
 		actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, target);
+		//rotate
+		rotAngle = CC_RADIANS_TO_DEGREES(ccpToAngle(moveDifference));
+		actionRot = CCRotateTo::actionWithDuration(speedRot, 90-rotAngle);
+		actionMove = CCSpawn::actions(actionMove, actionRot, NULL);
+		// add to list
 		pathGo->addObject(actionMove);
 		actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, from);
-		pathBack->addObject(actionMove);
+// 		pathBack->addObject(actionMove);
 	}
 	//pLabel->setString(textout);
 	//player->setPosition(m_tTouchPos);
-	pathBack->reverseObjects();
+// 	pathBack->reverseObjects();
 	actionGo = CCSequence::actionsWithArray(pathGo);
-	actionBack = CCSequence::actionsWithArray(pathBack);
+// 	actionBack = CCSequence::actionsWithArray(pathBack);
 	//CCFiniteTimeAction* actionMoveDone = CCCallFuncN::actionWithTarget( this, callfuncN_selector(HelloWorld::spriteMoveFinished));
 	//CCFiniteTimeAction* actionOver = CCCallFuncN::actionWithTarget( this, callfuncN_selector(Thief::moveFinished));
 	CCFiniteTimeAction* steal = CCCallFuncN::actionWithTarget( this, callfuncN_selector(Thief::getGem));
@@ -223,7 +238,9 @@ void Thief::findHome()
 	CCPoint moveDifference;
 	float distanceToMove;
 	float moveDuration;
+	float rotAngle;
 	CCFiniteTimeAction* actionMove;
+	CCFiniteTimeAction* actionRot;
 	CCFiniteTimeAction* actionGo;
 
 	if (result == PathFinder::same)
@@ -234,6 +251,11 @@ void Thief::findHome()
 		distanceToMove = ccpLength(moveDifference);
 		moveDuration = distanceToMove / speed;
 		actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, target);
+		//rotate
+		rotAngle = CC_RADIANS_TO_DEGREES(ccpToAngle(moveDifference));
+		actionRot = CCRotateTo::actionWithDuration(speedRot, 90-rotAngle);
+		actionMove = CCSpawn::actions(actionMove, actionRot, NULL);
+		// add to list
 		pathGo->addObject(actionMove);
 	}
 	else
@@ -246,6 +268,11 @@ void Thief::findHome()
 			distanceToMove = ccpLength(moveDifference);
 			moveDuration = distanceToMove / speed;
 			actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, target);
+			//rotate
+			rotAngle = CC_RADIANS_TO_DEGREES(ccpToAngle(moveDifference));
+			actionRot = CCRotateTo::actionWithDuration(speedRot, 90-rotAngle);
+			actionMove = CCSpawn::actions(actionMove, actionRot, NULL);
+			// add to list
 			pathGo->addObject(actionMove);
 		}
 	}

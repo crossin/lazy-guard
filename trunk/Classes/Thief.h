@@ -34,5 +34,6 @@ public:
 	float startY;
 // 	bool isFleeing;
 	int speed;
+	float speedRot;
 	int status;
 };
