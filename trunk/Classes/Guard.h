@@ -33,6 +33,8 @@ public:
 	float pointWake;
 	float pointWakeMax;
 	int speed;
+	float speedRot;
 	int range;
+	CCAction* actionWalk;
 };
 

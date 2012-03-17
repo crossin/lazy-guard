@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <plists>
+        <plist>sprites.plist</plist>
+    </plists>
+    <animations>
+        <animation>
+            <name>guard-walk</name>
+            <delay>0.2</delay>
+            <spriteFrame>guard1.png</spriteFrame>
+            <spriteFrame>guard2.png</spriteFrame>
+            <spriteFrame>guard3.png</spriteFrame>
+            <spriteFrame>guard2.png</spriteFrame>
+        </animation>
+        <animation>
+            <name>thief-walk</name>
+            <delay>0.1</delay>
+            <spriteFrame>thief1.png</spriteFrame>
+            <spriteFrame>thief2.png</spriteFrame>
+            <spriteFrame>thief3.png</spriteFrame>
+            <spriteFrame>thief2.png</spriteFrame>
+        </animation>
+    </animations>
+    <sprites>
+        <sprite>guard1.png</sprite>
+        <sprite>guard2.png</sprite>
+        <sprite>guard3.png</sprite>
+        <sprite>thief1.png</sprite>
+        <sprite>thief2.png</sprite>
+        <sprite>thief3.png</sprite>
+    </sprites>
+</root>
