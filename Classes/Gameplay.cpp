@@ -196,6 +196,8 @@ bool Gameplay::init()
 		guard[1] = Guard::guard();
 		guard[1]->setPosition(ccp(300,200));
 		this->addChild(guard[1], 1002);
+		addChild(guard[0]->bar, 1003);
+		addChild(guard[1]->bar, 1004);
 		//thief
 		thieves = new CCMutableArray<Thief*>;
 		countThief = 20;

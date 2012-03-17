@@ -3,7 +3,7 @@
 #include "Gameplay.h"
 #include "cocos2d.h"
 #include "AnimatePacker.h"
-#include <math.h>
+
 
 extern int game_map[10][15];
 
@@ -33,11 +33,11 @@ bool Thief::init()
 	bool bRet = false;
 	do{
 		//this->setAnchorPoint(CCPointZero);
-		AnimatePacker::getInstance()->loadAnimate("thief.xml"); 
-		sprite=CCSprite::spriteWithSpriteFrameName("thief1.png"); 
+		AnimatePacker::getInstance()->loadAnimate("sprites.xml"); 
+		sprite=CCSprite::spriteWithSpriteFrameName("thief2.png"); 
 		//sprite->setAnchorPoint(CCPointZero); 
 		//sprite->setPosition(ccp(size.width/2, size.height/2)); 
-		sprite->runAction(CCRepeatForever::actionWithAction(AnimatePacker::getInstance()->getAnimate("walk"))); 
+		sprite->runAction(CCRepeatForever::actionWithAction(AnimatePacker::getInstance()->getAnimate("thief-walk"))); 
 		addChild(sprite); 
 
 // 		sprite = CCSprite::spriteWithFile("Target.png");

@@ -2,6 +2,7 @@
 #include "PathFinder.h"
 #include "Gameplay.h"
 #include "cocos2d.h"
+#include "AnimatePacker.h"
 
 extern int game_map[10][15];
 
@@ -12,6 +13,7 @@ Guard::Guard(void)
 
 Guard::~Guard(void)
 {
+	actionWalk->release();
 }
 
 Guard* Guard::guard()
@@ -33,14 +35,21 @@ bool Guard::init()
 	do{
 		//this->setAnchorPoint(CCPointZero);
 
-		sprite = CCSprite::spriteWithFile("Player.png");
-		//sprite->setAnchorPoint(CCPointZero);
-		this->addChild(sprite);
+		AnimatePacker::getInstance()->loadAnimate("sprites.xml"); 
+		sprite=CCSprite::spriteWithSpriteFrameName("guard2.png"); 
+		sprite->setAnchorPoint(ccp(0.5,0.25)); 
+		//sprite->setPosition(ccp(size.width/2, size.height/2)); 
+		actionWalk = CCRepeatForever::actionWithAction(AnimatePacker::getInstance()->getAnimate("guard-walk"));
+		actionWalk->retain();
+		//sprite->runAction(actionWalk); 
+		addChild(sprite); 
+
 
 		bar = CCSprite::spriteWithFile("bar.png");
 		bar->setAnchorPoint(CCPointZero);
-		bar->setPosition(ccp(-bar->getContentSize().width/2, sprite->getContentSize().height/2));
-		this->addChild(bar);
+		//
+		//bar->setPosition(ccp(100,100));
+		//this->addChild(bar);
 		//setPosition(ccp(160,160));
 
 		//isAwake = false;
@@ -51,6 +60,7 @@ bool Guard::init()
 		pointWake = 0;
 		speed = 60;
 		range = 30;
+		speedRot = 0.5;
 		//behaviour=STAND;
 		//direction=DOWN;
 
@@ -113,7 +123,9 @@ void Guard::findThief()
 	CCPoint moveDifference;
 	float distanceToMove;
 	float moveDuration;
+	float rotAngle;
 	CCFiniteTimeAction* actionMove;
+	CCFiniteTimeAction* actionRot;
 
 // 	if (pathfinder->pathLength<2)
 // 	{
@@ -137,6 +149,10 @@ void Guard::findThief()
 	distanceToMove = ccpLength(moveDifference);
 	moveDuration = distanceToMove/speed;
 	actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, target);
+	//rotate
+	rotAngle = CC_RADIANS_TO_DEGREES(ccpToAngle(moveDifference));
+	actionRot = CCRotateTo::actionWithDuration(speedRot, 90-rotAngle);
+	actionMove = CCSpawn::actions(actionMove, actionRot, NULL);
 
 // char a[20];
 // sprintf(a,"%5f,%d\n",moveDuration,pathfinder->pathLength);
@@ -171,7 +187,9 @@ void Guard::patrol()
 	CCPoint moveDifference;
 	float distanceToMove;
 	float moveDuration;
+	float rotAngle;
 	CCFiniteTimeAction* actionMove;
+	CCFiniteTimeAction* actionRot;
 	CCFiniteTimeAction* actionGo;
 
 	for (int i = 0; i < pathfinder->pathLength; i++)
@@ -182,6 +200,11 @@ void Guard::patrol()
 		distanceToMove = ccpLength(moveDifference);
 		moveDuration = distanceToMove / speed;
 		actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, target);
+		//rotate
+		rotAngle = CC_RADIANS_TO_DEGREES(ccpToAngle(moveDifference));
+		actionRot = CCRotateTo::actionWithDuration(speedRot, 90-rotAngle);
+		actionMove = CCSpawn::actions(actionMove, actionRot, NULL);
+		// add to list
 		pathGo->addObject(actionMove);
 	}
 
@@ -222,13 +245,13 @@ void Guard::updateFrame(ccTime dt)
 	{
 		if (pointWake <= 0)
 		{
-			stopAllActions();
+			//stopAllActions();
 			setAwake(false);
 			bar->setIsVisible(false);
 		}
 		else
 		{
-			bar->setTextureRect(CCRectMake(0, 0, 16*pointWake/pointWakeMax, bar->getContentSize().height));
+			bar->setTextureRect(CCRectMake(0, 0, 36*pointWake/pointWakeMax, bar->getContentSize().height));
 			bar->setIsVisible(true);
 			pointWake -= (20 * dt);
 
@@ -242,7 +265,8 @@ void Guard::updateFrame(ccTime dt)
 			}
 		}
 	}
-	
+	// update position of bar
+	bar->setPosition(ccp(getPosition().x-18, getPosition().y+18));
 }
 
 void Guard::spriteMoveFinished(CCNode* sender)
@@ -274,12 +298,16 @@ void Guard::setAwake(bool w)
 	if (w)
 	{
 		status = WAKING;
+		sprite->runAction(actionWalk);
 		//isAwake = true;
 		pointWake = pointWakeMax;
 	}
 	else
 	{
 		status = SLEEPING;
+		stopAllActions();
+		sprite->stopAction(actionWalk);
+		sprite->setDisplayFrameWithAnimationName("guard-walk", 1);
 		//isAwake = false;
 		pointSleep = 0;
 	}
