@@ -168,13 +168,15 @@ if (INTERVAL-findingInterval<0.5)
 
 	findingInterval = INTERVAL;
 
+
 for (int i=0;i<10;i++){
 	for (int j=0;j<15;j++){
 		game_map[i][j] = 0;
 	}
 }
-game_map[pathfinder->pathBank[1]][pathfinder->pathBank[0]] = 2;
-
+for (int i = 0; i < pathfinder->pathLength; i++){
+game_map[pathfinder->pathBank[2*i+1]][pathfinder->pathBank[2*i]] = 2;
+}
 
 }
 
