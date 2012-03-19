@@ -50,10 +50,3 @@ void Gem::kill()
 	removeFromParentAndCleanup(true);
 }
 
-CCRect Gem::getRect()
-{
-	return CCRectMake(getPosition().x - sprite->getContentSize().width/2,
-		getPosition().y - sprite->getContentSize().height/2,
-		sprite->getContentSize().width,
-		sprite->getContentSize().height);
-}

@@ -8,6 +8,7 @@
 #include "PathFinder.h"
 #include <stdlib.h>
 #include <malloc.h>
+#include <math.h>
 
 
 PathFinder::PathFinder(void)
@@ -38,6 +39,7 @@ PathFinder::~PathFinder(void)
 	delete []Hcost;
 
 	delete []pathBank;
+	delete []bresenhamBank;
 	delete []floydBank;
 }
 
@@ -71,6 +73,7 @@ bool PathFinder::initWithSize(int mWeight, int mHeight, int tWeight, int tHeight
 	Hcost = new int[mapWidth*mapHeight+2];
 
 	pathBank = new int[2*(mapWidth*mapHeight)];
+	bresenhamBank = new int[2*(mapWidth*mapHeight)];
 	floydBank = new int[2*(mapWidth*mapHeight)];
 	//InitializePathfinder();
 	
@@ -128,6 +131,15 @@ int PathFinder::FindPath (int startingX, int startingY,
 	//	If target square is unwalkable, return that it's a nonexistent path.
 	if (walkability[targetX][targetY] == unwalkable)
 		goto noPath;
+
+	// If crossable
+	if (floydCrossAble(startX, startY, targetX, targetY))
+	{
+		pathBank[0] = targetX;
+		pathBank[1] = targetY;
+		pathLength = 1;
+		return found;
+	}
 
 	//3.Reset some variables that need to be cleared
 	if (onClosedList > 1000000) //reset whichList occasionally
@@ -577,6 +589,128 @@ void PathFinder::setUnwalkable(int gridX, int gridY, bool isBlock)
 	walkability [gridX][gridY] = isBlock ? unwalkable : walkable;
 }
 
+bool PathFinder::floydCrossAble(int fromX, int fromY, int targetX, int targetY)
+{
+	bresenhamLength = 0;
+	bool steep = abs(targetY - fromY) > abs(targetX - fromX);
+	if (steep) {
+		int temp = fromX;
+		fromX = fromY;
+		fromY = temp;
+		temp = targetX;
+		targetX = targetY;
+		targetY = temp;
+	}
+	int stepX = targetX > fromX?1:(targetX < fromX? -1:0);
+	float deltaY = (float)(targetY - fromY) / abs(targetX - fromX);
+// 	var ret:Array = [];
+	float nowX = fromX + stepX;
+	float nowY = fromY + deltaY;
+	if (steep)
+	{
+		if (isUnwalkable(fromY, fromX))
+			return false;
+	}
+	else
+	{
+		if (isUnwalkable(fromX, fromY))
+			return false;
+	}
+	if (abs(fromX - targetX) == abs(fromY - targetY))
+	{
+		if (fromX<targetX && fromY<targetY)
+		{
+			if (isUnwalkable(fromX, fromY+1))
+				return false;
+			if (isUnwalkable(targetX, targetY-1))
+				return false;
+		}
+		else if (fromX>targetX && fromY>targetY)
+		{
+			if (isUnwalkable(fromX, fromY-1))
+				return false;
+			if (isUnwalkable(targetX, targetY+1))
+				return false;
+		}
+		else if (fromX<targetX && fromY>targetY)
+		{
+			if (isUnwalkable(fromX, fromY-1))
+				return false;
+			if (isUnwalkable(targetX, targetY+1))
+				return false;
+		}
+		else if (fromX>targetX && fromY<targetY)
+		{
+			if (isUnwalkable(fromX, fromY+1))
+				return false;
+			if (isUnwalkable(targetX, targetY-1))
+				return false;
+		}
+	}
+	while (nowX != targetX)
+	{
+		int fY = floor(nowY);
+		int cY = ceil(nowY);
+		if (steep)
+		{
+			if (isUnwalkable(fY, nowX))
+				return false;
+		}
+		else
+		{
+			if (isUnwalkable(nowX, fY))
+				return false;
+		}
+		if (fY != cY) {
+			if (steep)
+			{
+				if (isUnwalkable(cY, nowX))
+					return false;
+			}
+			else
+			{
+				if (isUnwalkable(nowX, cY))
+					return false;
+			}
+		}
+		else if (deltaY != 0)
+		{
+			if (steep)
+			{
+				if (isUnwalkable(cY+1, nowX))
+					return false;
+				if (isUnwalkable(cY-1, nowX))
+					return false;
+			}
+			else
+			{
+				if (isUnwalkable(nowX, cY+1))
+					return false;
+				if (isUnwalkable(nowX, cY-1))
+					return false;
+			}
+		}
+		nowX += stepX;
+		nowY += deltaY;
+	}
+	if (steep)
+	{
+		if (isUnwalkable(targetY, targetX))
+			return false;
+	}
+	else
+	{
+		if (isUnwalkable(targetX, targetY))
+			return false;
+	}
+	return true;
+}
+
+inline bool PathFinder::isUnwalkable(int px, int py)
+{
+	return (px>=0 && px<mapWidth && py>=0 && py<mapHeight && walkability[px][py]==unwalkable);
+}
+
 void PathFinder::floyd(void)
 {
 	if (pathLength <= 1){
@@ -657,3 +791,4 @@ void PathFinder::floyd(void)
 // 			pathBank[i*2+1] = floydBank[floydLength*2+1];
 // 		}
 }
+

@@ -5,7 +5,7 @@
 #include "AnimatePacker.h"
 
 
-extern int game_map[10][15];
+// extern int game_map[10][15];
 
 Thief::Thief(void)
 {
@@ -61,7 +61,7 @@ bool Thief::init()
 		gem = NULL;
 // 		isFleeing = false;
 		speed = 50;
-		speedRot = 0.3;
+		timeRot = 0.3;
 		status = FINDING;
 		//behaviour=STAND;
 		//direction=DOWN;
@@ -130,60 +130,35 @@ void Thief::findGem()
 	//_itoa_s((*(pathBank[1]-4)),textout,10);
 	//itoa(pathLength[1],textout,10);
 	CCArray* pathGo = CCArray::array();
-// 	CCArray* pathBack = CCArray::array();
 	CCPoint target, from;
-	CCPoint moveDifference;
-	float distanceToMove;
-	float moveDuration;
-	float rotAngle;
-	CCFiniteTimeAction* actionMove;
-	CCFiniteTimeAction* actionRot;
 	CCFiniteTimeAction* actionGo;
-// 	CCFiniteTimeAction* actionBack;
 
 	for (int i = 0; i < pathfinder->pathLength; i++)
 	{
 		//game_map[pathfinder->pathBank[2*i+1]][pathfinder->pathBank[2*i]] = 2;
 		from = (i == 0) ? getPosition() : (ccp((pathfinder->pathBank[2*i-2]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[2*i-1]+0.5) * pathfinder->tileHeight));
 		target = (i == pathfinder->pathLength-1) ? ccp(gemX, gemY) : (ccp((pathfinder->pathBank[2*i]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[2*i+1]+0.5) * pathfinder->tileHeight));
-		moveDifference = ccpSub(target,from);
-		distanceToMove = ccpLength(moveDifference);
-		moveDuration = distanceToMove / speed;
-		actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, target);
-		//rotate
-		rotAngle = CC_RADIANS_TO_DEGREES(ccpToAngle(moveDifference));
-		actionRot = CCRotateTo::actionWithDuration(speedRot, 90-rotAngle);
-		actionMove = CCSpawn::actions(actionMove, actionRot, NULL);
-		// add to list
-		pathGo->addObject(actionMove);
-		actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, from);
-// 		pathBack->addObject(actionMove);
+		pathGo->addObject(makeAction(from, target));
 	}
-	//pLabel->setString(textout);
-	//player->setPosition(m_tTouchPos);
-// 	pathBack->reverseObjects();
 	actionGo = CCSequence::actionsWithArray(pathGo);
-// 	actionBack = CCSequence::actionsWithArray(pathBack);
-	//CCFiniteTimeAction* actionMoveDone = CCCallFuncN::actionWithTarget( this, callfuncN_selector(HelloWorld::spriteMoveFinished));
-	//CCFiniteTimeAction* actionOver = CCCallFuncN::actionWithTarget( this, callfuncN_selector(Thief::moveFinished));
 	CCFiniteTimeAction* steal = CCCallFuncN::actionWithTarget( this, callfuncN_selector(Thief::getGem));
 
 	stopAllActions();
 	runAction( CCSequence::actions(actionGo, steal, /*actionBack, actionOver,*/ NULL) );
 
 
-	for (int i=0;i<10;i++){
-		for (int j=0;j<15;j++){
-			if (game_map[i][j] == 2)
-			{
-				game_map[i][j] = 0;
-			}
-		}
-	}
-	for (int i = 0; i < pathfinder->pathLength; i++)
-	{
-		game_map[pathfinder->pathBank[2*i+1]][pathfinder->pathBank[2*i]] = 2;
-	}
+// for (int i=0;i<10;i++){
+// 	for (int j=0;j<15;j++){
+// 		if (game_map[i][j] == 2)
+// 		{
+// 			game_map[i][j] = 0;
+// 		}
+// 	}
+// }
+// for (int i = 0; i < pathfinder->pathLength; i++)
+// {
+// 	game_map[pathfinder->pathBank[2*i+1]][pathfinder->pathBank[2*i]] = 2;
+// }
 
 }
 
@@ -235,28 +210,12 @@ void Thief::findHome()
 	}
 	CCArray* pathGo = CCArray::array();
 	CCPoint target, from;
-	CCPoint moveDifference;
-	float distanceToMove;
-	float moveDuration;
-	float rotAngle;
-	CCFiniteTimeAction* actionMove;
-	CCFiniteTimeAction* actionRot;
 	CCFiniteTimeAction* actionGo;
-
 	if (result == PathFinder::same)
 	{
 		from = getPosition();
 		target = ccp(startX, startY);
-		moveDifference = ccpSub(target,from);
-		distanceToMove = ccpLength(moveDifference);
-		moveDuration = distanceToMove / speed;
-		actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, target);
-		//rotate
-		rotAngle = CC_RADIANS_TO_DEGREES(ccpToAngle(moveDifference));
-		actionRot = CCRotateTo::actionWithDuration(speedRot, 90-rotAngle);
-		actionMove = CCSpawn::actions(actionMove, actionRot, NULL);
-		// add to list
-		pathGo->addObject(actionMove);
+		pathGo->addObject(makeAction(from, target));
 	}
 	else
 	{
@@ -264,16 +223,7 @@ void Thief::findHome()
 		{
 			from = (i == 0) ? getPosition() : (ccp((pathfinder->pathBank[2*i-2]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[2*i-1]+0.5) * pathfinder->tileHeight));
 			target = (i == pathfinder->pathLength-1) ? ccp(startX, startY) : (ccp((pathfinder->pathBank[2*i]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[2*i+1]+0.5) * pathfinder->tileHeight));
-			moveDifference = ccpSub(target,from);
-			distanceToMove = ccpLength(moveDifference);
-			moveDuration = distanceToMove / speed;
-			actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, target);
-			//rotate
-			rotAngle = CC_RADIANS_TO_DEGREES(ccpToAngle(moveDifference));
-			actionRot = CCRotateTo::actionWithDuration(speedRot, 90-rotAngle);
-			actionMove = CCSpawn::actions(actionMove, actionRot, NULL);
-			// add to list
-			pathGo->addObject(actionMove);
+			pathGo->addObject(makeAction(from, target));
 		}
 	}
 
@@ -316,13 +266,6 @@ void Thief::kill()
 	removeFromParentAndCleanup(true);
 }
 
-CCRect Thief::getRect()
-{
-	return CCRectMake(getPosition().x - sprite->getContentSize().width/2,
-		getPosition().y - sprite->getContentSize().height/2,
-		sprite->getContentSize().width,
-		sprite->getContentSize().height);
-}
 
 void Thief::fleeHome()
 {

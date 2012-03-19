@@ -17,6 +17,7 @@ using namespace cocos2d;
 
 
 int game_map[10][15];
+
 /*
 //PathFinder *pathfinder;
 int r;
@@ -141,7 +142,7 @@ bool Gameplay::init()
 		}
 
 		// 2. Add a label shows "Hello World".
-/*
+
 		// Create a label and initialize with string "Hello World".
 		pLabel = CCLabelTTF::labelWithString("10", "Thonburi", 64);
 		CC_BREAK_IF(! pLabel);
@@ -151,8 +152,8 @@ bool Gameplay::init()
 		pLabel->setPosition(ccp(size.width / 2, size.height - 20));
 
 		// Add the label to HelloWorld layer as a child layer.
-		//this->addChild(pLabel, 1);
-*/
+		this->addChild(pLabel, 1);
+
 		//// 3. Add add a splash screen, show the cocos2d splash image.
 		
 		
@@ -441,6 +442,7 @@ void Gameplay::updateFrame(ccTime dt)
 		gameOverScene->getLayer()->getLabel()->setString("You Lose!");
 		CCDirector::sharedDirector()->replaceScene(gameOverScene);
 	}
+
 }
 
 void Gameplay::updateThieves()
