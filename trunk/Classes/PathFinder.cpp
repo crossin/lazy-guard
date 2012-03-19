@@ -132,6 +132,7 @@ int PathFinder::FindPath (int startingX, int startingY,
 	if (walkability[targetX][targetY] == unwalkable)
 		goto noPath;
 
+	/*
 	// If crossable
 	if (floydCrossAble(startX, startY, targetX, targetY))
 	{
@@ -139,7 +140,7 @@ int PathFinder::FindPath (int startingX, int startingY,
 		pathBank[1] = targetY;
 		pathLength = 1;
 		return found;
-	}
+	}*/
 
 	//3.Reset some variables that need to be cleared
 	if (onClosedList > 1000000) //reset whichList occasionally
@@ -718,14 +719,15 @@ void PathFinder::floyd(void)
 	}
 
 	// check on same line
-	int floydLength = 0;
 	int ax, ay, bx, by, cx, cy;
 	ax = startX;
 	ay = startY;
 	bx = pathBank[0];
 	by = pathBank[1];
-
-	for (int i = 0; i <= pathLength - 2; i++)
+	int floydLength = 1;
+	floydBank[0] = startX;
+	floydBank[1] = startY;
+	for (int i = 0; i <= pathLength-2; i++)
 	{
 		cx = pathBank[i*2+2];
 		cy = pathBank[i*2+3];
@@ -744,39 +746,40 @@ void PathFinder::floyd(void)
 	floydBank[floydLength*2+1] = pathBank[pathLength*2-1];
 	floydLength++;
 
-	pathLength = floydLength;
+// pathLength=floydLength;
+// for (int i = 0; i <pathLength*2; i++)
+// {	
+// 	pathBank[i] = floydBank[i];
+// }
 
-	for (int i = 0; i < pathLength*2; i++){
-		pathBank[i] = floydBank[i];
-	}
-	/*
-	int ax, ay, bx, by, cx, cy;
-	ax = startX;
-	ay = startY;
-	bx = pathBank[0];
-	by = pathBank[pathLength*2-3];
-	cx = pathBank[pathLength*2-2];
-	cy = pathBank[pathLength*2-1];
-	floydBank[0] = startX;
-	floydBank[1] = startY;
-	floydLength = 1;
-
-	for (int i = -1; i <= pathLength - 3; i++)
-	{
-		ax = (i<0) ? startX : pathBank[i*2];
-		ay = (i<0) ? startY : pathBank[i*2+1];
-		if (!((bx - ax == cx - bx) && (by - ay == cy - by)))
+	pathLength = 0;
+	for (int i = 0; i < floydLength-1; i++)
+	{		
+		for (int j = floydLength-1; j > i+1; j--)
 		{
-			cx = bx;
-			cy = by;
-			bx = ax;
-			by = ay;
-			floydBank[floydLength*2] = pathBank[i*2+2];
-			floydBank[floydLength*2+1] = pathBank[i*2+3];
-			floydLength++;
+			if (floydCrossAble(floydBank[2*i], floydBank[2*i+1], floydBank[2*j], floydBank[2*j+1]))
+			{
+				pathBank[pathLength*2] = floydBank[2*j];
+				pathBank[pathLength*2+1] = floydBank[2*j+1];
+				pathLength++;
+				i = j - 1;
+				break;
+			}
+			if (j == i+2)
+			{
+				pathBank[pathLength*2] = floydBank[2*i+2];
+				pathBank[pathLength*2+1] = floydBank[2*i+3];
+				pathLength++;
+			}
+		}
+		if (i == floydLength-2)
+		{
+			pathBank[pathLength*2] = floydBank[2*i+2];
+			pathBank[pathLength*2+1] = floydBank[2*i+3];
+			pathLength++;
 		}
 	}
-	*/
+
 // 	for (int i = floydLength - 1; i >= 0; i--){
 // 		for (int j = 0; j <= i - 2; j++){
 // 			if (floydCrossAble(_floydPath[i], _floydPath[j])){

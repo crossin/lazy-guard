@@ -26,12 +26,9 @@ public:
 	void EndPathfinder (void);
 	int FindPath (int startingX, int startingY, int targetX, int targetY);
 	void setUnwalkable(int gridX, int gridY, bool isBlock);
-<<<<<<< .mine
 	bool floydCrossAble(int fromX, int fromY, int targetX, int targetY);
 	inline bool isUnwalkable(int px, int py);
-=======
 	void floyd(void);
->>>>>>> .r46
 	//Declare constants
 	static const int notfinished = 0, notStarted = 0;// path-related constants
 	static const int found = 1, nonexistent = 2, same = 3; 
