@@ -1,30 +1,29 @@
 #pragma once
 
-#include "CCSprite.h"
+#include "Character.h"
 
 using namespace cocos2d;
 
 class Guard :
-	public CCNode
+	public Character
 {
 public:
 	Guard(void);
 	~Guard(void);
 
 	static Guard* guard();
-	bool init();
+	virtual bool init();
 
 	void findThief();
 	void spriteMoveFinished(CCNode* sender);
- 	CCRect getRect();
 	void onHit();
 	void updateFrame(ccTime dt);
 	void setAwake(bool w);
 	void patrol();
 
 	static const int SLEEPING = 0, WAKING = 1, CHASING = 2, PATROLING = 3; 
+	static const float INTERVAL;
 
-	CCSprite * sprite;
 	CCSprite * bar;
 	//bool isAwake;
 	int status;
@@ -32,9 +31,8 @@ public:
 	float pointSleepMax;
 	float pointWake;
 	float pointWakeMax;
-	int speed;
-	float speedRot;
-	int range;
+	int range; 
+	float findingInterval;
 	CCAction* actionWalk;
 };
 

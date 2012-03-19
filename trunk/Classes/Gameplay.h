@@ -36,6 +36,7 @@ virtual void draw();
 	Treasure* treasure;
 	int countThief;
 	int countGem;
+CCLabelTTF* pLabel;
 
 private:
 	void addThief();

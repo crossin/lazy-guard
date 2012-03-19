@@ -6,10 +6,11 @@
 
 extern int game_map[10][15];
 
+const float Guard::INTERVAL = 1;
+
 Guard::Guard(void)
 {
 }
-
 
 Guard::~Guard(void)
 {
@@ -56,11 +57,12 @@ bool Guard::init()
 		status = SLEEPING;
 		pointSleepMax = 100;
 		pointSleep = 0;
-		pointWakeMax = 100;
+		pointWakeMax = 1000;
 		pointWake = 0;
 		speed = 60;
 		range = 30;
-		speedRot = 0.5;
+		timeRot = 0.5;
+		findingInterval = INTERVAL;
 		//behaviour=STAND;
 		//direction=DOWN;
 
@@ -120,12 +122,7 @@ void Guard::findThief()
 	//itoa(pathLength[1],textout,10);
 	//CCArray* path = CCArray::array();
 	CCPoint target, from;
-	CCPoint moveDifference;
-	float distanceToMove;
-	float moveDuration;
-	float rotAngle;
 	CCFiniteTimeAction* actionMove;
-	CCFiniteTimeAction* actionRot;
 
 // 	if (pathfinder->pathLength<2)
 // 	{
@@ -145,14 +142,7 @@ void Guard::findThief()
 
 	from = getPosition();//ccp(pathfinder->pathBank[0] * w, pathfinder->pathBank[1] * w);
 	target = ccp((pathfinder->pathBank[0]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[1]+0.5) * pathfinder->tileHeight);
-	moveDifference = ccpSub(target,from);
-	distanceToMove = ccpLength(moveDifference);
-	moveDuration = distanceToMove/speed;
-	actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, target);
-	//rotate
-	rotAngle = CC_RADIANS_TO_DEGREES(ccpToAngle(moveDifference));
-	actionRot = CCRotateTo::actionWithDuration(speedRot, 90-rotAngle);
-	actionMove = CCSpawn::actions(actionMove, actionRot, NULL);
+	actionMove = makeAction(from, target);
 
 // char a[20];
 // sprintf(a,"%5f,%d\n",moveDuration,pathfinder->pathLength);
@@ -165,10 +155,27 @@ void Guard::findThief()
 
 	CCFiniteTimeAction* actionMoveDone = CCCallFuncN::actionWithTarget( this, callfuncN_selector(Guard::spriteMoveFinished));
 
-	//CCFiniteTimeAction* actionMoveDone = CCCallFuncN::actionWithTarget( this, callfuncN_selector(HelloWorld::spriteMoveFinished));
 	stopAllActions();
-	runAction( CCSequence::actions(actionMove,actionMoveDone,NULL) );
+	runAction( CCSequence::actions(actionMove,/*actionMoveDone,*/NULL) );
 	status = CHASING;
+
+if (INTERVAL-findingInterval<0.5)
+{
+	char textout[8];
+	_itoa_s((INTERVAL-findingInterval)*100,textout,10);
+	((Gameplay*)getParent())->pLabel->setString(textout);
+}
+
+	findingInterval = INTERVAL;
+
+for (int i=0;i<10;i++){
+	for (int j=0;j<15;j++){
+		game_map[i][j] = 0;
+	}
+}
+game_map[pathfinder->pathBank[1]][pathfinder->pathBank[0]] = 2;
+
+
 }
 
 void Guard::patrol() 
@@ -184,28 +191,13 @@ void Guard::patrol()
 
 	CCArray* pathGo = CCArray::array();
 	CCPoint target, from;
-	CCPoint moveDifference;
-	float distanceToMove;
-	float moveDuration;
-	float rotAngle;
-	CCFiniteTimeAction* actionMove;
-	CCFiniteTimeAction* actionRot;
 	CCFiniteTimeAction* actionGo;
 
 	for (int i = 0; i < pathfinder->pathLength; i++)
 	{
 		from = (i == 0) ? getPosition() : (ccp((pathfinder->pathBank[2*i-2]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[2*i-1]+0.5) * pathfinder->tileHeight));
 		target = ccp((pathfinder->pathBank[2*i]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[2*i+1]+0.5) * pathfinder->tileHeight);
-		moveDifference = ccpSub(target,from);
-		distanceToMove = ccpLength(moveDifference);
-		moveDuration = distanceToMove / speed;
-		actionMove = CCMoveTo::actionWithDuration((ccTime)moveDuration, target);
-		//rotate
-		rotAngle = CC_RADIANS_TO_DEGREES(ccpToAngle(moveDifference));
-		actionRot = CCRotateTo::actionWithDuration(speedRot, 90-rotAngle);
-		actionMove = CCSpawn::actions(actionMove, actionRot, NULL);
-		// add to list
-		pathGo->addObject(actionMove);
+		pathGo->addObject(makeAction(from, target));
 	}
 
 	actionGo = CCSequence::actionsWithArray(pathGo);
@@ -214,15 +206,16 @@ void Guard::patrol()
 	stopAllActions();
 	runAction( CCSequence::actions(actionWait, actionGo, NULL) );
 	status = PATROLING;
-for (int i=0;i<10;i++){
- 	for (int j=0;j<15;j++){
- 			game_map[i][j] = 0;
- 	}
- }
- for (int i = 0; i < pathfinder->pathLength; i++)
- {
- game_map[pathfinder->pathBank[2*i+1]][pathfinder->pathBank[2*i]] = 2;
- }
+
+// for (int i=0;i<10;i++){
+//  	for (int j=0;j<15;j++){
+//  			game_map[i][j] = 0;
+//  	}
+//  }
+//  for (int i = 0; i < pathfinder->pathLength; i++)
+//  {
+//  game_map[pathfinder->pathBank[2*i+1]][pathfinder->pathBank[2*i]] = 2;
+//  }
 }
 
 void Guard::updateFrame(ccTime dt)
@@ -251,9 +244,16 @@ void Guard::updateFrame(ccTime dt)
 		}
 		else
 		{
+			// awake
 			bar->setTextureRect(CCRectMake(0, 0, 36*pointWake/pointWakeMax, bar->getContentSize().height));
 			bar->setIsVisible(true);
 			pointWake -= (20 * dt);
+			findingInterval -= dt;
+
+			if (status == CHASING && findingInterval < 0)
+			{
+				findThief();
+			}
 
 			if (this->numberOfRunningActions() == 0)
 			{
@@ -275,13 +275,6 @@ void Guard::spriteMoveFinished(CCNode* sender)
 	this->findThief();
 }
 
-CCRect Guard::getRect()
-{
-	return CCRectMake(getPosition().x - sprite->getContentSize().width/2,
-		getPosition().y - sprite->getContentSize().height/2,
-		sprite->getContentSize().width,
-		sprite->getContentSize().height);
-}
 
 void Guard::onHit()
 {
