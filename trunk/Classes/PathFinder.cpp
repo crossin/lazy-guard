@@ -38,6 +38,7 @@ PathFinder::~PathFinder(void)
 	delete []Hcost;
 
 	delete []pathBank;
+	delete []floydBank;
 }
 
 bool PathFinder::initWithSize(int mWeight, int mHeight, int tWeight, int tHeight)
@@ -70,6 +71,7 @@ bool PathFinder::initWithSize(int mWeight, int mHeight, int tWeight, int tHeight
 	Hcost = new int[mapWidth*mapHeight+2];
 
 	pathBank = new int[2*(mapWidth*mapHeight)];
+	floydBank = new int[2*(mapWidth*mapHeight)];
 	//InitializePathfinder();
 	
 	return true;
@@ -105,8 +107,8 @@ int PathFinder::FindPath (int startingX, int startingY,
 		newOpenListItemID=0;
 
 	//1. Convert location data (in pixels) to coordinates in the walkability array.
-	int startX = startingX/tileWidth;
-	int startY = startingY/tileHeight;	
+	startX = startingX/tileWidth;
+	startY = startingY/tileHeight;	
 	targetX = targetX/tileWidth;
 	targetY = targetY/tileHeight;
 
@@ -430,6 +432,8 @@ int PathFinder::FindPath (int startingX, int startingY,
 		//11.Read the first path step into xPath/yPath arrays
 		ReadPath(startingX,startingY,1);
 
+		// floyd cut
+		floyd();
 	}
 	return path;
 
@@ -571,4 +575,85 @@ int PathFinder::ReadPathY(int pathLocation)
 void PathFinder::setUnwalkable(int gridX, int gridY, bool isBlock)
 {
 	walkability [gridX][gridY] = isBlock ? unwalkable : walkable;
+}
+
+void PathFinder::floyd(void)
+{
+	if (pathLength <= 1){
+		return;
+	}
+
+	// check on same line
+	int floydLength = 0;
+	int ax, ay, bx, by, cx, cy;
+	ax = startX;
+	ay = startY;
+	bx = pathBank[0];
+	by = pathBank[1];
+
+	for (int i = 0; i <= pathLength - 2; i++)
+	{
+		cx = pathBank[i*2+2];
+		cy = pathBank[i*2+3];
+		if (!((bx - ax == cx - bx) && (by - ay == cy - by)))
+		{
+			floydBank[floydLength*2] = pathBank[i*2];
+			floydBank[floydLength*2+1] = pathBank[i*2+1];
+			floydLength++;
+		}
+		ax = bx;
+		ay = by;
+		bx = cx;
+		by = cy;
+	}
+	floydBank[floydLength*2] = pathBank[pathLength*2-2];
+	floydBank[floydLength*2+1] = pathBank[pathLength*2-1];
+	floydLength++;
+
+	pathLength = floydLength;
+
+	for (int i = 0; i < pathLength*2; i++){
+		pathBank[i] = floydBank[i];
+	}
+	/*
+	int ax, ay, bx, by, cx, cy;
+	ax = startX;
+	ay = startY;
+	bx = pathBank[0];
+	by = pathBank[pathLength*2-3];
+	cx = pathBank[pathLength*2-2];
+	cy = pathBank[pathLength*2-1];
+	floydBank[0] = startX;
+	floydBank[1] = startY;
+	floydLength = 1;
+
+	for (int i = -1; i <= pathLength - 3; i++)
+	{
+		ax = (i<0) ? startX : pathBank[i*2];
+		ay = (i<0) ? startY : pathBank[i*2+1];
+		if (!((bx - ax == cx - bx) && (by - ay == cy - by)))
+		{
+			cx = bx;
+			cy = by;
+			bx = ax;
+			by = ay;
+			floydBank[floydLength*2] = pathBank[i*2+2];
+			floydBank[floydLength*2+1] = pathBank[i*2+3];
+			floydLength++;
+		}
+	}
+	*/
+// 	for (int i = floydLength - 1; i >= 0; i--){
+// 		for (int j = 0; j <= i - 2; j++){
+// 			if (floydCrossAble(_floydPath[i], _floydPath[j])){
+// 				for (var k:int = i - 1; k > j; k--){
+// 					_floydPath.splice(k, 1);
+// 				}
+// 				i = j;
+// 				len = _floydPath.length;
+// 				break;
+// 			}
+// 			pathBank[i*2] = floydBank[floydLength*2];
+// 			pathBank[i*2+1] = floydBank[floydLength*2+1];
+// 		}
 }
