@@ -779,19 +779,6 @@ void PathFinder::floyd(void)
 			pathLength++;
 		}
 	}
-
-// 	for (int i = floydLength - 1; i >= 0; i--){
-// 		for (int j = 0; j <= i - 2; j++){
-// 			if (floydCrossAble(_floydPath[i], _floydPath[j])){
-// 				for (var k:int = i - 1; k > j; k--){
-// 					_floydPath.splice(k, 1);
-// 				}
-// 				i = j;
-// 				len = _floydPath.length;
-// 				break;
-// 			}
-// 			pathBank[i*2] = floydBank[floydLength*2];
-// 			pathBank[i*2+1] = floydBank[floydLength*2+1];
-// 		}
 }
+
 
