@@ -33,6 +33,6 @@ public:
 	float pointWakeMax;
 	int range; 
 	float findingInterval;
-	CCAction* actionWalk;
+	//CCAction* actionWalk;
 };
 

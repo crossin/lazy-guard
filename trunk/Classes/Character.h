@@ -16,8 +16,10 @@ public:
 
 	CCRect getRect();
 	CCFiniteTimeAction* makeAction(CCPoint from, CCPoint target);
-
+	void changeDirection(CCNode *node, void *param);
 	CCSprite* sprite;
 	int speed;
 	float timeRot;
+	CCFiniteTimeAction* actionWalks[8];
+	CCFiniteTimeAction* actionWalk;
 };

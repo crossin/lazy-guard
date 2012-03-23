@@ -11,6 +11,7 @@
 #include "GameOverScene.h"
 //#include <stdlib.h>
 #include <math.h>
+#include "AnimatePacker.h"
 
 
 using namespace cocos2d;
@@ -156,7 +157,7 @@ bool Gameplay::init()
 
 		//// 3. Add add a splash screen, show the cocos2d splash image.
 		
-		
+		AnimatePacker::getInstance()->loadAnimate("sprites.xml");
 		//gem
 // 		countGem = 5;
 // 		gems = CCArray::arrayWithCapacity(5);
@@ -190,6 +191,7 @@ bool Gameplay::init()
 		}
 		gemsOutside = CCArray::arrayWithCapacity(countGem);
 		gemsOutside->retain();
+
 		//guard
 		guard[0] = Guard::guard();
 		guard[0]->setPosition(ccp(100,100));

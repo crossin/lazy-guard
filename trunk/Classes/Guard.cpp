@@ -14,7 +14,6 @@ Guard::Guard(void)
 
 Guard::~Guard(void)
 {
-	actionWalk->release();
 }
 
 Guard* Guard::guard()
@@ -36,14 +35,20 @@ bool Guard::init()
 	do{
 		//this->setAnchorPoint(CCPointZero);
 
-		AnimatePacker::getInstance()->loadAnimate("sprites.xml"); 
-		sprite=CCSprite::spriteWithSpriteFrameName("guard2.png"); 
+		sprite=CCSprite::spriteWithSpriteFrameName("guard/guard-walk-down-0.png"); 
 		sprite->setAnchorPoint(ccp(0.5,0.25)); 
+		addChild(sprite);
 		//sprite->setPosition(ccp(size.width/2, size.height/2)); 
-		actionWalk = CCRepeatForever::actionWithAction(AnimatePacker::getInstance()->getAnimate("guard-walk"));
-		actionWalk->retain();
+		for (int i = 0; i < 8 ; i++)
+		{
+			char name[13];
+			sprintf(name,"guard-walk-%d",i);
+			actionWalks[i] = CCRepeatForever::actionWithAction(AnimatePacker::getInstance()->getAnimate(name));
+			actionWalks[i]->retain();
+		}
+		actionWalk = actionWalks[4];
+		//actionWalk->retain();
 		//sprite->runAction(actionWalk); 
-		addChild(sprite); 
 
 
 		bar = CCSprite::spriteWithFile("bar.png");
@@ -57,7 +62,7 @@ bool Guard::init()
 		status = SLEEPING;
 		pointSleepMax = 100;
 		pointSleep = 0;
-		pointWakeMax = 1000;
+		pointWakeMax = 100;
 		pointWake = 0;
 		speed = 60;
 		range = 30;
@@ -159,12 +164,12 @@ void Guard::findThief()
 	runAction( CCSequence::actions(actionMove,/*actionMoveDone,*/NULL) );
 	status = CHASING;
 
-if (INTERVAL-findingInterval<0.5)
-{
-	char textout[8];
-	_itoa_s((INTERVAL-findingInterval)*100,textout,10);
-	((Gameplay*)getParent())->pLabel->setString(textout);
-}
+// if (INTERVAL-findingInterval<0.5)
+// {
+// 	char textout[8];
+// 	_itoa_s((INTERVAL-findingInterval)*100,textout,10);
+// 	((Gameplay*)getParent())->pLabel->setString(textout);
+// }
 
 	findingInterval = INTERVAL;
 
@@ -209,15 +214,20 @@ void Guard::patrol()
 	runAction( CCSequence::actions(actionWait, actionGo, NULL) );
 	status = PATROLING;
 
-// for (int i=0;i<10;i++){
-//  	for (int j=0;j<15;j++){
-//  			game_map[i][j] = 0;
-//  	}
-//  }
-//  for (int i = 0; i < pathfinder->pathLength; i++)
-//  {
-//  game_map[pathfinder->pathBank[2*i+1]][pathfinder->pathBank[2*i]] = 2;
-//  }
+
+char textout[10];
+_itoa_s(pathfinder->pathLength,textout,10);
+((Gameplay*)this->getParent())->pLabel->setString(textout);
+
+ for (int i=0;i<10;i++){
+  	for (int j=0;j<15;j++){
+  			game_map[i][j] = 0;
+  	}
+  }
+  for (int i = 0; i < pathfinder->pathLength; i++)
+  {
+  game_map[pathfinder->pathBank[2*i+1]][pathfinder->pathBank[2*i]] = 2;
+  }
 }
 
 void Guard::updateFrame(ccTime dt)
@@ -231,7 +241,7 @@ void Guard::updateFrame(ccTime dt)
 		}
 		else
 		{
-			bar->setTextureRect(CCRectMake(0, 0, 16*pointSleep/pointSleepMax, bar->getContentSize().height));
+			bar->setTextureRect(CCRectMake(0, 0, 36*pointSleep/pointSleepMax, bar->getContentSize().height));
 			bar->setIsVisible(true);
 			pointSleep -= (50 * dt);
 		}
@@ -268,7 +278,7 @@ void Guard::updateFrame(ccTime dt)
 		}
 	}
 	// update position of bar
-	bar->setPosition(ccp(getPosition().x-18, getPosition().y+18));
+	bar->setPosition(ccp(getPosition().x-18, getPosition().y+36));
 }
 
 void Guard::spriteMoveFinished(CCNode* sender)
@@ -302,7 +312,7 @@ void Guard::setAwake(bool w)
 		status = SLEEPING;
 		stopAllActions();
 		sprite->stopAction(actionWalk);
-		sprite->setDisplayFrameWithAnimationName("guard-walk", 1);
+		sprite->setDisplayFrameWithAnimationName("guard-walk-4", 0);
 		//isAwake = false;
 		pointSleep = 0;
 	}
