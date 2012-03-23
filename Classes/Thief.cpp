@@ -33,12 +33,20 @@ bool Thief::init()
 	bool bRet = false;
 	do{
 		//this->setAnchorPoint(CCPointZero);
-		AnimatePacker::getInstance()->loadAnimate("sprites.xml"); 
-		sprite=CCSprite::spriteWithSpriteFrameName("thief2.png"); 
-		//sprite->setAnchorPoint(CCPointZero); 
+
+
+		sprite=CCSprite::spriteWithSpriteFrameName("thief/thief-walk-down-0.png"); 
+		sprite->setAnchorPoint(ccp(0.5,0.25)); 
+		addChild(sprite);
 		//sprite->setPosition(ccp(size.width/2, size.height/2)); 
-		sprite->runAction(CCRepeatForever::actionWithAction(AnimatePacker::getInstance()->getAnimate("thief-walk"))); 
-		addChild(sprite); 
+		for (int i = 0; i < 8 ; i++)
+		{
+			char name[13];
+			sprintf(name,"thief-walk-%d",i);
+			actionWalks[i] = CCRepeatForever::actionWithAction(AnimatePacker::getInstance()->getAnimate(name));
+			actionWalks[i]->retain();
+		}
+		actionWalk = actionWalks[4];
 
 // 		sprite = CCSprite::spriteWithFile("Target.png");
 // 		this->addChild(sprite);

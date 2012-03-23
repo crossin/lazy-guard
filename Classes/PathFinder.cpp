@@ -754,7 +754,13 @@ void PathFinder::floyd(void)
 
 	pathLength = 0;
 	for (int i = 0; i < floydLength-1; i++)
-	{		
+	{
+		if (i == floydLength-2)
+		{
+			pathBank[pathLength*2] = floydBank[2*i+2];
+			pathBank[pathLength*2+1] = floydBank[2*i+3];
+			pathLength++;
+		}
 		for (int j = floydLength-1; j > i+1; j--)
 		{
 			if (floydCrossAble(floydBank[2*i], floydBank[2*i+1], floydBank[2*j], floydBank[2*j+1]))
@@ -772,12 +778,7 @@ void PathFinder::floyd(void)
 				pathLength++;
 			}
 		}
-		if (i == floydLength-2)
-		{
-			pathBank[pathLength*2] = floydBank[2*i+2];
-			pathBank[pathLength*2+1] = floydBank[2*i+3];
-			pathLength++;
-		}
+
 	}
 }
 
