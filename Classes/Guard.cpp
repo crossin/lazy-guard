@@ -66,7 +66,7 @@ bool Guard::init()
 		pointWake = 0;
 		speed = 60;
 		range = 30;
-		timeRot = 0.5;
+		//timeRot = 0.5;
 		findingInterval = INTERVAL;
 		//behaviour=STAND;
 		//direction=DOWN;

@@ -16,14 +16,6 @@ Character::~Character(void)
 	}
 }
 
-CCRect Character::getRect()
-{
-	return CCRectMake(getPosition().x - sprite->getContentSize().width/2,
-		getPosition().y - sprite->getContentSize().height/2,
-		sprite->getContentSize().width,
-		sprite->getContentSize().height);
-}
-
 CCFiniteTimeAction* Character::makeAction( CCPoint from, CCPoint target )
 {
 

@@ -46,6 +46,11 @@ Gameplay::~Gameplay(void)
 		gemsOutside->release();
 		gemsOutside = NULL;
 	}
+	if (things)
+	{
+		things->release();
+		things = NULL;
+	}
 	PathFinder::release();
 
 	//delete pathfinder;
@@ -158,6 +163,7 @@ bool Gameplay::init()
 		//// 3. Add add a splash screen, show the cocos2d splash image.
 		
 		AnimatePacker::getInstance()->loadAnimate("sprites.xml");
+		things = new CCMutableArray<Thing*>;
 		//gem
 // 		countGem = 5;
 // 		gems = CCArray::arrayWithCapacity(5);
@@ -195,12 +201,16 @@ bool Gameplay::init()
 		//guard
 		guard[0] = Guard::guard();
 		guard[0]->setPosition(ccp(100,100));
-		this->addChild(guard[0], 1001);
+		addChild(guard[0], 1, Thing::GUARD);
+		addChild(guard[0]->bar, 1001);
+		things->addObject(guard[0]);
+
 		guard[1] = Guard::guard();
 		guard[1]->setPosition(ccp(300,200));
-		this->addChild(guard[1], 1002);
-		addChild(guard[0]->bar, 1003);
-		addChild(guard[1]->bar, 1004);
+		addChild(guard[1], 1, Thing::GUARD);
+		addChild(guard[1]->bar, 1001);
+		things->addObject(guard[1]);
+		
 		//thief
 		thieves = new CCMutableArray<Thief*>;
 		countThief = 20;
@@ -361,14 +371,14 @@ for (int i=0;i<10;i++){
 // 			guard[i]->findThief();
 		}
 	}
-	
 }
 
 void Gameplay::addThief()
 {
 	Thief *thief = Thief::thief();
 	thieves->addObject(thief);
-	addChild(thief);	
+	addChild(thief, 1, Thing::THIEF);
+	things->addObject(thief);
 	thief->findGem();
 
 // 	char a[10];
@@ -389,45 +399,15 @@ void Gameplay::gameLogic(ccTime dt)
 
 void Gameplay::updateFrame(ccTime dt)
 {
-	//CCMutableArray<Thief*> *thievesToDelete = new CCMutableArray<Thief*>;
-	CCMutableArray<Thief*>::CCMutableArrayIterator it;
-	Thief* thief;
-
-	for (it = thieves->begin(); it != thieves->end(); it++)
+	CCMutableArray<Thing*>::CCMutableArrayIterator it1;
+	CCMutableArray<Thing*>::CCMutableArrayIterator it2;
+	for (it1 = things->begin(); it1 != things->end(); it1++)
 	{
-		thief = *it;
-		// check caught
-		if (thief->status != Thief::FLEEING  && thief->inScreen())
+		for (it2 = things->begin(); it2 != things->end(); it2++)
 		{
-			for (int i = 0; i < 2; i++)
-			{
-				//if (guard[i]->isAwake && CCRect::CCRectIntersectsRect(guard[i]->getRect(), thief->getRect()))
-				if (guard[i]->status != Guard::SLEEPING && ccpDistance(guard[i]->getPosition(), thief->getPosition()) < guard[i]->range)
-				{
-					if (thief->gem)
-					{
-						//treasure->gems->addObject(thief->gem);
-						//int i = treasure->gems->indexOfObject(thief->gem);
-						//thief->gem->setPosition(ccp(treasure->posX+8*sin(i*6.28/5),treasure->posY+8*cos(i*6.28/5)));
-						this->reorderChild(thief->gem, 0);
-						gemsOutside->addObject(thief->gem);
-						thief->gem = NULL;
-					}
-					//thievesToDelete->addObject(thief);
-					thief->fleeHome();
-					guard[i]->stopAllActions();
-					//guard[i]->isAwake = false;
-				}
-			}
+			overlapped(*it1, *it2);
 		}
 	}
-
-
-// 	for (it = thievesToDelete->begin(); it != thievesToDelete->end(); it++ )
-// 	{
-// 		thief = *it;
-// 		thief->kill();
-// 	}
 
 	// check win
 	if (countThief == 0 && thieves->count() == 0)
@@ -443,6 +423,43 @@ void Gameplay::updateFrame(ccTime dt)
 		GameOverScene *gameOverScene = GameOverScene::node();
 		gameOverScene->getLayer()->getLabel()->setString("You Lose!");
 		CCDirector::sharedDirector()->replaceScene(gameOverScene);
+	}
+
+}
+
+void Gameplay::overlapped(Thing* t1, Thing* t2)
+{
+	if (t1 == t2)
+	{
+		return;
+	}
+
+	if (t1->getTag() == Thing::GUARD && t2->getTag() == Thing::THIEF)
+	{
+		Guard* gd = (Guard*)t1;
+		Thief* tf = (Thief*)t2;
+		if (tf->status != Thief::FLEEING  && tf->inScreen())
+		{
+			if (gd->status != Guard::SLEEPING && ccpDistance(gd->getPosition(), tf->getPosition()) < gd->range)
+			{
+				if (tf->gem)
+				{
+					reorderChild(tf->gem, 0);
+					gemsOutside->addObject(tf->gem);
+					tf->gem = NULL;
+				}
+				tf->fleeHome();
+				gd->stopAllActions();
+			}				
+		}
+	}
+	
+	if (CCRect::CCRectIntersectsRect(t1->getRect(), t2->getRect()))
+	{
+		if (t1->getPosition().y > t2->getPosition().y && t1->getZOrder() >= t2->getZOrder())
+		{
+			reorderChild(t2, t1->getZOrder()+1);
+		}
 	}
 
 }
