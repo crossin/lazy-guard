@@ -69,7 +69,7 @@ bool Thief::init()
 		gem = NULL;
 // 		isFleeing = false;
 		speed = 50;
-		timeRot = 0.3;
+		//timeRot = 0.3;
 		status = FINDING;
 		//behaviour=STAND;
 		//direction=DOWN;
@@ -266,12 +266,14 @@ void Thief::moveFinished(CCNode* sender)
 
 void Thief::kill()
 {
+	Gameplay* gp = (Gameplay*)getParent();
 	if (gem)
 	{
 		gem->kill();
-		((Gameplay*)getParent())->countGem--;
+		gp->countGem--;
 	}
-	((Gameplay*)getParent())->thieves->removeObject(this);
+	gp->thieves->removeObject(this);
+	gp->things->removeObject(this);
 	removeFromParentAndCleanup(true);
 }
 

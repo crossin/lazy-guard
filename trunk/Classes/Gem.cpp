@@ -43,14 +43,6 @@ bool Gem::init()
 	return bRet;
 }
 
-CCRect Gem::getRect()
-{
-	return CCRectMake(getPosition().x - sprite->getContentSize().width/2,
-		getPosition().y - sprite->getContentSize().height/2,
-		sprite->getContentSize().width,
-		sprite->getContentSize().height);
-}
-
 void Gem::kill()
 {
 	//owner = NULL;

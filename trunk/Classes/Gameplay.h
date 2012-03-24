@@ -31,6 +31,7 @@ virtual void draw();
 	//virtual void ccTouchesBegan(CCSet *pTouches, CCEvent *pEvent);
  //   virtual void ccTouchesMoved(CCSet *pTouches, CCEvent *pEvent);
 	CCMutableArray<Thief*>* thieves;
+	CCMutableArray<Thing*>* things;
 	Guard* guard[2];
 	CCArray* gemsOutside;
 	Treasure* treasure;
@@ -46,7 +47,7 @@ private:
 // 	void spriteMoveFinished(CCNode* sender);
 	//CCMenu* m_pItmeMenu;
 	virtual void keyBackClicked();
-
+	void overlapped(Thing* t1, Thing* t2);
 };
 
 #endif

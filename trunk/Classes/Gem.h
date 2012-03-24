@@ -1,11 +1,11 @@
 #pragma once
 
-#include "CCSprite.h"
+#include "Thing.h"
 
 using namespace cocos2d;
 
 class Gem :
-	public CCNode
+	public Thing
 {
 public:
 	Gem(void);
@@ -13,11 +13,8 @@ public:
 
 	static Gem* gem();
 
-	bool init();
+	virtual bool init();
 	void kill();
-	CCRect getRect();
 
-	CCSprite* sprite;
-	//Thief* owner;
 };
 
