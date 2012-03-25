@@ -16,10 +16,10 @@ Treasure::~Treasure(void)
 	}
 }
 
-Treasure* Treasure::treasure(int count, int ix, int iy)
+Treasure* Treasure::treasure(int count, CCPoint pos)
 {
 	Treasure *treasure = new Treasure;
-	if (treasure && treasure->init(count, ix, iy))
+	if (treasure && treasure->init(count, pos))
 	{
 		treasure->autorelease();
 		return treasure;
@@ -28,24 +28,19 @@ Treasure* Treasure::treasure(int count, int ix, int iy)
 	return NULL;
 }
 
-bool Treasure::init(int count, int ix, int iy)
+bool Treasure::init(int count, CCPoint pos)
 {
 	bool bRet = false;
 	do{
-		//this->setAnchorPoint(CCPointZero);
-		posX = ix;
-		posY = iy;
-
+		setPosition(ccp(pos.x, pos.y));
 		gems = CCArray::arrayWithCapacity(count);
 		gems->retain();
 		for (int i = 0; i < count; i++)
 		{
 			Gem* g = Gem::gem();
-			g->setPosition(ccp(posX+8*sin(i*6.28/5), posY+8*cos(i*6.28/5)));
-// 			((Gameplay*)this->getParent())->addChild(g);
+			g->setPosition(ccp(pos.x+8*sin(i*6.28/5), pos.y+8*cos(i*6.28/5)));
 			gems->addObject(g);
 		}
-
 		bRet=true;
 	}while(0);
 

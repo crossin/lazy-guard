@@ -20,7 +20,7 @@ public:
 	void updateFrame(ccTime dt);
 	void setAwake(bool w);
 	void patrol();
-
+	CCRect getRectClick();
 	static const int SLEEPING = 0, WAKING = 1, CHASING = 2, PATROLING = 3; 
 	static const float INTERVAL;
 

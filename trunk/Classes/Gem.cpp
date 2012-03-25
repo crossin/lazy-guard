@@ -1,6 +1,5 @@
 #include "Gem.h"
 
-#include "Gameplay.h"
 using namespace cocos2d;
 
 Gem::Gem(void)

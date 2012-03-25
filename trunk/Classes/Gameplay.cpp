@@ -12,6 +12,7 @@
 //#include <stdlib.h>
 #include <math.h>
 #include "AnimatePacker.h"
+#include "Obstacle.h"
 
 
 using namespace cocos2d;
@@ -102,10 +103,12 @@ bool Gameplay::init()
 		pDesertTileMap->setPosition(ccp(0,0));
 		addChild(pDesertTileMap, 0, 1);
 		
-		CCTMXLayer *meta=pDesertTileMap->layerNamed("Meta");
-		meta->setIsVisible(false);
-		CCTMXLayer *layerGem = pDesertTileMap->layerNamed("gem");
-		layerGem->setIsVisible(false);
+// 		CCTMXLayer *meta=pDesertTileMap->layerNamed("Meta");
+// 		meta->setIsVisible(false);
+// 		CCTMXLayer *layerGem = pDesertTileMap->layerNamed("gem");
+// 		layerGem->setIsVisible(false);
+		CCTMXLayer *layerObstacle = pDesertTileMap->layerNamed("Things");
+		layerObstacle->setIsVisible(false);
 /*
 		r = (sizeof(game_map)/sizeof(game_map[0]));
 		c = (sizeof(game_map[0])/sizeof(game_map[0][0]));
@@ -119,10 +122,14 @@ bool Gameplay::init()
 		PathFinder* pathfinder = PathFinder::getInstance();
 		pathfinder->initWithSize(pDesertTileMap->getMapSize().width, pDesertTileMap->getMapSize().height, pDesertTileMap->getTileSize().width, pDesertTileMap->getTileSize().height);
 
+		AnimatePacker::getInstance()->loadAnimate("sprites.xml");
+		things = new CCMutableArray<Thing*>;
+
 		int tileGID;
 		CCDictionary<std::string, CCString*>* props;
 		CCString* result;
-
+		CCPoint posTemp;
+/*
 		for (int i=0;i<r;i++){
 			for (int j=0;j<c;j++){
 				pathfinder->setUnwalkable(j, i, false);
@@ -146,6 +153,32 @@ bool Gameplay::init()
 				//}
 			}
 		}
+*/
+		Thing* obsTemp;
+		for (int i=0;i<r;i++){
+			for (int j=0;j<c;j++){
+				pathfinder->setUnwalkable(j, i, false);
+				if (tileGID = layerObstacle->tileGIDAt(ccp(j,r-i-1)))
+				{
+					if (props = pDesertTileMap->propertiesForGID(tileGID))
+					{
+						result = props->objectForKey("Type");
+						posTemp = ccp((j+0.5)*pDesertTileMap->getTileSize().width, (i+0.5)*pDesertTileMap->getTileSize().height);
+						obsTemp = Obstacle::obstacle(result->toInt(), posTemp);
+						pathfinder->setUnwalkable(j, i, true);
+						addChild(obsTemp);
+						things->addObject(obsTemp);
+// 						if (result->m_sString.compare("True") == 0)
+// 						{
+// 							game_map[i][j] = 1;
+// 							//pathfinder->walkability [j][i] = pathfinder->unwalkable;
+// 							pathfinder->setUnwalkable(j, i, true);
+// 						}
+					}
+				}
+			}
+		}
+
 
 		// 2. Add a label shows "Hello World".
 
@@ -162,34 +195,27 @@ bool Gameplay::init()
 
 		//// 3. Add add a splash screen, show the cocos2d splash image.
 		
-		AnimatePacker::getInstance()->loadAnimate("sprites.xml");
-		things = new CCMutableArray<Thing*>;
+
 		//gem
-// 		countGem = 5;
-// 		gems = CCArray::arrayWithCapacity(5);
-// 		gems->retain();
-// 		for (int i = 0; i < 5; i++)
-// 		{
-// 			Gem* g = Gem::gem();
-// 			g->setPosition(ccp(240+8*sin(i*6.28/5),160+8*cos(i*6.28/5)));
-// 			addChild(g, 1000);
-// 			gems->addObject(g);
+		CCTMXObjectGroup *objects = pDesertTileMap->objectGroupNamed("Objects");
+		props = objects->objectNamed("Treasure");
+		posTemp = ccp(props->objectForKey("x")->toInt(), props->objectForKey("y")->toInt());
+		countGem = props->objectForKey("Count")->toInt();
+
+// 		for (int i=0;i<r;i++){
+// 			for (int j=0;j<c;j++){
+// 				if (tileGID = layerGem->tileGIDAt(ccp(j,r-i-1)))
+// 				{
+// 					if (props = pDesertTileMap->propertiesForGID(tileGID))
+// 					{
+// 						result = props->objectForKey("count");
+// 						countGem = result->toInt();
+// 						posTemp = ccp((j+0.5)*pDesertTileMap->getTileSize().width, (i+0.5)*pDesertTileMap->getTileSize().height);
+// 					}
+// 				}
+// 			}
 // 		}
-		CCPoint posGem;
-		for (int i=0;i<r;i++){
-			for (int j=0;j<c;j++){
-				if (tileGID = layerGem->tileGIDAt(ccp(j,r-i-1)))
-				{
-					if (props = pDesertTileMap->propertiesForGID(tileGID))
-					{
-						result = props->objectForKey("count");
-						countGem = result->toInt();
-						posGem = ccp((j+0.5)*pDesertTileMap->getTileSize().width, (i+0.5)*pDesertTileMap->getTileSize().height);
-					}
-				}
-			}
-		}
-		treasure = Treasure::treasure(countGem, posGem.x, posGem.y);
+		treasure = Treasure::treasure(countGem, posTemp);
 		this->addChild(treasure);
 		for (int i=0; i<countGem; i++)
 		{
@@ -363,7 +389,7 @@ for (int i=0;i<10;i++){
 	for (int i = 0; i < 2; i++)
 	{
 // 		rectGuard = CCRectMake(guard[i]->getPosition().x, guard[i]->getPosition().y, guard[i]->sprite->getContentSize().width, guard[i]->sprite->getContentSize().height);
-		if (!guard[i]->status != Guard::SLEEPING && CCRect::CCRectContainsPoint(guard[i]->getRect(), m_tTouchPos))
+		if (!guard[i]->status != Guard::SLEEPING && CCRect::CCRectContainsPoint(guard[i]->getRectClick(), m_tTouchPos))
 		{
 			guard[i]->onHit();
 			break;
