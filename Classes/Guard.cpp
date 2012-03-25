@@ -316,5 +316,14 @@ void Guard::setAwake(bool w)
 		//isAwake = false;
 		pointSleep = 0;
 	}
+}
 
+
+CCRect Guard::getRectClick()
+{
+	int border = 20;
+	return CCRectMake(getPosition().x - sprite->getContentSize().width * sprite->getAnchorPoint().x - border,
+		getPosition().y - sprite->getContentSize().height * sprite->getAnchorPoint().y - border,
+		sprite->getContentSize().width + border * 2,
+		sprite->getContentSize().height + border * 2);
 }

@@ -109,12 +109,12 @@ void Thief::findGem()
 		}
 		if (trs->gems->count() > 0 && status != BACKING)
 		{
-			dist = ccpDistance(getPosition(), ccp(trs->posX,trs->posY));
+			dist = ccpDistance(getPosition(), trs->getPosition());
 			if (dist < dist_min)
 			{
 				dist_min = dist;
-				gemX = trs->posX;
-				gemY = trs->posY;
+				gemX = trs->getPosition().x;
+				gemY = trs->getPosition().y;
 			}
 		} 
 	} 
@@ -124,8 +124,8 @@ void Thief::findGem()
 		{
 			return;
 		}
-		gemX = trs->posX;
-		gemY = trs->posY;
+		gemX = trs->getPosition().x;
+		gemY = trs->getPosition().y;
 	}
 
 	PathFinder *pathfinder = PathFinder::getInstance();
@@ -195,7 +195,7 @@ void Thief::getGem(CCNode* sender)
 	}
 	// in treasure
 	Treasure* trs = ((Gameplay*)getParent())->treasure;
-	if (gem == NULL && CCRect::CCRectContainsPoint(this->getRect(), ccp(trs->posX, trs->posY)))
+	if (gem == NULL && CCRect::CCRectContainsPoint(this->getRect(), trs->getPosition()))
 	{
 		status = BACKING;
 		gemsList = trs->gems;
