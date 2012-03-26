@@ -6,8 +6,6 @@
 
 extern int game_map[10][15];
 
-const float Guard::INTERVAL = 1;
-
 Guard::Guard(void)
 {
 }
@@ -158,10 +156,11 @@ void Guard::findThief()
 // 	int t=1;
 // }
 
-	CCFiniteTimeAction* actionMoveDone = CCCallFuncN::actionWithTarget( this, callfuncN_selector(Guard::spriteMoveFinished));
+	//CCFiniteTimeAction* actionMoveDone = CCCallFuncN::actionWithTarget( this, callfuncN_selector(Guard::spriteMoveFinished));
 
 	stopAllActions();
-	runAction( CCSequence::actions(actionMove,/*actionMoveDone,*/NULL) );
+	//runAction( CCSequence::actions(actionMove,/*actionMoveDone,*/NULL) );
+	runAction(actionMove);
 	status = CHASING;
 
 // if (INTERVAL-findingInterval<0.5)
@@ -281,11 +280,11 @@ void Guard::updateFrame(ccTime dt)
 	bar->setPosition(ccp(getPosition().x-18, getPosition().y+36));
 }
 
-void Guard::spriteMoveFinished(CCNode* sender)
-{
-	//CCSprite *sprite = (CCSprite *)sender;
-	this->findThief();
-}
+// void Guard::spriteMoveFinished(CCNode* sender)
+// {
+// 	//CCSprite *sprite = (CCSprite *)sender;
+// 	this->findThief();
+// }
 
 
 void Guard::onHit()
