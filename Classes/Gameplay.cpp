@@ -504,6 +504,7 @@ void Gameplay::overlapped(Thing* t1, Thing* t2)
 				// treasure
 				if (treasure->gems->containsObject(gm))
 				{
+
 				}
 			}
 		}
