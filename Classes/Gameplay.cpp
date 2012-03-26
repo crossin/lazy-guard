@@ -216,10 +216,13 @@ bool Gameplay::init()
 // 			}
 // 		}
 		treasure = Treasure::treasure(countGem, posTemp);
-		this->addChild(treasure);
+		addChild(treasure);
+		Gem* g;
 		for (int i=0; i<countGem; i++)
 		{
-			this->addChild((Gem*)treasure->gems->objectAtIndex(i));
+			g = (Gem*)treasure->gems->objectAtIndex(i);
+			addChild(g, 0, Thing::GEM);
+			things->addObject(g);
 		}
 		gemsOutside = CCArray::arrayWithCapacity(countGem);
 		gemsOutside->retain();
@@ -460,26 +463,76 @@ void Gameplay::overlapped(Thing* t1, Thing* t2)
 		return;
 	}
 
+	// guard vs. thief
 	if (t1->getTag() == Thing::GUARD && t2->getTag() == Thing::THIEF)
 	{
 		Guard* gd = (Guard*)t1;
 		Thief* tf = (Thief*)t2;
-		if (tf->status != Thief::FLEEING  && tf->inScreen())
+		if (tf->status != Thief::FLEEING  && tf->inScreen()
+			&& gd->status != Guard::SLEEPING && ccpDistance(gd->getPosition(), tf->getPosition()) < gd->range)
 		{
-			if (gd->status != Guard::SLEEPING && ccpDistance(gd->getPosition(), tf->getPosition()) < gd->range)
+			if (tf->gem)
 			{
-				if (tf->gem)
+				reorderChild(tf->gem, 0);
+				gemsOutside->addObject(tf->gem);
+				tf->gem = NULL;
+			}
+			tf->fleeHome();
+			gd->stopAllActions();
+		}				
+	}
+
+	// thief vs. gem
+	if (t1->getTag() == Thing::THIEF && t2->getTag() == Thing::GEM)
+	{
+		Thief* tf = (Thief*)t1;
+		Gem* gm = (Gem*)t2;
+
+		if (tf->status == Thief::FINDING || tf->status == Thief::BACKING)
+		{
+			if (CCRect::CCRectIntersectsRect(tf->getRect(), gm->getRect()))
+			{
+				// outside
+				if (gemsOutside->containsObject(gm))
 				{
-					reorderChild(tf->gem, 0);
-					gemsOutside->addObject(tf->gem);
-					tf->gem = NULL;
+					reorderChild(gm, 1000);
+					gemsOutside->removeObject(g);
+					tf->gem = gm;
+					tf->status = Thief::STEALING;
+					tf->findHome();
 				}
-				tf->fleeHome();
-				gd->stopAllActions();
-			}				
+				// treasure
+				if (treasure->gems->containsObject(gm))
+				{
+				}
+			}
+		}
+
+
+		//CCArray* gemsList = ((Gameplay*)getParent())->gemsOutside;
+		// 	rectThief = CCRectMake(this->getPosition().x, this->getPosition().y, this->sprite->getContentSize().width, this->sprite->getContentSize().height);
+
+		// in treasure
+		Treasure* trs = ((Gameplay*)getParent())->treasure;
+		if (gem == NULL && CCRect::CCRectContainsPoint(this->getRect(), trs->getPosition()))
+		{
+			status = BACKING;
+			gemsList = trs->gems;
+			if (gem = (Gem*)gemsList->lastObject())
+			{
+				((Gameplay*)getParent())->reorderChild(gem, 1000);
+				gemsList->removeLastObject();
+				status = STEALING;
+			}
+			this->findHome();
 		}
 	}
 	
+	// check z-order
+	if (t1->getTag() == Thing::GEM || t2->getTag() == Thing::GEM)
+	{
+		return;
+	}
 	if (CCRect::CCRectIntersectsRect(t1->getRect(), t2->getRect()))
 	{
 		if (t1->getPosition().y > t2->getPosition().y && t1->getZOrder() >= t2->getZOrder())

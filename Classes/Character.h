@@ -12,6 +12,8 @@ public:
 	Character(void);
 	~Character(void);
 
+	static const float INTERVAL;
+
 	virtual bool init() = 0;
 
 	CCFiniteTimeAction* makeAction(CCPoint from, CCPoint target);

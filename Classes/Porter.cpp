@@ -1,4 +1,4 @@
-#include "Thief.h"
+#include "Porter.h"
 #include "PathFinder.h"
 #include "Gameplay.h"
 #include "cocos2d.h"
@@ -7,38 +7,35 @@
 
 extern int game_map[10][15];
 
-Thief::Thief(void)
+Porter::Porter(void)
 {
 }
 
-Thief::~Thief(void)
+Porter::~Porter(void)
 {
 }
 
-Thief* Thief::thief()
+Porter* Porter::porter()
 {
-	Thief *thief = new Thief;
+	Porter *porter = new Porter;
 
-	if (thief && thief->init())
+	if (porter && porter->init())
 	{
-		thief->autorelease();
-		return thief;
+		porter->autorelease();
+		return porter;
 	}
 
 	return NULL;
 }
 
-bool Thief::init()
+bool Porter::init()
 {
 	bool bRet = false;
 	do{
-		//this->setAnchorPoint(CCPointZero);
-
-
 		sprite=CCSprite::spriteWithSpriteFrameName("thief/thief-walk-down-0.png"); 
 		sprite->setAnchorPoint(ccp(0.5,0.25)); 
 		addChild(sprite);
-		//sprite->setPosition(ccp(size.width/2, size.height/2)); 
+
 		for (int i = 0; i < 8 ; i++)
 		{
 			char name[13];
@@ -48,84 +45,41 @@ bool Thief::init()
 		}
 		actionWalk = actionWalks[4];
 
-// 		sprite = CCSprite::spriteWithFile("Target.png");
-// 		this->addChild(sprite);
-
-
-		float ranPos = CCRANDOM_0_1();
-		//float startX, startY;
-		//srand(GetTickCount());
-		if (ranPos<0.5)
-		{
-			startX = CCRANDOM_0_1()*500;
-			startY = (ranPos<0.25)?-20:340;
-		} 
-		else
-		{
-			startX = (ranPos<0.75)?-20:500;
-			startY = CCRANDOM_0_1()*340;
-		}
-		setPosition(ccp(startX,startY));
+		setPosition(ccp(240,320));
 		gem = NULL;
-// 		isFleeing = false;
 		speed = 50;
-		//timeRot = 0.3;
-		status = FINDING;
-		//behaviour=STAND;
-		//direction=DOWN;
+		status = PATROLING;
 
 		schedule( schedule_selector(Thief::updateFrame));
 
-		//CCActionInterval *action=getAnimate(MOVE,OVERLOOK);
-		//spirte->runAction(CCRepeatForever::actionWithAction(action));
-
-		//this->schedule(schedule_selector(Monster::moveUpdate));
 		bRet=true;
 	}while(0);
 	return bRet;
 }
 
-void Thief::findGem()
+void Porter::findGem()
 {
 	CCArray* gemsOut = ((Gameplay*)getParent())->gemsOutside;
-	Treasure* trs = ((Gameplay*)getParent())->treasure;
 	int gemX = 0;
 	int gemY = 0;
 	float dist;
 	float dist_min = 100000;
-	if (gemsOut->count() > 0)
+	if (gemsOut->count() == 0)
 	{
-		Gem* g;
-		for (int i=0; i<gemsOut->count(); i++)
-		{
-			g = (Gem*)gemsOut->objectAtIndex(i);
-			dist = ccpDistance(getPosition(), g->getPosition());
-			if (dist < dist_min)
-			{
-				dist_min = dist;
-				gemX = g->getPosition().x;
-				gemY = g->getPosition().y;
-			}
-		}
-		if (trs->gems->count() > 0 && status != BACKING)
-		{
-			dist = ccpDistance(getPosition(), trs->getPosition());
-			if (dist < dist_min)
-			{
-				dist_min = dist;
-				gemX = trs->getPosition().x;
-				gemY = trs->getPosition().y;
-			}
-		} 
-	} 
-	else
+		return;
+	}
+
+	Gem* g;
+	for (int i=0; i<gemsOut->count(); i++)
 	{
-		if (status == BACKING)
+		g = (Gem*)gemsOut->objectAtIndex(i);
+		dist = ccpDistance(getPosition(), g->getPosition());
+		if (dist < dist_min)
 		{
-			return;
+			dist_min = dist;
+			gemX = g->getPosition().x;
+			gemY = g->getPosition().y;
 		}
-		gemX = trs->getPosition().x;
-		gemY = trs->getPosition().y;
 	}
 
 	PathFinder *pathfinder = PathFinder::getInstance();
@@ -149,11 +103,10 @@ void Thief::findGem()
 		pathGo->addObject(makeAction(from, target));
 	}
 	actionGo = CCSequence::actionsWithArray(pathGo);
-	//CCFiniteTimeAction* steal = CCCallFuncN::actionWithTarget( this, callfuncN_selector(Thief::getGem));
+	CCFiniteTimeAction* steal = CCCallFuncN::actionWithTarget( this, callfuncN_selector(Thief::getGem));
 
 	stopAllActions();
-	//runAction( CCSequence::actions(actionGo, steal, /*actionBack, actionOver,*/ NULL) );
-	runAction(actionGo);
+	runAction( CCSequence::actions(actionGo, steal, /*actionBack, actionOver,*/ NULL) );
 
 /*
  for (int i=0;i<10;i++){
@@ -172,7 +125,7 @@ void Thief::findGem()
 
 }
 
-void Thief::getGem(CCNode* sender)
+void Porter::getGem(CCNode* sender)
 {
 // 	CCRect rectGem;
 // 	CCRect rectThief;
@@ -210,7 +163,7 @@ void Thief::getGem(CCNode* sender)
 	}
 }
 
-void Thief::findHome()
+void Porter::findHome()
 {
 	PathFinder *pathfinder = PathFinder::getInstance();
 	int result = pathfinder->FindPath(getPosition().x, getPosition().y, startX, startY);
@@ -260,26 +213,26 @@ for (int i = 0; i < pathfinder->pathLength; i++)
 */
 }
 
-void Thief::moveFinished(CCNode* sender)
-{
-	kill();
-}
+// void Porter::moveFinished(CCNode* sender)
+// {
+// 	kill();
+// }
 
-void Thief::kill()
-{
-	Gameplay* gp = (Gameplay*)getParent();
-	if (gem)
-	{
-		gem->kill();
-		gp->countGem--;
-	}
-	gp->thieves->removeObject(this);
-	gp->things->removeObject(this);
-	removeFromParentAndCleanup(true);
-}
+// void Porter::kill()
+// {
+// 	Gameplay* gp = (Gameplay*)getParent();
+// 	if (gem)
+// 	{
+// 		gem->kill();
+// 		gp->countGem--;
+// 	}
+// 	gp->thieves->removeObject(this);
+// 	gp->things->removeObject(this);
+// 	removeFromParentAndCleanup(true);
+// }
 
 
-void Thief::fleeHome()
+void Porter::fleeHome()
 {
 // 	isFleeing = true;
 	status = FLEEING;
@@ -288,7 +241,7 @@ void Thief::fleeHome()
 	this->findHome();
 }
 
-void Thief::updateFrame(ccTime dt)
+void Porter::updateFrame(ccTime dt)
 {
 	if (gem)
 	{
@@ -296,7 +249,7 @@ void Thief::updateFrame(ccTime dt)
 	}
 }
 
-bool Thief::inScreen()
+bool Porter::inScreen()
 {
 	CCSize winSize = CCDirector::sharedDirector()->getWinSize();
 // 	int w = PathFinder::getInstance()->tileWidth / 2;

@@ -4,8 +4,6 @@
 #include "SimpleAudioEngine.h"
 using namespace CocosDenshion;
 
-
-#include "HelloWorldScene.h"
 #include "Gameplay.h"
 
 #include "CCEGLView.h"
