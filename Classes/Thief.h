@@ -18,7 +18,7 @@ public:
 	void findGem();
 	void findHome();
 	void moveFinished(CCNode* sender);
- 	void getGem(CCNode* sender);
+//  	void getGem(CCNode* sender);
 	void fleeHome();
 	void kill();
 	void updateFrame(ccTime dt);
@@ -32,4 +32,5 @@ public:
 	float startY;
 // 	bool isFleeing;
 	int status;
+	float findingInterval;
 };

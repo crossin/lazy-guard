@@ -71,6 +71,7 @@ bool Thief::init()
 		speed = 50;
 		//timeRot = 0.3;
 		status = FINDING;
+		findingInterval = INTERVAL;
 		//behaviour=STAND;
 		//direction=DOWN;
 
@@ -155,6 +156,7 @@ void Thief::findGem()
 	//runAction( CCSequence::actions(actionGo, steal, /*actionBack, actionOver,*/ NULL) );
 	runAction(actionGo);
 
+	findingInterval = INTERVAL;
 /*
  for (int i=0;i<10;i++){
  	for (int j=0;j<15;j++){
@@ -172,6 +174,7 @@ void Thief::findGem()
 
 }
 
+/*
 void Thief::getGem(CCNode* sender)
 {
 // 	CCRect rectGem;
@@ -209,6 +212,7 @@ void Thief::getGem(CCNode* sender)
 		this->findHome();
 	}
 }
+*/
 
 void Thief::findHome()
 {
@@ -243,7 +247,7 @@ void Thief::findHome()
 	stopAllActions();
 	runAction( CCSequence::actions(actionGo, actionOver, NULL) );
 
-	((Gameplay*)getParent())->updateThieves();
+// 	((Gameplay*)getParent())->updateThieves();
 /*
 for (int i=0;i<10;i++){
 	for (int j=0;j<15;j++){
@@ -293,6 +297,14 @@ void Thief::updateFrame(ccTime dt)
 	if (gem)
 	{
 		gem->setPosition(getPosition());
+	}
+	if (status == FINDING || status == BACKING)
+	{
+		findingInterval -= dt;
+		if (findingInterval < 0)
+		{
+			findGem();
+		}
 	}
 }
 

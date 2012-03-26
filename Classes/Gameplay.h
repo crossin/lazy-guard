@@ -23,7 +23,7 @@ public:
 	LAYER_NODE_FUNC(Gameplay);
 
 	void ccTouchesEnded(CCSet* touches, CCEvent* event);
-	void updateThieves();
+	//void updateThieves();
 
 virtual void draw();
  //   void menuCallback(CCObject * pSender);
@@ -48,6 +48,8 @@ private:
 	//CCMenu* m_pItmeMenu;
 	virtual void keyBackClicked();
 	void overlapped(Thing* t1, Thing* t2);
+	void caughtThief(Guard* gd, Thief* tf);
+	void gotGem(Thief* tf);
 };
 
 #endif

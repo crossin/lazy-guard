@@ -4,7 +4,7 @@
 
 using namespace cocos2d;
 
-const float Character::INTERVAL = 1;
+const float Character::INTERVAL = 0.7;
 
 Character::Character(void)
 {

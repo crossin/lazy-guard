@@ -32,7 +32,7 @@ bool Treasure::init(int count, CCPoint pos)
 {
 	bool bRet = false;
 	do{
-		setPosition(ccp(pos.x, pos.y));
+		setPosition(pos);
 		gems = CCArray::arrayWithCapacity(count);
 		gems->retain();
 		for (int i = 0; i < count; i++)
