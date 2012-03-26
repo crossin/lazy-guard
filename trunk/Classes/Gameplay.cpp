@@ -221,8 +221,8 @@ bool Gameplay::init()
 		for (int i=0; i<countGem; i++)
 		{
 			g = (Gem*)treasure->gems->objectAtIndex(i);
-			addChild(g, 0, Thing::GEM);
-			things->addObject(g);
+			addChild(g, 0);
+			//things->addObject(g);
 		}
 		gemsOutside = CCArray::arrayWithCapacity(countGem);
 		gemsOutside->retain();
@@ -430,12 +430,29 @@ void Gameplay::updateFrame(ccTime dt)
 {
 	CCMutableArray<Thing*>::CCMutableArrayIterator it1;
 	CCMutableArray<Thing*>::CCMutableArrayIterator it2;
+	Thing* tg1;
+	Thing* tg2;
 	for (it1 = things->begin(); it1 != things->end(); it1++)
 	{
+		tg1 = (Thing*)*it1;
+		// check thief got gem
+		if (tg1->getTag() == Thing::THIEF)
+		{
+			gotGem((Thief*)tg1);
+		}
+
 		for (it2 = things->begin(); it2 != things->end(); it2++)
 		{
-			overlapped(*it1, *it2);
+			tg2 = (Thing*)*it2;
+			// check guard got thief
+			if (tg1->getTag() == Thing::GUARD && tg2->getTag() == Thing::THIEF)
+			{
+				caughtThief((Guard*)tg1, (Thief*)tg2);
+			}
+			// check overlap
+			overlapped(tg1, tg2);
 		}
+
 	}
 
 	// check win
@@ -462,78 +479,6 @@ void Gameplay::overlapped(Thing* t1, Thing* t2)
 	{
 		return;
 	}
-
-	// guard vs. thief
-	if (t1->getTag() == Thing::GUARD && t2->getTag() == Thing::THIEF)
-	{
-		Guard* gd = (Guard*)t1;
-		Thief* tf = (Thief*)t2;
-		if (tf->status != Thief::FLEEING  && tf->inScreen()
-			&& gd->status != Guard::SLEEPING && ccpDistance(gd->getPosition(), tf->getPosition()) < gd->range)
-		{
-			if (tf->gem)
-			{
-				reorderChild(tf->gem, 0);
-				gemsOutside->addObject(tf->gem);
-				tf->gem = NULL;
-			}
-			tf->fleeHome();
-			gd->stopAllActions();
-		}				
-	}
-
-	// thief vs. gem
-	if (t1->getTag() == Thing::THIEF && t2->getTag() == Thing::GEM)
-	{
-		Thief* tf = (Thief*)t1;
-		Gem* gm = (Gem*)t2;
-
-		if (tf->status == Thief::FINDING || tf->status == Thief::BACKING)
-		{
-			if (CCRect::CCRectIntersectsRect(tf->getRect(), gm->getRect()))
-			{
-				// outside
-				if (gemsOutside->containsObject(gm))
-				{
-					reorderChild(gm, 1000);
-					gemsOutside->removeObject(g);
-					tf->gem = gm;
-					tf->status = Thief::STEALING;
-					tf->findHome();
-				}
-				// treasure
-				if (treasure->gems->containsObject(gm))
-				{
-
-				}
-			}
-		}
-
-
-		//CCArray* gemsList = ((Gameplay*)getParent())->gemsOutside;
-		// 	rectThief = CCRectMake(this->getPosition().x, this->getPosition().y, this->sprite->getContentSize().width, this->sprite->getContentSize().height);
-
-		// in treasure
-		Treasure* trs = ((Gameplay*)getParent())->treasure;
-		if (gem == NULL && CCRect::CCRectContainsPoint(this->getRect(), trs->getPosition()))
-		{
-			status = BACKING;
-			gemsList = trs->gems;
-			if (gem = (Gem*)gemsList->lastObject())
-			{
-				((Gameplay*)getParent())->reorderChild(gem, 1000);
-				gemsList->removeLastObject();
-				status = STEALING;
-			}
-			this->findHome();
-		}
-	}
-	
-	// check z-order
-	if (t1->getTag() == Thing::GEM || t2->getTag() == Thing::GEM)
-	{
-		return;
-	}
 	if (CCRect::CCRectIntersectsRect(t1->getRect(), t2->getRect()))
 	{
 		if (t1->getPosition().y > t2->getPosition().y && t1->getZOrder() >= t2->getZOrder())
@@ -544,6 +489,58 @@ void Gameplay::overlapped(Thing* t1, Thing* t2)
 
 }
 
+void Gameplay::caughtThief(Guard* gd, Thief* tf)
+{
+	if (tf->status != Thief::FLEEING  && tf->inScreen()
+		&& gd->status != Guard::SLEEPING && ccpDistance(gd->getPosition(), tf->getPosition()) < gd->range)
+	{
+		if (tf->gem)
+		{
+			reorderChild(tf->gem, 0);
+			gemsOutside->addObject(tf->gem);
+			tf->gem = NULL;
+		}
+		tf->fleeHome();
+		gd->stopAllActions();
+	}				
+}
+
+void Gameplay::gotGem(Thief* tf)
+{
+	if (tf->status == Thief::FINDING || tf->status == Thief::BACKING)
+	{
+		Gem* gm;
+		// outside
+		for (int i=0; i<gemsOutside->count(); i++)
+		{
+			gm = (Gem*)gemsOutside->objectAtIndex(i);
+			if (CCRect::CCRectIntersectsRect(tf->getRect(), gm->getRect()))
+			{
+				reorderChild(gm, 1000);
+				gemsOutside->removeObject(gm);
+				tf->gem = gm;
+				tf->status = Thief::STEALING;
+				tf->findHome();
+				break;
+			}
+		}
+		// in treasure
+		if (tf->status == Thief::FINDING && CCRect::CCRectContainsPoint(tf->getRect(), treasure->getPosition()))
+		{
+			tf->status = Thief::BACKING;
+			if (tf->gem = (Gem*)treasure->gems->lastObject())
+			{
+				reorderChild(tf->gem, 1000);
+				treasure->gems->removeLastObject();
+				tf->status = Thief::STEALING;
+			}
+			tf->findHome();
+		}
+	}
+
+}
+
+/*
 void Gameplay::updateThieves()
 {
 	CCMutableArray<Thief*>::CCMutableArrayIterator it;
@@ -559,6 +556,7 @@ void Gameplay::updateThieves()
 		}
 	}
 }
+*/
 
 void Gameplay::keyBackClicked()
 {

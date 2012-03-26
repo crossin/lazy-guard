@@ -60,9 +60,9 @@ bool Guard::init()
 		status = SLEEPING;
 		pointSleepMax = 100;
 		pointSleep = 0;
-		pointWakeMax = 100;
+		pointWakeMax = 10;
 		pointWake = 0;
-		speed = 60;
+		speed = 160;
 		range = 30;
 		//timeRot = 0.5;
 		findingInterval = INTERVAL;
@@ -172,7 +172,7 @@ void Guard::findThief()
 
 	findingInterval = INTERVAL;
 
-
+/*
 for (int i=0;i<10;i++){
 	for (int j=0;j<15;j++){
 		game_map[i][j] = 0;
@@ -181,7 +181,7 @@ for (int i=0;i<10;i++){
 for (int i = 0; i < pathfinder->pathLength; i++){
 game_map[pathfinder->pathBank[2*i+1]][pathfinder->pathBank[2*i]] = 2;
 }
-
+*/
 }
 
 void Guard::patrol() 

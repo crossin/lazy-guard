@@ -11,7 +11,7 @@ public:
 	Thing(void);
 	~Thing(void);
 
-	static const int GUARD = 1, THIEF = 2, GEM = 3; 
+	static const int GUARD = 1, THIEF = 2;//, GEM = 3; 
 
 	virtual bool init() = 0;
 
