@@ -38,11 +38,17 @@ bool Treasure::init(int count, CCPoint pos)
 		for (int i = 0; i < count; i++)
 		{
 			Gem* g = Gem::gem();
-			g->setPosition(ccp(pos.x+8*sin(i*6.28/5), pos.y+8*cos(i*6.28/5)));
+			setGemPos(g, i);
 			gems->addObject(g);
 		}
 		bRet=true;
 	}while(0);
 
 	return bRet;
+}
+
+void Treasure::setGemPos(Gem* g, int idx)
+{
+
+	g->setPosition(ccp(getPosition().x+8*sin(idx*6.28/5), getPosition().y+8*cos(idx*6.28/5)));
 }

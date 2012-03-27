@@ -17,19 +17,17 @@ public:
 
 	void findGem();
 	void findHome();
-	//void moveFinished(CCNode* sender);
- 	void getGem(CCNode* sender);
-	void fleeHome();
-	//void kill();
+	void patrol();
 	void updateFrame(ccTime dt);
 	//bool inScreen();
 // 	void updateTarget();
 
-	static const int PATROLING = 0, FINDING = 1, STUNNING = 2, BACKING = 3; 
+	static const int PATROLING = 0, FINDING = 1, STUNNING = 2, BACKING = 3, WAITING = 4; 
 
 	Gem* gem;
 	//float startX;
 	//float startY;
 // 	bool isFleeing;
 	int status;
+	float findingInterval;
 };

@@ -132,8 +132,74 @@
             <spriteFrame>thief/thief-walk-upleft-0.png</spriteFrame>
             <spriteFrame>thief/thief-walk-upleft-2.png</spriteFrame>
         </animation>
+        <animation>
+            <name>porter-walk-0</name>
+            <delay>0.15</delay>
+            <spriteFrame>porter/porter-walk-up-0.png</spriteFrame>
+            <spriteFrame>porter/porter-walk-up-1.png</spriteFrame>
+            <spriteFrame>porter/porter-walk-up-0.png</spriteFrame>
+            <spriteFrame>porter/porter-walk-up-2.png</spriteFrame>
+        </animation>
+        <animation>
+            <name>porter-walk-1</name>
+            <delay>0.15</delay>
+            <spriteFrame>porter/porter-walk-upright-0.png</spriteFrame>
+            <spriteFrame>porter/porter-walk-upright-1.png</spriteFrame>
+            <spriteFrame>porter/porter-walk-upright-0.png</spriteFrame>
+            <spriteFrame>porter/porter-walk-upright-2.png</spriteFrame>
+        </animation>
+        <animation>
+            <name>porter-walk-2</name>
+            <delay>0.15</delay>
+            <spriteFrame>porter/porter-walk-right-0.png</spriteFrame>
+            <spriteFrame>porter/porter-walk-right-1.png</spriteFrame>
+            <spriteFrame>porter/porter-walk-right-0.png</spriteFrame>
+            <spriteFrame>porter/porter-walk-right-2.png</spriteFrame>
+        </animation>
+        <animation>
+            <name>porter-walk-3</name>
+            <delay>0.15</delay>
+            <spriteFrame>porter/porter-walk-downright-0.png</spriteFrame>
+            <spriteFrame>porter/porter-walk-downright-1.png</spriteFrame>
+            <spriteFrame>porter/porter-walk-downright-0.png</spriteFrame>
+            <spriteFrame>porter/porter-walk-downright-2.png</spriteFrame>
+        </animation>
+        <animation>
+            <name>porter-walk-4</name>
+            <delay>0.15</delay>
+            <spriteFrame>porter/porter-walk-down-0.png</spriteFrame>
+            <spriteFrame>porter/porter-walk-down-1.png</spriteFrame>
+            <spriteFrame>porter/porter-walk-down-0.png</spriteFrame>
+            <spriteFrame>porter/porter-walk-down-2.png</spriteFrame>
+        </animation>
+        <animation>
+            <name>porter-walk-5</name>
+            <delay>0.15</delay>
+            <spriteFrame>porter/porter-walk-downleft-0.png</spriteFrame>
+            <spriteFrame>porter/porter-walk-downleft-1.png</spriteFrame>
+            <spriteFrame>porter/porter-walk-downleft-0.png</spriteFrame>
+            <spriteFrame>porter/porter-walk-downleft-2.png</spriteFrame>
+        </animation>
+        <animation>
+            <name>porter-walk-6</name>
+            <delay>0.15</delay>
+            <spriteFrame>porter/porter-walk-left-0.png</spriteFrame>
+            <spriteFrame>porter/porter-walk-left-1.png</spriteFrame>
+            <spriteFrame>porter/porter-walk-left-0.png</spriteFrame>
+            <spriteFrame>porter/porter-walk-left-2.png</spriteFrame>
+        </animation>
+        <animation>
+            <name>porter-walk-7</name>
+            <delay>0.15</delay>
+            <spriteFrame>porter/porter-walk-upleft-0.png</spriteFrame>
+            <spriteFrame>porter/porter-walk-upleft-1.png</spriteFrame>
+            <spriteFrame>porter/porter-walk-upleft-0.png</spriteFrame>
+            <spriteFrame>porter/porter-walk-upleft-2.png</spriteFrame>
+        </animation>
     </animations>
     <sprites>
+        <sprite>box.png</sprite>
+        <sprite>brick.png</sprite>
         <sprite>guard/guard-walk-down-0.png</sprite>
         <sprite>guard/guard-walk-down-1.png</sprite>
         <sprite>guard/guard-walk-down-2.png</sprite>
@@ -158,6 +224,31 @@
         <sprite>guard/guard-walk-upright-0.png</sprite>
         <sprite>guard/guard-walk-upright-1.png</sprite>
         <sprite>guard/guard-walk-upright-2.png</sprite>
+        <sprite>house.png</sprite>
+        <sprite>porter/porter-walk-down-0.png</sprite>
+        <sprite>porter/porter-walk-down-1.png</sprite>
+        <sprite>porter/porter-walk-down-3.png</sprite>
+        <sprite>porter/porter-walk-downleft-0.png</sprite>
+        <sprite>porter/porter-walk-downleft-1.png</sprite>
+        <sprite>porter/porter-walk-downleft-2.png</sprite>
+        <sprite>porter/porter-walk-downright-0.png</sprite>
+        <sprite>porter/porter-walk-downright-1.png</sprite>
+        <sprite>porter/porter-walk-downright-2.png</sprite>
+        <sprite>porter/porter-walk-left-0.png</sprite>
+        <sprite>porter/porter-walk-left-1.png</sprite>
+        <sprite>porter/porter-walk-left-2.png</sprite>
+        <sprite>porter/porter-walk-right-0.png</sprite>
+        <sprite>porter/porter-walk-right-1.png</sprite>
+        <sprite>porter/porter-walk-right-2.png</sprite>
+        <sprite>porter/porter-walk-up-0.png</sprite>
+        <sprite>porter/porter-walk-up-1.png</sprite>
+        <sprite>porter/porter-walk-up-2.png</sprite>
+        <sprite>porter/porter-walk-upleft-0.png</sprite>
+        <sprite>porter/porter-walk-upleft-1.png</sprite>
+        <sprite>porter/porter-walk-upleft-2.png</sprite>
+        <sprite>porter/porter-walk-upright-0.png</sprite>
+        <sprite>porter/porter-walk-upright-1.png</sprite>
+        <sprite>porter/porter-walk-upright-2.png</sprite>
         <sprite>thief/thief-walk-down-0.png</sprite>
         <sprite>thief/thief-walk-down-1.png</sprite>
         <sprite>thief/thief-walk-down-2.png</sprite>
@@ -182,5 +273,6 @@
         <sprite>thief/thief-walk-upright-0.png</sprite>
         <sprite>thief/thief-walk-upright-1.png</sprite>
         <sprite>thief/thief-walk-upright-2.png</sprite>
+        <sprite>tree.png</sprite>
     </sprites>
 </root>

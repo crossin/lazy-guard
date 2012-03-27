@@ -39,7 +39,7 @@ bool Guard::init()
 		//sprite->setPosition(ccp(size.width/2, size.height/2)); 
 		for (int i = 0; i < 8 ; i++)
 		{
-			char name[13];
+			char name[16];
 			sprintf(name,"guard-walk-%d",i);
 			actionWalks[i] = CCRepeatForever::actionWithAction(AnimatePacker::getInstance()->getAnimate(name));
 			actionWalks[i]->retain();
@@ -60,9 +60,9 @@ bool Guard::init()
 		status = SLEEPING;
 		pointSleepMax = 100;
 		pointSleep = 0;
-		pointWakeMax = 10;
+		pointWakeMax = 100;
 		pointWake = 0;
-		speed = 160;
+		speed = 60;
 		range = 30;
 		//timeRot = 0.5;
 		findingInterval = INTERVAL;
@@ -213,7 +213,7 @@ void Guard::patrol()
 	runAction( CCSequence::actions(actionWait, actionGo, NULL) );
 	status = PATROLING;
 
-
+/*
 char textout[10];
 _itoa_s(pathfinder->pathLength,textout,10);
 ((Gameplay*)this->getParent())->pLabel->setString(textout);
@@ -227,6 +227,7 @@ _itoa_s(pathfinder->pathLength,textout,10);
   {
   game_map[pathfinder->pathBank[2*i+1]][pathfinder->pathBank[2*i]] = 2;
   }
+*/
 }
 
 void Guard::updateFrame(ccTime dt)
@@ -260,17 +261,11 @@ void Guard::updateFrame(ccTime dt)
 			bar->setIsVisible(true);
 			pointWake -= (20 * dt);
 			findingInterval -= dt;
-
-			if (status == CHASING && findingInterval < 0)
+			if (numberOfRunningActions() == 0)
 			{
-				findThief();
+				status = WAITING;
 			}
-
-			if (this->numberOfRunningActions() == 0)
-			{
-				status = WAKING;
-			}
-			if (status == WAKING || status == PATROLING)
+			if (findingInterval < 0 || status == WAITING)
 			{
 				findThief();
 			}
@@ -301,7 +296,7 @@ void Guard::setAwake(bool w)
 {
 	if (w)
 	{
-		status = WAKING;
+		status = WAITING;
 		sprite->runAction(actionWalk);
 		//isAwake = true;
 		pointWake = pointWakeMax;

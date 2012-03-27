@@ -2,6 +2,7 @@
 
 #include "cocos2d.h"
 #include "CCGeometry.h"
+#include "Gem.h"
 
 using namespace cocos2d;
 
@@ -15,7 +16,7 @@ public:
 	static Treasure* treasure(int count, CCPoint pos);
 
 	bool init(int count, CCPoint pos);
-
+	void setGemPos(Gem* g, int idx);
 	CCArray* gems;
 };
 

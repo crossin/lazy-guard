@@ -17,7 +17,7 @@ public:
 
 	void findGem();
 	void findHome();
-	void moveFinished(CCNode* sender);
+	void moveFinished();
 //  	void getGem(CCNode* sender);
 	void fleeHome();
 	void kill();
