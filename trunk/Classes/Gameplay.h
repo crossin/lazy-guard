@@ -6,6 +6,7 @@
 #include "Guard.h"
 #include "Gem.h"
 #include "Treasure.h"
+#include "Porter.h"
 
 using namespace cocos2d;
 
@@ -33,6 +34,7 @@ virtual void draw();
 	CCMutableArray<Thief*>* thieves;
 	CCMutableArray<Thing*>* things;
 	Guard* guard[2];
+	Porter* porter;
 	CCArray* gemsOutside;
 	Treasure* treasure;
 	int countThief;
@@ -49,7 +51,8 @@ private:
 	virtual void keyBackClicked();
 	void overlapped(Thing* t1, Thing* t2);
 	void caughtThief(Guard* gd, Thief* tf);
-	void gotGem(Thief* tf);
+	void thiefGotGem(Thief* tf);
+	void porterGotGem(Porter* pt);
 };
 
 #endif

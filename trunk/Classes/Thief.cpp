@@ -41,7 +41,7 @@ bool Thief::init()
 		//sprite->setPosition(ccp(size.width/2, size.height/2)); 
 		for (int i = 0; i < 8 ; i++)
 		{
-			char name[13];
+			char name[16];
 			sprintf(name,"thief-walk-%d",i);
 			actionWalks[i] = CCRepeatForever::actionWithAction(AnimatePacker::getInstance()->getAnimate(name));
 			actionWalks[i]->retain();
@@ -144,7 +144,6 @@ void Thief::findGem()
 
 	for (int i = 0; i < pathfinder->pathLength; i++)
 	{
-		//game_map[pathfinder->pathBank[2*i+1]][pathfinder->pathBank[2*i]] = 2;
 		from = (i == 0) ? getPosition() : (ccp((pathfinder->pathBank[2*i-2]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[2*i-1]+0.5) * pathfinder->tileHeight));
 		target = (i == pathfinder->pathLength-1) ? ccp(gemX, gemY) : (ccp((pathfinder->pathBank[2*i]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[2*i+1]+0.5) * pathfinder->tileHeight));
 		pathGo->addObject(makeAction(from, target));
@@ -242,7 +241,7 @@ void Thief::findHome()
 	}
 
 	actionGo = CCSequence::actionsWithArray(pathGo);
-	CCFiniteTimeAction* actionOver = CCCallFuncN::actionWithTarget( this, callfuncN_selector(Thief::moveFinished));
+	CCFiniteTimeAction* actionOver = CCCallFunc::actionWithTarget( this, callfunc_selector(Thief::moveFinished));
 
 	stopAllActions();
 	runAction( CCSequence::actions(actionGo, actionOver, NULL) );
@@ -264,7 +263,7 @@ for (int i = 0; i < pathfinder->pathLength; i++)
 */
 }
 
-void Thief::moveFinished(CCNode* sender)
+void Thief::moveFinished()
 {
 	kill();
 }
