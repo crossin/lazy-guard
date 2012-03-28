@@ -60,9 +60,9 @@ bool Guard::init()
 		status = SLEEPING;
 		pointSleepMax = 100;
 		pointSleep = 0;
-		pointWakeMax = 40;
+		pointWakeMax = 100;
 		pointWake = 0;
-		speed = 160;
+		speed = 60;
 		range = 30;
 		//timeRot = 0.5;
 		findingInterval = INTERVAL;
@@ -212,6 +212,7 @@ void Guard::patrol()
 	stopAllActions();
 	runAction( CCSequence::actions(actionWait, actionGo, NULL) );
 	status = PATROLING;
+	findingInterval = INTERVAL;
 
 /*
 char textout[10];

@@ -33,7 +33,7 @@
  </layer>
  <layer name="Things" width="15" height="10">
   <data encoding="base64" compression="zlib">
-   eJxjYKAeMCQgZkSkOUY4zMKllhiAbp4xGt8EjSYFUKIXnz50N4IAvnAhN8yIDUNSAABWgAOL
+   eJxjYKAeMCQgZkSkOUY4zMKllhiAbp4xGt8EjSYFUKIXH0B3IwjgCxdyw4zYMCQFAAArcANX
   </data>
  </layer>
  <objectgroup name="Objects" width="15" height="10">
