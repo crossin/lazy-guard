@@ -1,6 +1,7 @@
 #include "Character.h"
 #include "cocos2d.h"
 // #include "Gameplay.h"
+#include "PathFinder.h"
 
 using namespace cocos2d;
 
@@ -52,4 +53,11 @@ void Character::changeDirection(CCNode *node, void *param)
 	int i = (int)param;
 	actionWalk = actionWalks[i];
 	sprite->runAction(actionWalk);
+}
+
+CCRect Character::getRectIn()
+{
+	int w = PathFinder::getInstance()->tileWidth;
+	int h = PathFinder::getInstance()->tileHeight;
+	return CCRectMake(getPosition().x - w/2, getPosition().y - h/2,	w, h);	
 }

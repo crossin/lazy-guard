@@ -25,12 +25,12 @@ public:
 	bool inScreen();
 // 	void updateTarget();
 
-	static const int FINDING = 0, STEALING = 1, FLEEING = 2, BACKING = 3; 
+	static const int FINDING = 0, FLEEING = 1, BACKING = 2; //, STEALING = 1
 
 	Gem* gem;
 	float startX;
 	float startY;
-// 	bool isFleeing;
+ 	bool hasVisited;
 	int status;
 	float findingInterval;
 };
