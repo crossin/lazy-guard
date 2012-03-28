@@ -18,6 +18,7 @@ public:
 
 	CCFiniteTimeAction* makeAction(CCPoint from, CCPoint target);
 	void changeDirection(CCNode *node, void *param);
+	CCRect getRectIn();
 	int speed;
 	CCFiniteTimeAction* actionWalks[8];
 	CCFiniteTimeAction* actionWalk;

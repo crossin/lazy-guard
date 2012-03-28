@@ -60,9 +60,9 @@ bool Guard::init()
 		status = SLEEPING;
 		pointSleepMax = 100;
 		pointSleep = 0;
-		pointWakeMax = 100;
+		pointWakeMax = 40;
 		pointWake = 0;
-		speed = 60;
+		speed = 160;
 		range = 30;
 		//timeRot = 0.5;
 		findingInterval = INTERVAL;
@@ -311,7 +311,6 @@ void Guard::setAwake(bool w)
 		pointSleep = 0;
 	}
 }
-
 
 CCRect Guard::getRectClick()
 {

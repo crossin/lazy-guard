@@ -11,7 +11,7 @@ Thing::~Thing(void)
 {
 }
 
-CCRect Thing::getRect()
+CCRect Thing::getRectOut()
 {
 	return CCRectMake(getPosition().x - sprite->getContentSize().width * sprite->getAnchorPoint().x,
 		getPosition().y - sprite->getContentSize().height * sprite->getAnchorPoint().y,

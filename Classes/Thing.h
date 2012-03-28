@@ -15,7 +15,7 @@ public:
 
 	virtual bool init() = 0;
 
-	CCRect getRect();
+	CCRect getRectOut();
 
 	CCSprite* sprite;
 };

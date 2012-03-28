@@ -212,7 +212,7 @@ void Porter::patrol()
 	CCFiniteTimeAction* actionWait = CCDelayTime::actionWithDuration(1);
 	//	CCFiniteTimeAction* actionOver = CCCallFuncN::actionWithTarget( this, callfuncN_selector(Thief::moveFinished));
 	stopAllActions();
-	runAction( CCSequence::actions(actionWait, actionGo, NULL) );
+	runAction( CCSequence::actions(actionGo, actionWait, NULL) );
 	status = PATROLING;
 	findingInterval = INTERVAL;
 }

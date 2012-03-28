@@ -72,6 +72,7 @@ bool Thief::init()
 		//timeRot = 0.3;
 		status = FINDING;
 		findingInterval = INTERVAL;
+		hasVisited = false;
 		//behaviour=STAND;
 		//direction=DOWN;
 
@@ -108,7 +109,7 @@ void Thief::findGem()
 				gemY = g->getPosition().y;
 			}
 		}
-		if (trs->gems->count() > 0 && status != BACKING)
+		if (trs->gems->count() > 0/* && !hasVisited*/)
 		{
 			dist = ccpDistance(getPosition(), trs->getPosition());
 			if (dist < dist_min)
@@ -121,12 +122,19 @@ void Thief::findGem()
 	} 
 	else
 	{
-		if (status == BACKING)
+		if (trs->gems->count() > 0 || !hasVisited)
 		{
+			gemX = trs->getPosition().x;
+			gemY = trs->getPosition().y;
+		}
+		else
+		{
+			if (status != BACKING)
+			{
+				findHome();
+			}
 			return;
 		}
-		gemX = trs->getPosition().x;
-		gemY = trs->getPosition().y;
 	}
 
 	PathFinder *pathfinder = PathFinder::getInstance();
@@ -154,7 +162,7 @@ void Thief::findGem()
 	stopAllActions();
 	//runAction( CCSequence::actions(actionGo, steal, /*actionBack, actionOver,*/ NULL) );
 	runAction(actionGo);
-
+	status = FINDING;
 	findingInterval = INTERVAL;
 /*
  for (int i=0;i<10;i++){
@@ -245,7 +253,7 @@ void Thief::findHome()
 
 	stopAllActions();
 	runAction( CCSequence::actions(actionGo, actionOver, NULL) );
-
+	status = BACKING;
 // 	((Gameplay*)getParent())->updateThieves();
 /*
 for (int i=0;i<10;i++){
@@ -285,10 +293,10 @@ void Thief::kill()
 void Thief::fleeHome()
 {
 // 	isFleeing = true;
-	status = FLEEING;
 	speed *= 2;
 	//this->stopAllActions();
-	this->findHome();
+	findHome();
+	status = FLEEING;
 }
 
 void Thief::updateFrame(ccTime dt)
@@ -297,7 +305,7 @@ void Thief::updateFrame(ccTime dt)
 	{
 		gem->setPosition(getPosition());
 	}
-	if (status == FINDING || status == BACKING)
+	else if (status == FINDING || status == BACKING)
 	{
 		findingInterval -= dt;
 		if (findingInterval < 0)
@@ -305,6 +313,10 @@ void Thief::updateFrame(ccTime dt)
 			findGem();
 		}
 	}
+// 	if (numberOfRunningActions() == 0 && status == BACKING)
+// 	{
+// 		findHome();
+// 	}
 }
 
 bool Thief::inScreen()
