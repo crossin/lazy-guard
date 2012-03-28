@@ -254,6 +254,7 @@ void Thief::findHome()
 	stopAllActions();
 	runAction( CCSequence::actions(actionGo, actionOver, NULL) );
 	status = BACKING;
+	findingInterval = INTERVAL;
 // 	((Gameplay*)getParent())->updateThieves();
 /*
 for (int i=0;i<10;i++){

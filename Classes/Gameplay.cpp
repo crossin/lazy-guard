@@ -574,7 +574,7 @@ void Gameplay::thiefGotGem(Thief* tf)
 			else if (!tf->hasVisited)
 			{
 				tf->hasVisited = true;
-				tf->findHome();
+				tf->findGem();
 			}
 		}
 	}

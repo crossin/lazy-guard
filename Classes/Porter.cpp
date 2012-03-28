@@ -47,7 +47,7 @@ bool Porter::init()
 
 		setPosition(ccp(240, 120));
 		gem = NULL;
-		speed = 50;
+		speed = 30;
 		status = WAITING;
 		findingInterval = INTERVAL;
 
