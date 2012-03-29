@@ -170,7 +170,7 @@ void Guard::findThief()
 // 	((Gameplay*)getParent())->pLabel->setString(textout);
 // }
 
-	findingInterval = INTERVAL;
+//	findingInterval = INTERVAL;
 
 /*
 for (int i=0;i<10;i++){
@@ -212,7 +212,7 @@ void Guard::patrol()
 	stopAllActions();
 	runAction( CCSequence::actions(actionWait, actionGo, NULL) );
 	status = PATROLING;
-	findingInterval = INTERVAL;
+//	findingInterval = INTERVAL;
 
 /*
 char textout[10];
@@ -269,6 +269,7 @@ void Guard::updateFrame(ccTime dt)
 			if (findingInterval < 0 || status == WAITING)
 			{
 				findThief();
+				findingInterval = INTERVAL;
 			}
 		}
 	}

@@ -47,7 +47,7 @@ bool Porter::init()
 
 		setPosition(ccp(240, 120));
 		gem = NULL;
-		speed = 30;
+		speed = 50;
 		status = WAITING;
 		findingInterval = INTERVAL;
 
@@ -113,7 +113,7 @@ void Porter::findGem()
 	stopAllActions();
 	runAction(actionGo);
 	status = FINDING;
-	findingInterval = INTERVAL;
+//	findingInterval = INTERVAL;
 
 /*
  for (int i=0;i<10;i++){
@@ -214,7 +214,16 @@ void Porter::patrol()
 	stopAllActions();
 	runAction( CCSequence::actions(actionGo, actionWait, NULL) );
 	status = PATROLING;
-	findingInterval = INTERVAL;
+//	findingInterval = INTERVAL;
+}
+
+void Porter::stun() 
+{
+	sprite->stopAction(actionWalk);
+	CCFiniteTimeAction* actionWait = CCDelayTime::actionWithDuration(1);
+	stopAllActions();
+	runAction(actionWait);
+	status = STUNNING;
 }
 
 void Porter::updateFrame(ccTime dt)
@@ -226,10 +235,10 @@ void Porter::updateFrame(ccTime dt)
 	if (status == FINDING || status == PATROLING)
 	{
 		findingInterval -= dt;
-
 		if (findingInterval < 0)
 		{
 			findGem();
+			findingInterval = INTERVAL;
 		}
 	}
 	if (numberOfRunningActions() == 0)

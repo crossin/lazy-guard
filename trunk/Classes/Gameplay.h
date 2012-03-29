@@ -51,6 +51,7 @@ private:
 	virtual void keyBackClicked();
 	void overlapped(Thing* t1, Thing* t2);
 	void caughtThief(Guard* gd, Thief* tf);
+	void robbedPorter(Thief* tf, Porter* pt);
 	void thiefGotGem(Thief* tf);
 	void porterGotGem(Porter* pt);
 };
