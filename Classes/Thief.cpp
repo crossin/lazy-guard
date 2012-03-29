@@ -91,11 +91,12 @@ void Thief::findGem()
 {
 	CCArray* gemsOut = ((Gameplay*)getParent())->gemsOutside;
 	Treasure* trs = ((Gameplay*)getParent())->treasure;
+	Porter* pt = ((Gameplay*)getParent())->porter;
 	int gemX = 0;
 	int gemY = 0;
 	float dist;
 	float dist_min = 100000;
-	if (gemsOut->count() > 0)
+	if (gemsOut->count() > 0 || pt->gem)
 	{
 		Gem* g;
 		for (int i=0; i<gemsOut->count(); i++)
@@ -107,6 +108,16 @@ void Thief::findGem()
 				dist_min = dist;
 				gemX = g->getPosition().x;
 				gemY = g->getPosition().y;
+			}
+		}
+		if (pt->gem)
+		{
+			dist = ccpDistance(getPosition(), pt->getPosition());
+			if (dist < dist_min)
+			{
+				dist_min = dist;
+				gemX = pt->getPosition().x;
+				gemY = pt->getPosition().y;
 			}
 		}
 		if (trs->gems->count() > 0/* && !hasVisited*/)
@@ -163,7 +174,7 @@ void Thief::findGem()
 	//runAction( CCSequence::actions(actionGo, steal, /*actionBack, actionOver,*/ NULL) );
 	runAction(actionGo);
 	status = FINDING;
-	findingInterval = INTERVAL;
+//	findingInterval = INTERVAL;
 /*
  for (int i=0;i<10;i++){
  	for (int j=0;j<15;j++){
@@ -254,7 +265,7 @@ void Thief::findHome()
 	stopAllActions();
 	runAction( CCSequence::actions(actionGo, actionOver, NULL) );
 	status = BACKING;
-	findingInterval = INTERVAL;
+//	findingInterval = INTERVAL;
 // 	((Gameplay*)getParent())->updateThieves();
 /*
 for (int i=0;i<10;i++){
@@ -312,6 +323,7 @@ void Thief::updateFrame(ccTime dt)
 		if (findingInterval < 0)
 		{
 			findGem();
+			findingInterval = INTERVAL;
 		}
 	}
 // 	if (numberOfRunningActions() == 0 && status == BACKING)

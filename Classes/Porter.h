@@ -18,7 +18,9 @@ public:
 	void findGem();
 	void findHome();
 	void patrol();
+	void stun();
 	void updateFrame(ccTime dt);
+
 	//bool inScreen();
 // 	void updateTarget();
 

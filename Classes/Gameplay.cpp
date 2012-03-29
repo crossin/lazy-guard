@@ -482,6 +482,11 @@ void Gameplay::updateFrame(ccTime dt)
 			{
 				caughtThief((Guard*)tg1, (Thief*)tg2);
 			}
+			// check thief got porter
+			if (tg1->getTag() == Thing::THIEF && tg2->getTag() == Thing::PORTER)
+			{
+				robbedPorter((Thief*)tg1, (Porter*)tg2);
+			}
 			// check overlap
 			overlapped(tg1, tg2);
 		}
@@ -538,6 +543,22 @@ void Gameplay::caughtThief(Guard* gd, Thief* tf)
 	}				
 }
 
+void Gameplay::robbedPorter( Thief* tf, Porter* pt )
+{
+	if (tf->status != Thief::FLEEING && pt->status != Porter::STUNNING
+		&& CCRect::CCRectIntersectsRect(tf->getRectIn(), pt->getRectIn()))
+	{
+		if (pt->gem)
+		{
+			reorderChild(pt->gem, 0);
+			gemsOutside->addObject(pt->gem);
+			pt->gem = NULL;
+		}
+		pt->stun();
+	}
+
+}
+
 void Gameplay::thiefGotGem(Thief* tf)
 {
 	if (tf->gem)
@@ -551,18 +572,18 @@ void Gameplay::thiefGotGem(Thief* tf)
 		for (int i=0; i<gemsOutside->count(); i++)
 		{
 			gm = (Gem*)gemsOutside->objectAtIndex(i);
-			if (CCRect::CCRectIntersectsRect(tf->getRectOut(), gm->getRectOut()))
+			if (CCRect::CCRectContainsPoint(tf->getRectIn(), gm->getPosition()))
 			{
 				reorderChild(gm, 1000);
-				gemsOutside->removeObject(gm);
 				tf->gem = gm;
+				gemsOutside->removeObject(gm);
 				//tf->status = Thief::STEALING;
 				tf->findHome();
 				return;
 			}
 		}
 		// in treasure
-		if (CCRect::CCRectContainsPoint(tf->getRectOut(), treasure->getPosition()))
+		if (CCRect::CCRectContainsPoint(tf->getRectIn(), treasure->getPosition()))
 		{
 			if (tf->gem = (Gem*)treasure->gems->lastObject())
 			{
@@ -583,17 +604,17 @@ void Gameplay::thiefGotGem(Thief* tf)
 void Gameplay::porterGotGem(Porter* pt)
 {
 	// get gem outside
-	if (pt->status == Porter::FINDING || pt->status == Porter::PATROLING)
+	if (pt->status == Porter::FINDING || pt->status == Porter::PATROLING || pt->status == Porter::WAITING)
 	{
 		Gem* gm;
 		for (int i=0; i<gemsOutside->count(); i++)
 		{
 			gm = (Gem*)gemsOutside->objectAtIndex(i);
-			if (CCRect::CCRectIntersectsRect(pt->getRectOut(), gm->getRectOut()))
+			if (CCRect::CCRectContainsPoint(pt->getRectIn(), gm->getPosition()))
 			{
 				reorderChild(gm, 1000);
-				gemsOutside->removeObject(gm);
 				pt->gem = gm;
+				gemsOutside->removeObject(gm);
 				//pt->status = Porter::BACKING;
 				pt->findHome();
 				break;
@@ -601,11 +622,12 @@ void Gameplay::porterGotGem(Porter* pt)
 		}
 	}
 	// return gem to treasure
-	if (pt->gem && CCRect::CCRectContainsPoint(pt->getRectOut(), treasure->getPosition()))
+	if (pt->gem && CCRect::CCRectContainsPoint(pt->getRectIn(), treasure->getPosition()))
 	{
 		reorderChild(pt->gem, 0);
 		treasure->gems->addObject(pt->gem);
 		treasure->setGemPos(pt->gem, treasure->gems->indexOfObject(pt->gem));
+		//gemsOutside->removeObject(pt->gem);
 		pt->gem = NULL;
 		//pt->status = Porter::FINDING;
 		pt->findGem();
@@ -639,3 +661,5 @@ void Gameplay::keyBackClicked()
 	exit(0);
 #endif
 }
+
+
