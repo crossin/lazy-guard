@@ -201,7 +201,7 @@ bool Gameplay::init()
 		props = objects->objectNamed("Treasure");
 		posTemp = ccp(props->objectForKey("x")->toInt(), props->objectForKey("y")->toInt());
 		countGem = props->objectForKey("Count")->toInt();
-countGem = 1;
+//countGem = 1;
 // 		for (int i=0;i<r;i++){
 // 			for (int j=0;j<c;j++){
 // 				if (tileGID = layerGem->tileGIDAt(ccp(j,r-i-1)))
