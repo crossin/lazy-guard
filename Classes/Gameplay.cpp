@@ -163,14 +163,14 @@ bool Gameplay::init()
 					if (props = pDesertTileMap->propertiesForGID(tileGID))
 					{
 						result = props->objectForKey("Type");
-						posTemp = ccp((j+0.5)*pDesertTileMap->getTileSize().width, (i+0.5)*pDesertTileMap->getTileSize().height);
+						posTemp = ccp(j*pDesertTileMap->getTileSize().width, i*pDesertTileMap->getTileSize().height);
 						obsTemp = Obstacle::obstacle(result->toInt(), posTemp);
 						pathfinder->setUnwalkable(j, i, true);
 						addChild(obsTemp);
 						things->addObject(obsTemp);
 // 						if (result->m_sString.compare("True") == 0)
 // 						{
-// 							game_map[i][j] = 1;
+ 							game_map[i][j] = 1;
 // 							//pathfinder->walkability [j][i] = pathfinder->unwalkable;
 // 							pathfinder->setUnwalkable(j, i, true);
 // 						}
@@ -201,7 +201,7 @@ bool Gameplay::init()
 		props = objects->objectNamed("Treasure");
 		posTemp = ccp(props->objectForKey("x")->toInt(), props->objectForKey("y")->toInt());
 		countGem = props->objectForKey("Count")->toInt();
-//countGem = 1;
+countGem = 1;
 // 		for (int i=0;i<r;i++){
 // 			for (int j=0;j<c;j++){
 // 				if (tileGID = layerGem->tileGIDAt(ccp(j,r-i-1)))
@@ -419,6 +419,7 @@ for (tt = thieves->begin(); tt != thieves->end(); tt++)
 	if (thief->gem)
 	{
 		reorderChild(thief->gem, 0);
+		thief->gem->setPosition(thief->getPosition());
 		gemsOutside->addObject(thief->gem);
 		thief->gem = NULL;
 	}
@@ -534,6 +535,7 @@ void Gameplay::caughtThief(Guard* gd, Thief* tf)
 	{
 		if (tf->gem)
 		{
+			tf->gem->setPosition(tf->getPosition());
 			reorderChild(tf->gem, 0);
 			gemsOutside->addObject(tf->gem);
 			tf->gem = NULL;
@@ -550,6 +552,7 @@ void Gameplay::robbedPorter( Thief* tf, Porter* pt )
 	{
 		if (pt->gem)
 		{
+			pt->gem->setPosition(pt->getPosition());
 			reorderChild(pt->gem, 0);
 			gemsOutside->addObject(pt->gem);
 			pt->gem = NULL;

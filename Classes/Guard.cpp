@@ -34,7 +34,7 @@ bool Guard::init()
 		//this->setAnchorPoint(CCPointZero);
 
 		sprite=CCSprite::spriteWithSpriteFrameName("guard/guard-walk-down-0.png"); 
-		sprite->setAnchorPoint(ccp(0.5,0.25)); 
+		sprite->setAnchorPoint(ccp(0.5,0)); 
 		addChild(sprite);
 		//sprite->setPosition(ccp(size.width/2, size.height/2)); 
 		for (int i = 0; i < 8 ; i++)

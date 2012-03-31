@@ -57,7 +57,7 @@ void Character::changeDirection(CCNode *node, void *param)
 
 CCRect Character::getRectIn()
 {
-	int w = PathFinder::getInstance()->tileWidth;
-	int h = PathFinder::getInstance()->tileHeight;
-	return CCRectMake(getPosition().x - w/2, getPosition().y - h/2,	w, h);	
+	int w = sprite->getContentSize().width;
+	//int h = PathFinder::getInstance()->tileHeight;
+	return CCRectMake(getPosition().x - w/2, getPosition().y - w/4,	w, w/2);	
 }
