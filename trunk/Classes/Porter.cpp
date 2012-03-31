@@ -33,7 +33,7 @@ bool Porter::init()
 	bool bRet = false;
 	do{
 		sprite=CCSprite::spriteWithSpriteFrameName("porter/porter-walk-down-0.png"); 
-		sprite->setAnchorPoint(ccp(0.5,0.25)); 
+		sprite->setAnchorPoint(ccp(0.5,0)); 
 		addChild(sprite);
 
 		for (int i = 0; i < 8 ; i++)
@@ -88,8 +88,8 @@ void Porter::findGem()
 	}
 
 	PathFinder *pathfinder = PathFinder::getInstance();
-	
-	if (PathFinder::found != pathfinder->FindPath(getPosition().x, getPosition().y, gemX, gemY))
+	int result = pathfinder->FindPath(getPosition().x, getPosition().y, gemX, gemY);
+	if (result == PathFinder::nonexistent)
 	{
 		return;
 	}
@@ -99,15 +99,24 @@ void Porter::findGem()
 	CCArray* pathGo = CCArray::array();
 	CCPoint target, from;
 	CCFiniteTimeAction* actionGo;
-
-	for (int i = 0; i < pathfinder->pathLength; i++)
+	if (result == PathFinder::same)
 	{
-		//game_map[pathfinder->pathBank[2*i+1]][pathfinder->pathBank[2*i]] = 2;
-		from = (i == 0) ? getPosition() : (ccp((pathfinder->pathBank[2*i-2]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[2*i-1]+0.5) * pathfinder->tileHeight));
-		target = (i == pathfinder->pathLength-1) ? ccp(gemX, gemY) : (ccp((pathfinder->pathBank[2*i]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[2*i+1]+0.5) * pathfinder->tileHeight));
+		from = getPosition();
+		target = ccp(gemX, gemY);
 		pathGo->addObject(makeAction(from, target));
 	}
+	else
+	{
+		for (int i = 0; i < pathfinder->pathLength; i++)
+		{
+			//game_map[pathfinder->pathBank[2*i+1]][pathfinder->pathBank[2*i]] = 2;
+			from = (i == 0) ? getPosition() : (ccp((pathfinder->pathBank[2*i-2]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[2*i-1]+0.5) * pathfinder->tileHeight));
+			target = (i == pathfinder->pathLength-1) ? ccp(gemX, gemY) : (ccp((pathfinder->pathBank[2*i]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[2*i+1]+0.5) * pathfinder->tileHeight));
+			pathGo->addObject(makeAction(from, target));
+		}
+	}
 	actionGo = CCSequence::actionsWithArray(pathGo);
+
 	//CCFiniteTimeAction* steal = CCCallFuncN::actionWithTarget( this, callfuncN_selector(Thief::getGem));
 
 	stopAllActions();
@@ -230,7 +239,7 @@ void Porter::updateFrame(ccTime dt)
 {
 	if (gem)
 	{
-		gem->setPosition(getPosition());
+		gem->setPosition(ccp(getPosition().x, getPosition().y+16));
 	}
 	if (status == FINDING || status == PATROLING)
 	{

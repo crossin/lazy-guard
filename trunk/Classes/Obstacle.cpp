@@ -28,8 +28,6 @@ bool Obstacle::init()
 {
 	bool bRet = false;
 	do{
-		//this->setAnchorPoint(CCPointZero);
-
 		switch (typeIndex)
 		{
 		case 1:
@@ -46,6 +44,7 @@ bool Obstacle::init()
 			sprite = CCSprite::spriteWithSpriteFrameName("tree.png");
 			break;
 		}
+		sprite->setAnchorPoint(CCPointZero);
 		addChild(sprite);
 
 		bRet=true;
