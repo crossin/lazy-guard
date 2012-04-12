@@ -13,6 +13,7 @@
 #include <math.h>
 #include "AnimatePacker.h"
 #include "Obstacle.h"
+#include "Level.h"
 
 
 using namespace cocos2d;
@@ -98,6 +99,10 @@ bool Gameplay::init()
 		// add your codes below...
 		//////////////////////////////////////////////////////////////////////////
 		
+//test level
+		Level* level = Level::level();
+		level->save();
+
 		// load the tile map
 		CCTMXTiledMap *pDesertTileMap = CCTMXTiledMap::tiledMapWithTMXFile("background.tmx");
 		pDesertTileMap->setPosition(ccp(0,0));
