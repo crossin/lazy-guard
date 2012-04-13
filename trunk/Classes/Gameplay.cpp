@@ -101,7 +101,7 @@ bool Gameplay::init()
 		
 //test level
 		Level* level = Level::level();
-		level->save();
+		level->load();
 
 		// load the tile map
 		CCTMXTiledMap *pDesertTileMap = CCTMXTiledMap::tiledMapWithTMXFile("background.tmx");
@@ -129,6 +129,7 @@ bool Gameplay::init()
 
 		AnimatePacker::getInstance()->loadAnimate("sprites.xml");
 		things = new CCMutableArray<Thing*>;
+
 
 		int tileGID;
 		CCDictionary<std::string, CCString*>* props;
@@ -159,6 +160,8 @@ bool Gameplay::init()
 			}
 		}
 */
+
+		/*
 		Thing* obsTemp;
 		for (int i=0;i<r;i++){
 			for (int j=0;j<c;j++){
@@ -182,7 +185,38 @@ bool Gameplay::init()
 					}
 				}
 			}
+		}*/
+
+		for (int i=0;i<r;i++){
+			for (int j=0;j<c;j++){
+				pathfinder->setUnwalkable(j, i, false);
+			}
 		}
+
+		Thing* obsTemp;
+		int obsType;
+		int obsX;
+		int obsY;
+		CCPoint obsPos;
+		CCMutableDictionary<std::string, CCString*>* obsProps;
+		int cc=level->obstacles->count();
+		for (int i=0; i<level->obstacles->count(); i++)
+		{
+			obsProps = (CCMutableDictionary<std::string, CCString*>*)level->obstacles->objectAtIndex(i);
+			CCString* s = obsProps->objectForKey("type");
+			obsType = obsProps->objectForKey("type")->toInt();
+			obsX = obsProps->objectForKey("x")->toInt();
+			obsY = obsProps->objectForKey("y")->toInt();
+			obsPos = ccp(obsX * pDesertTileMap->getTileSize().width, obsY * pDesertTileMap->getTileSize().height);
+			obsTemp = Obstacle::obstacle(obsType, obsPos);
+			pathfinder->setUnwalkable(obsX, obsY, true);
+			addChild(obsTemp);
+			things->addObject(obsTemp);
+
+			game_map[obsY][obsX] = 1;
+		}
+
+
 
 
 		// 2. Add a label shows "Hello World".

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CCObject.h"
+#include "cocos2d.h"
 
 using namespace cocos2d;
 
@@ -14,4 +14,8 @@ public:
 	bool init();
 
 	bool save();
+	bool load();
+
+	CCArray* obstacles;
+	//CCMutableDictionary<std::string, CCString*>* props;
 };
