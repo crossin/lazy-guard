@@ -100,15 +100,16 @@ bool Gameplay::init()
 		//////////////////////////////////////////////////////////////////////////
 		
 //test level
-
-
-		initMap();
-
 		// load the tile map
 		CCTMXTiledMap *pDesertTileMap = CCTMXTiledMap::tiledMapWithTMXFile("background.tmx");
 		pDesertTileMap->setPosition(ccp(0,0));
 		addChild(pDesertTileMap, 0, 1);
-		
+
+
+
+		// load level
+		Level* level = Level::level();
+		level->load();	
 
 
 
@@ -123,13 +124,14 @@ bool Gameplay::init()
 		c = (sizeof(game_map[0])/sizeof(game_map[0][0]));
 		w = 480/c;
 */
-		int r = pDesertTileMap->getMapSize().height;
-		int c = pDesertTileMap->getMapSize().width;
+
+// 		int r = pDesertTileMap->getMapSize().height;
+// 		int c = pDesertTileMap->getMapSize().width;
 
 		//_itoa_s(pDesertTileMap->getTileSize().height,textout,10);
 		//pathfinder = new PathFinder(pDesertTileMap->getMapSize().width, pDesertTileMap->getMapSize().height, pDesertTileMap->getTileSize().width, pDesertTileMap->getTileSize().height);
 		PathFinder* pathfinder = PathFinder::getInstance();
-		pathfinder->initWithSize(pDesertTileMap->getMapSize().width, pDesertTileMap->getMapSize().height, pDesertTileMap->getTileSize().width, pDesertTileMap->getTileSize().height);
+		pathfinder->initWithSize(level->width, level->height, level->tileWidth, level->tileHeight);
 
 		AnimatePacker::getInstance()->loadAnimate("sprites.xml");
 		things = new CCMutableArray<Thing*>;
@@ -191,15 +193,54 @@ bool Gameplay::init()
 			}
 		}*/
 
-		for (int i=0;i<r;i++){
-			for (int j=0;j<c;j++){
+		for (int i=0;i<level->height;i++){
+			for (int j=0;j<level->width;j++){
 				pathfinder->setUnwalkable(j, i, false);
 			}
 		}
 
 
 
+		// init map
 
+
+		// background
+		//const char* bacImg;
+		char bacImg[16];
+		sprintf(bacImg, "back%d.png", level->background);
+		CCTexture2D *texture = CCTextureCache::sharedTextureCache()->addImage(bacImg);
+		ccTexParams tp = {GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT};
+		texture->setTexParameters(&tp);
+		CCSprite* background = CCSprite::spriteWithTexture(texture);
+		CCSize winSize = CCDirector::sharedDirector()->getWinSize();
+		//CCSize textureSize = texture->getContentSize();
+		background->setTextureRect(CCRectMake(0, 0, winSize.width, winSize.height));
+		background->setPosition(ccp(winSize.width/2, winSize.height/2));
+		addChild(background);
+
+		// obstacles
+		Thing* obsTemp;
+		int obsType;
+		int obsX;
+		int obsY;
+		CCPoint obsPos;
+		CCMutableDictionary<std::string, CCString*>* obsProps;
+		int cc=level->obstacles->count();
+		for (int i=0; i<level->obstacles->count(); i++)
+		{
+			obsProps = (CCMutableDictionary<std::string, CCString*>*)level->obstacles->objectAtIndex(i);
+			CCString* s = obsProps->objectForKey("type");
+			obsType = obsProps->objectForKey("type")->toInt();
+			obsX = obsProps->objectForKey("x")->toInt();
+			obsY = obsProps->objectForKey("y")->toInt();
+			obsPos = ccp(obsX * level->tileWidth, obsY * level->tileHeight);
+			obsTemp = Obstacle::obstacle(obsType, obsPos);
+			pathfinder->setUnwalkable(obsX, obsY, true);
+			addChild(obsTemp);
+			things->addObject(obsTemp);
+
+			game_map[obsY][obsX] = 1;
+		}
 
 
 		// 2. Add a label shows "Hello World".
@@ -209,8 +250,8 @@ bool Gameplay::init()
 		CC_BREAK_IF(! pLabel);
 
 		// Get window size and place the label upper. 
-		CCSize size = CCDirector::sharedDirector()->getWinSize();
-		pLabel->setPosition(ccp(size.width / 2, size.height - 20));
+		
+		pLabel->setPosition(ccp(winSize.width / 2, winSize.height - 20));
 
 		// Add the label to HelloWorld layer as a child layer.
 		this->addChild(pLabel, 1);
@@ -677,47 +718,6 @@ void Gameplay::updateThieves()
 	}
 }
 */
-
-void Gameplay::initMap()
-{
-	// load level
-	Level* level = Level::level();
-	level->load();
-
-	// background
-	CCTexture2D *texture = CCTextureCache::sharedTextureCache()->addImage("test.png");
-	ccTexParams tp = {GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT};
-	texture->setTexParameters(&tp);
-	CCSprite* sss = CCSprite::spriteWithTexture(texture);
-	CCSize textureSize = texture->getContentSize();
-	sss->setTextureRect(CCRectMake(0, 0, 480, 320));
-	sss->setPosition(ccp(240, 160));
-	addChild(sss);
-
-	// obstacles
-	Thing* obsTemp;
-	int obsType;
-	int obsX;
-	int obsY;
-	CCPoint obsPos;
-	CCMutableDictionary<std::string, CCString*>* obsProps;
-	int cc=level->obstacles->count();
-	for (int i=0; i<level->obstacles->count(); i++)
-	{
-		obsProps = (CCMutableDictionary<std::string, CCString*>*)level->obstacles->objectAtIndex(i);
-		CCString* s = obsProps->objectForKey("type");
-		obsType = obsProps->objectForKey("type")->toInt();
-		obsX = obsProps->objectForKey("x")->toInt();
-		obsY = obsProps->objectForKey("y")->toInt();
-		obsPos = ccp(obsX * pDesertTileMap->getTileSize().width, obsY * pDesertTileMap->getTileSize().height);
-		obsTemp = Obstacle::obstacle(obsType, obsPos);
-		pathfinder->setUnwalkable(obsX, obsY, true);
-		addChild(obsTemp);
-		things->addObject(obsTemp);
-
-		game_map[obsY][obsX] = 1;
-	}
-}
 
 void Gameplay::keyBackClicked()
 {

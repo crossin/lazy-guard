@@ -86,6 +86,7 @@ bool Level::load()
 	xmlNodePtr propsNode;
 	//xmlChar *szKey;          //临时字符串变量
 	char *szDocName;
+	CCMutableDictionary<std::string, CCString*>* propsTemp = new CCMutableDictionary<std::string, CCString*>();
 
 	szDocName = "CreatedXml.xml";
 
@@ -112,11 +113,13 @@ bool Level::load()
 		xmlFreeDoc(doc);
 		return false;
 	}
-int cc= obstacles->count();
+
 	curNode = curNode->xmlChildrenNode;
 	//xmlNodePtr propNodePtr = curNode;
+	
 	while(curNode != NULL)
 	{
+		
 		// get map
 		if (!xmlStrcmp(curNode->name, (const xmlChar *)"map"))
 		{
@@ -135,7 +138,12 @@ int cc= obstacles->count();
 				obsNode = obsNode->next;
 			}
 		}
-		
+		else
+		{
+			
+			propsTemp->setObject(new CCString((const char*)xmlNodeGetContent(curNode)), string((char*)curNode->name));
+
+		}
 		/*
 		//取出节点中的内容
 		//if ((!xmlStrcmp(curNode->name, (const xmlChar *)"newNode1")))
@@ -168,6 +176,13 @@ int cc= obstacles->count();
 	}*/
 
 	xmlFreeDoc(doc);
+
+	// get properties
+	width = propsTemp->objectForKey("width")->toInt();
+	height = propsTemp->objectForKey("height")->toInt();
+	tileWidth = propsTemp->objectForKey("tilewidth")->toInt();
+	tileHeight = propsTemp->objectForKey("tileheight")->toInt();
+	background = propsTemp->objectForKey("background")->toInt();
 
 	return true;
 }

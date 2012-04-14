@@ -54,7 +54,7 @@ private:
 	void robbedPorter(Thief* tf, Porter* pt);
 	void thiefGotGem(Thief* tf);
 	void porterGotGem(Porter* pt);
-	void initMap();
+
 };
 
 #endif
