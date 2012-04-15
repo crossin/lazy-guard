@@ -9,7 +9,11 @@ Level::Level(void)
 
 Level::~Level(void)
 {
-	int a=1;
+	if (treasure)
+	{
+		treasure->release();
+		treasure = NULL;
+	}
 }
 
 Level* Level::level()
@@ -30,6 +34,7 @@ bool Level::init()
 	bool bRet = false;
 	do{
 		obstacles = CCArray::array();
+		treasure = new CCMutableDictionary<std::string, CCString*>();
 		bRet=true;
 	}while(0);
 
@@ -82,14 +87,12 @@ bool Level::load()
 {
 	xmlDocPtr doc;           //定义解析文档指针
 	xmlNodePtr curNode;      //定义结点指针(你需要它为了在各个结点间移动)
-	xmlNodePtr obsNode;
-	xmlNodePtr propsNode;
+	xmlNodePtr sonNode;
+	//xmlNodePtr propsNode;
 	//xmlChar *szKey;          //临时字符串变量
 	char *szDocName;
 	CCMutableDictionary<std::string, CCString*>* propsTemp = new CCMutableDictionary<std::string, CCString*>();
-
 	szDocName = "CreatedXml.xml";
-
 	doc = xmlReadFile(szDocName,"UTF-8",XML_PARSE_RECOVER); //解析文件
 	//检查解析文档是否成功，如果不成功，libxml将指一个注册的错误并停止。
 	//一个常见错误是不适当的编码。XML标准文档除了用UTF-8或UTF-16外还可用其它编码保存。
@@ -121,7 +124,7 @@ bool Level::load()
 	{
 		
 		// get map
-		if (!xmlStrcmp(curNode->name, (const xmlChar *)"map"))
+		/*if (!xmlStrcmp(curNode->name, (const xmlChar *)"map"))
 		{
 			obsNode = curNode->xmlChildrenNode;
 			while(obsNode != NULL)
@@ -137,12 +140,38 @@ bool Level::load()
 				obstacles->addObject(obsTemp);
 				obsNode = obsNode->next;
 			}
+		}*/
+
+		if (!xmlStrcmp(curNode->name, (const xmlChar *)"obstacle"))
+		{
+			sonNode = curNode->xmlChildrenNode;
+			CCMutableDictionary<std::string, CCString*>* obsTemp = new CCMutableDictionary<std::string, CCString*>();
+			while(sonNode != NULL)
+			{
+				CCString* str = new CCString((const char*)xmlNodeGetContent(sonNode));
+				obsTemp->setObject(str, string((char*)sonNode->name));
+				str->autorelease();
+				sonNode = sonNode->next;
+			}
+			obstacles->addObject(obsTemp);
+			obsTemp->autorelease();
+		}
+		else if (!xmlStrcmp(curNode->name, (const xmlChar *)"treasure"))
+		{
+			sonNode = curNode->xmlChildrenNode;
+			while(sonNode != NULL)
+			{
+				CCString* str = new CCString((const char*)xmlNodeGetContent(sonNode));
+				treasure->setObject(str, string((char*)sonNode->name));
+				str->autorelease();
+				sonNode = sonNode->next;
+			}
 		}
 		else
 		{
-			
-			propsTemp->setObject(new CCString((const char*)xmlNodeGetContent(curNode)), string((char*)curNode->name));
-
+			CCString* str = new CCString((const char*)xmlNodeGetContent(curNode));
+			propsTemp->setObject(str, string((char*)curNode->name));
+			str->autorelease();
 		}
 		/*
 		//取出节点中的内容
@@ -183,6 +212,7 @@ bool Level::load()
 	tileWidth = propsTemp->objectForKey("tilewidth")->toInt();
 	tileHeight = propsTemp->objectForKey("tileheight")->toInt();
 	background = propsTemp->objectForKey("background")->toInt();
+	propsTemp->autorelease();
 
 	return true;
 }

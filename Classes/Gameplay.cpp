@@ -260,10 +260,10 @@ bool Gameplay::init()
 		
 
 		//gem
-		CCTMXObjectGroup *objects = pDesertTileMap->objectGroupNamed("Objects");
-		props = objects->objectNamed("Treasure");
-		posTemp = ccp(props->objectForKey("x")->toInt(), props->objectForKey("y")->toInt());
-		countGem = props->objectForKey("Count")->toInt();
+		//CCTMXObjectGroup *objects = pDesertTileMap->objectGroupNamed("Objects");
+		//props = objects->objectNamed("Treasure");
+		posTemp = ccp((level->treasure->objectForKey("x")->toInt()+0.5) * level->tileWidth, (level->treasure->objectForKey("y")->toInt()+0.5) * level->tileHeight);
+		countGem = level->treasure->objectForKey("count")->toInt();
 //countGem = 1;
 // 		for (int i=0;i<r;i++){
 // 			for (int j=0;j<c;j++){
