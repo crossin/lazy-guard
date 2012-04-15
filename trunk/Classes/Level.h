@@ -16,6 +16,7 @@ public:
 	bool save();
 	bool load();
 	CCArray* obstacles;
+	CCMutableDictionary<std::string, CCString*>* treasure;
 	int width;
 	int height;
 	int tileWidth;
