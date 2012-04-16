@@ -15,11 +15,11 @@ Thief::~Thief(void)
 {
 }
 
-Thief* Thief::thief()
+Thief* Thief::thief(int ts)
 {
 	Thief *thief = new Thief;
 
-	if (thief && thief->init())
+	if (thief && thief->init(ts))
 	{
 		thief->autorelease();
 		return thief;
@@ -73,10 +73,12 @@ bool Thief::init()
 		status = FINDING;
 		findingInterval = INTERVAL;
 		hasVisited = false;
+		//timeLife = 0;
 		//behaviour=STAND;
 		//direction=DOWN;
 
 		schedule( schedule_selector(Thief::updateFrame));
+		//schedule(schedule_selector(Thief::checkStart), 1);
 
 		//CCActionInterval *action=getAnimate(MOVE,OVERLOOK);
 		//spirte->runAction(CCRepeatForever::actionWithAction(action));
@@ -85,6 +87,12 @@ bool Thief::init()
 		bRet=true;
 	}while(0);
 	return bRet;
+}
+
+bool Thief::init( int ts )
+{
+	timeStart = ts;
+	return init();
 }
 
 void Thief::findGem()
@@ -339,6 +347,23 @@ void Thief::updateFrame(ccTime dt)
 // 		findHome();
 // 	}
 }
+
+// void Thief::checkStart(ccTime dt)
+// {
+// 	timeLife += dt;
+// 	if (timeLife >= timeStart)
+// 	{
+// // 		Thief *thief = Thief::thief();
+// // 		thieves->addObject(thief);
+// // 		
+// // 		things->addObject(thief);
+// // 		thief->findGem();
+// // 		unschedule(schedule_selector(Thief::checkStart));
+// // 		schedule(schedule_selector(Thief::updateFrame));	
+// 	}
+// }
+
+
 
 bool Thief::inScreen()
 {

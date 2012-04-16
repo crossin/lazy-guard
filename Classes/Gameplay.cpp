@@ -53,6 +53,11 @@ Gameplay::~Gameplay(void)
 		things->release();
 		things = NULL;
 	}
+	if (thievesPool)
+	{
+		thievesPool->release();
+		thievesPool = NULL;
+	}
 	PathFinder::release();
 
 	//delete pathfinder;
@@ -101,9 +106,9 @@ bool Gameplay::init()
 		
 //test level
 		// load the tile map
-		CCTMXTiledMap *pDesertTileMap = CCTMXTiledMap::tiledMapWithTMXFile("background.tmx");
-		pDesertTileMap->setPosition(ccp(0,0));
-		addChild(pDesertTileMap, 0, 1);
+		//CCTMXTiledMap *pDesertTileMap = CCTMXTiledMap::tiledMapWithTMXFile("background.tmx");
+		//pDesertTileMap->setPosition(ccp(0,0));
+		//addChild(pDesertTileMap, 0, 1);
 
 
 
@@ -117,8 +122,8 @@ bool Gameplay::init()
 // 		meta->setIsVisible(false);
 // 		CCTMXLayer *layerGem = pDesertTileMap->layerNamed("gem");
 // 		layerGem->setIsVisible(false);
-		CCTMXLayer *layerObstacle = pDesertTileMap->layerNamed("Things");
-		layerObstacle->setIsVisible(false);
+		//CCTMXLayer *layerObstacle = pDesertTileMap->layerNamed("Things");
+		//layerObstacle->setIsVisible(false);
 /*
 		r = (sizeof(game_map)/sizeof(game_map[0]));
 		c = (sizeof(game_map[0])/sizeof(game_map[0][0]));
@@ -137,10 +142,10 @@ bool Gameplay::init()
 		things = new CCMutableArray<Thing*>;
 
 
-		int tileGID;
-		CCDictionary<std::string, CCString*>* props;
-		CCString* result;
-		CCPoint posTemp;
+		//int tileGID;
+		//CCDictionary<std::string, CCString*>* props;
+		//CCString* result;
+		//CCPoint posTemp;
 /*
 		for (int i=0;i<r;i++){
 			for (int j=0;j<c;j++){
@@ -216,6 +221,7 @@ bool Gameplay::init()
 		//CCSize textureSize = texture->getContentSize();
 		background->setTextureRect(CCRectMake(0, 0, winSize.width, winSize.height));
 		background->setPosition(ccp(winSize.width/2, winSize.height/2));
+background->setOpacity(122);
 		addChild(background);
 
 		// obstacles
@@ -224,15 +230,15 @@ bool Gameplay::init()
 		int obsX;
 		int obsY;
 		CCPoint obsPos;
-		CCMutableDictionary<std::string, CCString*>* obsProps;
+		CCMutableDictionary<std::string, CCString*>* propsTemp;
 		int cc=level->obstacles->count();
 		for (int i=0; i<level->obstacles->count(); i++)
 		{
-			obsProps = (CCMutableDictionary<std::string, CCString*>*)level->obstacles->objectAtIndex(i);
-			CCString* s = obsProps->objectForKey("type");
-			obsType = obsProps->objectForKey("type")->toInt();
-			obsX = obsProps->objectForKey("x")->toInt();
-			obsY = obsProps->objectForKey("y")->toInt();
+			propsTemp = (CCMutableDictionary<std::string, CCString*>*)level->obstacles->objectAtIndex(i);
+			CCString* s = propsTemp->objectForKey("type");
+			obsType = propsTemp->objectForKey("type")->toInt();
+			obsX = propsTemp->objectForKey("x")->toInt();
+			obsY = propsTemp->objectForKey("y")->toInt();
 			obsPos = ccp(obsX * level->tileWidth, obsY * level->tileHeight);
 			obsTemp = Obstacle::obstacle(obsType, obsPos);
 			pathfinder->setUnwalkable(obsX, obsY, true);
@@ -262,7 +268,7 @@ bool Gameplay::init()
 		//gem
 		//CCTMXObjectGroup *objects = pDesertTileMap->objectGroupNamed("Objects");
 		//props = objects->objectNamed("Treasure");
-		posTemp = ccp((level->treasure->objectForKey("x")->toInt()+0.5) * level->tileWidth, (level->treasure->objectForKey("y")->toInt()+0.5) * level->tileHeight);
+		CCPoint posTemp = ccp((level->treasure->objectForKey("x")->toInt()+0.5) * level->tileWidth, (level->treasure->objectForKey("y")->toInt()+0.5) * level->tileHeight);
 		countGem = level->treasure->objectForKey("count")->toInt();
 //countGem = 1;
 // 		for (int i=0;i<r;i++){
@@ -292,6 +298,17 @@ bool Gameplay::init()
 		gemsOutside->retain();
 
 		//guard
+		for (int i = 0; i < 2; i++)
+		{
+			propsTemp = (CCMutableDictionary<std::string, CCString*>*)level->guards->objectAtIndex(i);
+			guard[i] = Guard::guard();
+			guard[i]->setPosition(ccp((propsTemp->objectForKey("x")->toInt()+0.5) * level->tileWidth, propsTemp->objectForKey("y")->toInt() * level->tileHeight));
+			addChild(guard[i], 1, Thing::GUARD);
+			addChild(guard[i]->bar, 1001);
+			things->addObject(guard[i]);
+		}
+		
+/*
 		guard[0] = Guard::guard();
 		guard[0]->setPosition(ccp(100,100));
 		addChild(guard[0], 1, Thing::GUARD);
@@ -303,15 +320,27 @@ bool Gameplay::init()
 		addChild(guard[1], 1, Thing::GUARD);
 		addChild(guard[1]->bar, 1001);
 		things->addObject(guard[1]);
-		
+*/		
 		//thief
 		thieves = new CCMutableArray<Thief*>;
-		countThief = 20;
+		thievesPool = CCArray::arrayWithCapacity(level->thieves->count());
+		thievesPool->retain();
+		for (int i = 0; i < level->thieves->count(); i++)
+		{
+			propsTemp = (CCMutableDictionary<std::string, CCString*>*)level->thieves->objectAtIndex(i);
+			Thief *thief = Thief::thief(propsTemp->objectForKey("time")->toInt());
+			thievesPool->addObject(thief);
+		}
+
+
 
 		//porter
 		porter = Porter::porter();
 		addChild(porter, 1, Thing::PORTER);
+		porter->setPosition(treasure->getPosition());
 		things->addObject(porter);
+
+		timeLife = 0;
 
 		bRet = true;
 	} while (0);
@@ -319,7 +348,7 @@ bool Gameplay::init()
 	setIsTouchEnabled(true);
 	setIsKeypadEnabled(true);
 
-	schedule( schedule_selector(Gameplay::gameLogic), 3 );
+	schedule( schedule_selector(Gameplay::addThief), 1 );
 	schedule( schedule_selector(Gameplay::updateFrame));
 
 	// init map
@@ -495,27 +524,33 @@ pLabel->setString(textout);
 
 }
 
-void Gameplay::addThief()
-{
-	Thief *thief = Thief::thief();
-	thieves->addObject(thief);
-	addChild(thief, 1, Thing::THIEF);
-	things->addObject(thief);
-	thief->findGem();
+// void Gameplay::addThief()
+// {
+	//Thief *thief = Thief::thief();
+// 	thieves->addObject(thief);
+// 	addChild(thief, 1, Thing::THIEF);
+// 	things->addObject(thief);
+// 	thief->findGem();
 
 // 	char a[10];
 // 	sprintf(a,"%d",thieves->count());
 // 	OutputDebugStringA(a);
-}
+//}
 
-void Gameplay::gameLogic(ccTime dt)
+void Gameplay::addThief(ccTime dt)
 {
-	if (countThief > 0)
+	timeLife += dt;
+	for (int i = 0; i < thievesPool->count(); i++)
 	{
-		addThief();
-		countThief--;
-		//_itoa_s(countThief,textout,10);
-		//pLabel->setString(textout);
+		Thief* tf = (Thief*)thievesPool->objectAtIndex(i);
+		if (timeLife >= tf->timeStart)
+		{
+			addChild(tf, 1, Thing::THIEF);
+			thieves->addObject(tf);
+			things->addObject(tf);
+			tf->findGem();
+			thievesPool->removeObject(tf);
+		}
 	}
 }
 
@@ -558,7 +593,7 @@ void Gameplay::updateFrame(ccTime dt)
 	}
 
 	// check win
-	if (countThief == 0 && thieves->count() == 0)
+	if (thievesPool->count() == 0 && thieves->count() == 0)
 	{
 		GameOverScene *gameOverScene = GameOverScene::node();
 		gameOverScene->getLayer()->getLabel()->setString("You Win!");
