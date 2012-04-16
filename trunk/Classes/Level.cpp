@@ -37,6 +37,11 @@ bool Level::init()
 		guards = CCArray::array();
 		thieves = CCArray::array();
 		treasure = new CCMutableDictionary<std::string, CCString*>();
+		width = 15;
+		height = 10;
+		tileWidth = 32;
+		tileHeight = 32;
+
 		bRet=true;
 	}while(0);
 
@@ -47,7 +52,7 @@ bool Level::save()
 {
 	//定义文档和节点指针
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST"1.0");
-	xmlNodePtr root_node = xmlNewNode(NULL,BAD_CAST"root");
+	xmlNodePtr root_node = xmlNewNode(NULL,BAD_CAST"level");
 
 	//设置根节点
 	xmlDocSetRootElement(doc,root_node);
@@ -58,12 +63,57 @@ bool Level::save()
 // 	xmlNewTextChild(root_node, NULL, BAD_CAST "newNode3", BAD_CAST "newNode3 content");
 
 	//创建一个节点，设置其内容和属性，然后加入根结点
-	xmlNodePtr node = xmlNewNode(NULL,BAD_CAST"node2");
-	xmlNodePtr content = xmlNewText(BAD_CAST"NODE CONTENT");
+	xmlNodePtr node;
+	xmlNodePtr son_node;
+	xmlNodePtr content;
+	char number[4];
+	CCMutableDictionary<std::string, CCString*>* dic;
+
+	// background
+	node = xmlNewNode(NULL,BAD_CAST"background");
+	sprintf_s(number, "%d", background);
+	content = xmlNewText(BAD_CAST(number));
 	xmlAddChild(root_node,node);
 	xmlAddChild(node,content);
-	xmlNewProp(node,BAD_CAST"attribute",BAD_CAST "yes");
 
+	// obstacle
+	for (int i=0; i<obstacles->count(); i++)
+	{
+		node = xmlNewNode(NULL, BAD_CAST"obstacle");
+		xmlAddChild(root_node, node);
+
+		dic = (CCMutableDictionary<std::string, CCString*>*)obstacles->objectAtIndex(i);
+		//CCMutableDictionary<std::string, CCString*>:: it;
+
+		vector<std::string> vc = dic->allKeys();
+		vector<std::string>::iterator it;
+		string key;
+		for (it = vc.begin(); it != vc.end(); it++)
+		{
+			key = *it;
+ 			son_node = xmlNewNode(NULL, BAD_CAST(key.c_str()));
+ 			content = xmlNewText(BAD_CAST(dic->objectForKey(key)->toStdString().c_str()));
+ 			xmlAddChild(node,son_node);
+ 			xmlAddChild(son_node,content);
+		}
+		//Thief* thief;
+		//for (it = dic->begin(); it != dic->end(); it++)
+// 		{
+// 			node = xmlNewNode(NULL, BAD_CAST(it->first));
+// 			content = xmlNewText(BAD_CAST(it->second));
+// 			xmlAddChild(root_node,node);
+// 			xmlAddChild(node,content);
+// 		}
+	}
+	
+	
+
+
+
+
+	//xmlNewProp(node,BAD_CAST"attribute",BAD_CAST "yes");
+
+	/*
 	//创建一个儿子和孙子节点
 	node = xmlNewNode(NULL, BAD_CAST "son");
 	xmlAddChild(root_node,node);
@@ -71,9 +121,9 @@ bool Level::save()
 	xmlNodePtr grandson = xmlNewNode(NULL, BAD_CAST "grandson");
 	xmlAddChild(node,grandson);
 	xmlAddChild(grandson, xmlNewText(BAD_CAST "This is a grandson node"));
-
+*/
 	//存储xml文档
-	int nRel = xmlSaveFileEnc("CreatedXml.xml",doc,"UTF-8");
+	int nRel = xmlSaveFileEnc("level.xml",doc,"UTF-8");
 	if (nRel == -1)
 	{
 		return false;
@@ -94,7 +144,7 @@ bool Level::load()
 	//xmlChar *szKey;          //临时字符串变量
 	char *szDocName;
 	CCMutableDictionary<std::string, CCString*>* dic; 
-	CCMutableDictionary<std::string, CCString*>* props = new CCMutableDictionary<std::string, CCString*>();
+	//CCMutableDictionary<std::string, CCString*>* props = new CCMutableDictionary<std::string, CCString*>();
 	szDocName = "CreatedXml.xml";
 	doc = xmlReadFile(szDocName,"UTF-8",XML_PARSE_RECOVER); //解析文件
 	//检查解析文档是否成功，如果不成功，libxml将指一个注册的错误并停止。
@@ -199,10 +249,10 @@ bool Level::load()
 			thieves->addObject(dic);
 			dic->autorelease();
 		}
-		else
+		else if (!xmlStrcmp(curNode->name, (const xmlChar *)"background"))
 		{
 			CCString* str = new CCString((const char*)xmlNodeGetContent(curNode));
-			props->setObject(str, string((char*)curNode->name));
+			background = str->toInt();
 			str->autorelease();
 		}
 		/*
@@ -239,12 +289,8 @@ bool Level::load()
 	xmlFreeDoc(doc);
 
 	// get properties
-	width = props->objectForKey("width")->toInt();
-	height = props->objectForKey("height")->toInt();
-	tileWidth = props->objectForKey("tilewidth")->toInt();
-	tileHeight = props->objectForKey("tileheight")->toInt();
-	background = props->objectForKey("background")->toInt();
-	props->autorelease();
+	//background = props->objectForKey("background")->toInt();
+	//props->autorelease();
 
 	return true;
 }

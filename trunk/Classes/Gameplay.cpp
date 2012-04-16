@@ -116,7 +116,7 @@ bool Gameplay::init()
 		Level* level = Level::level();
 		level->load();	
 
-
+		level->save();
 
 // 		CCTMXLayer *meta=pDesertTileMap->layerNamed("Meta");
 // 		meta->setIsVisible(false);
