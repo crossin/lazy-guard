@@ -16,6 +16,8 @@ public:
 	bool save();
 	bool load();
 	CCArray* obstacles;
+	CCArray* guards;
+	CCArray* thieves;
 	CCMutableDictionary<std::string, CCString*>* treasure;
 	int width;
 	int height;

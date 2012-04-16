@@ -34,6 +34,8 @@ bool Level::init()
 	bool bRet = false;
 	do{
 		obstacles = CCArray::array();
+		guards = CCArray::array();
+		thieves = CCArray::array();
 		treasure = new CCMutableDictionary<std::string, CCString*>();
 		bRet=true;
 	}while(0);
@@ -91,7 +93,8 @@ bool Level::load()
 	//xmlNodePtr propsNode;
 	//xmlChar *szKey;          //临时字符串变量
 	char *szDocName;
-	CCMutableDictionary<std::string, CCString*>* propsTemp = new CCMutableDictionary<std::string, CCString*>();
+	CCMutableDictionary<std::string, CCString*>* dic; 
+	CCMutableDictionary<std::string, CCString*>* props = new CCMutableDictionary<std::string, CCString*>();
 	szDocName = "CreatedXml.xml";
 	doc = xmlReadFile(szDocName,"UTF-8",XML_PARSE_RECOVER); //解析文件
 	//检查解析文档是否成功，如果不成功，libxml将指一个注册的错误并停止。
@@ -145,16 +148,17 @@ bool Level::load()
 		if (!xmlStrcmp(curNode->name, (const xmlChar *)"obstacle"))
 		{
 			sonNode = curNode->xmlChildrenNode;
-			CCMutableDictionary<std::string, CCString*>* obsTemp = new CCMutableDictionary<std::string, CCString*>();
+			//CCMutableDictionary<std::string, CCString*>* obsTemp = new CCMutableDictionary<std::string, CCString*>();
+			dic = new CCMutableDictionary<std::string, CCString*>();
 			while(sonNode != NULL)
 			{
 				CCString* str = new CCString((const char*)xmlNodeGetContent(sonNode));
-				obsTemp->setObject(str, string((char*)sonNode->name));
+				dic->setObject(str, string((char*)sonNode->name));
 				str->autorelease();
 				sonNode = sonNode->next;
 			}
-			obstacles->addObject(obsTemp);
-			obsTemp->autorelease();
+			obstacles->addObject(dic);
+			dic->autorelease();
 		}
 		else if (!xmlStrcmp(curNode->name, (const xmlChar *)"treasure"))
 		{
@@ -167,10 +171,38 @@ bool Level::load()
 				sonNode = sonNode->next;
 			}
 		}
+		else if (!xmlStrcmp(curNode->name, (const xmlChar *)"guard"))
+		{
+			sonNode = curNode->xmlChildrenNode;
+			dic = new CCMutableDictionary<std::string, CCString*>();
+			while(sonNode != NULL)
+			{
+				CCString* str = new CCString((const char*)xmlNodeGetContent(sonNode));
+				dic->setObject(str, string((char*)sonNode->name));
+				str->autorelease();
+				sonNode = sonNode->next;
+			}
+			guards->addObject(dic);
+			dic->autorelease();
+		}
+		else if (!xmlStrcmp(curNode->name, (const xmlChar *)"thief"))
+		{
+			sonNode = curNode->xmlChildrenNode;
+			dic = new CCMutableDictionary<std::string, CCString*>();
+			while(sonNode != NULL)
+			{
+				CCString* str = new CCString((const char*)xmlNodeGetContent(sonNode));
+				dic->setObject(str, string((char*)sonNode->name));
+				str->autorelease();
+				sonNode = sonNode->next;
+			}
+			thieves->addObject(dic);
+			dic->autorelease();
+		}
 		else
 		{
 			CCString* str = new CCString((const char*)xmlNodeGetContent(curNode));
-			propsTemp->setObject(str, string((char*)curNode->name));
+			props->setObject(str, string((char*)curNode->name));
 			str->autorelease();
 		}
 		/*
@@ -187,7 +219,7 @@ bool Level::load()
 		{
 			propNodePtr = curNode;
 		}*/
-
+		
 		curNode = curNode->next;
 	}
 
@@ -207,12 +239,12 @@ bool Level::load()
 	xmlFreeDoc(doc);
 
 	// get properties
-	width = propsTemp->objectForKey("width")->toInt();
-	height = propsTemp->objectForKey("height")->toInt();
-	tileWidth = propsTemp->objectForKey("tilewidth")->toInt();
-	tileHeight = propsTemp->objectForKey("tileheight")->toInt();
-	background = propsTemp->objectForKey("background")->toInt();
-	propsTemp->autorelease();
+	width = props->objectForKey("width")->toInt();
+	height = props->objectForKey("height")->toInt();
+	tileWidth = props->objectForKey("tilewidth")->toInt();
+	tileHeight = props->objectForKey("tileheight")->toInt();
+	background = props->objectForKey("background")->toInt();
+	props->autorelease();
 
 	return true;
 }

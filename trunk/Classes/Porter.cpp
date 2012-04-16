@@ -45,7 +45,7 @@ bool Porter::init()
 		}
 		actionWalk = actionWalks[4];
 
-		setPosition(ccp(240, 120));
+		//setPosition(ccp(240, 120));
 		gem = NULL;
 		speed = 50;
 		status = WAITING;

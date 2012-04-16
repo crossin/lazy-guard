@@ -24,6 +24,7 @@ public:
 	LAYER_NODE_FUNC(Gameplay);
 
 	void ccTouchesEnded(CCSet* touches, CCEvent* event);
+
 	//void updateThieves();
 
 virtual void draw();
@@ -36,14 +37,16 @@ virtual void draw();
 	Guard* guard[2];
 	Porter* porter;
 	CCArray* gemsOutside;
+	CCArray* thievesPool;
 	Treasure* treasure;
-	int countThief;
+	//int countThief;
 	int countGem;
+	float timeLife;
 CCLabelTTF* pLabel;
 
 private:
-	void addThief();
-	void gameLogic(ccTime dt);
+	//void addThief();
+	void addThief(ccTime dt);
 	void updateFrame(ccTime dt);
 	//     void FindThief();
 // 	void spriteMoveFinished(CCNode* sender);
