@@ -5,6 +5,7 @@
 using namespace CocosDenshion;
 
 #include "Gameplay.h"
+#include "LevelEditor.h"
 
 #include "CCEGLView.h"
 
@@ -31,7 +32,7 @@ bool AppDelegate::initInstance()
 		// The HelloWorld is designed as HVGA.
 		CCEGLView * pMainWnd = new CCEGLView();
 		CC_BREAK_IF(! pMainWnd
-				|| ! pMainWnd->Create(TEXT("cocos2d: Hello World"), 480, 320));
+				|| ! pMainWnd->Create(TEXT("Sleeping Guard"), 480, 320));
 
 #endif  // CC_PLATFORM_WIN32
 
@@ -116,7 +117,8 @@ bool AppDelegate::applicationDidFinishLaunching()
     pDirector->setAnimationInterval(1.0 / 60);
 
     // create a scene. it's an autorelease object
-    CCScene *pScene = Gameplay::scene();
+    //CCScene *pScene = Gameplay::scene();
+	CCScene *pScene = LevelEditor::node();
 	/*
 	CCScene * pScene = CCScene::node();
     CCLayer * pLayer = new HelloWorld();

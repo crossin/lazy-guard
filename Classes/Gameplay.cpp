@@ -139,6 +139,7 @@ bool Gameplay::init()
 		pathfinder->initWithSize(level->width, level->height, level->tileWidth, level->tileHeight);
 
 		AnimatePacker::getInstance()->loadAnimate("sprites.xml");
+
 		things = new CCMutableArray<Thing*>;
 
 
@@ -231,11 +232,9 @@ background->setOpacity(122);
 		int obsY;
 		CCPoint obsPos;
 		CCMutableDictionary<std::string, CCString*>* propsTemp;
-		int cc=level->obstacles->count();
 		for (int i=0; i<level->obstacles->count(); i++)
 		{
 			propsTemp = (CCMutableDictionary<std::string, CCString*>*)level->obstacles->objectAtIndex(i);
-			CCString* s = propsTemp->objectForKey("type");
 			obsType = propsTemp->objectForKey("type")->toInt();
 			obsX = propsTemp->objectForKey("x")->toInt();
 			obsY = propsTemp->objectForKey("y")->toInt();

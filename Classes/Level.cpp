@@ -68,6 +68,9 @@ bool Level::save()
 	xmlNodePtr content;
 	char number[4];
 	CCMutableDictionary<std::string, CCString*>* dic;
+	vector<std::string> vc;
+	vector<std::string>::iterator it;
+	string key;
 
 	// background
 	node = xmlNewNode(NULL,BAD_CAST"background");
@@ -83,11 +86,8 @@ bool Level::save()
 		xmlAddChild(root_node, node);
 
 		dic = (CCMutableDictionary<std::string, CCString*>*)obstacles->objectAtIndex(i);
-		//CCMutableDictionary<std::string, CCString*>:: it;
 
-		vector<std::string> vc = dic->allKeys();
-		vector<std::string>::iterator it;
-		string key;
+		vc = dic->allKeys();
 		for (it = vc.begin(); it != vc.end(); it++)
 		{
 			key = *it;
@@ -96,20 +96,58 @@ bool Level::save()
  			xmlAddChild(node,son_node);
  			xmlAddChild(son_node,content);
 		}
-		//Thief* thief;
-		//for (it = dic->begin(); it != dic->end(); it++)
-// 		{
-// 			node = xmlNewNode(NULL, BAD_CAST(it->first));
-// 			content = xmlNewText(BAD_CAST(it->second));
-// 			xmlAddChild(root_node,node);
-// 			xmlAddChild(node,content);
-// 		}
 	}
 	
-	
+	// treasure
+	node = xmlNewNode(NULL, BAD_CAST"treasure");
+	xmlAddChild(root_node, node);
+	vc = treasure->allKeys();
+	for (it = vc.begin(); it != vc.end(); it++)
+	{
+		key = *it;
+		son_node = xmlNewNode(NULL, BAD_CAST(key.c_str()));
+		content = xmlNewText(BAD_CAST(treasure->objectForKey(key)->toStdString().c_str()));
+		xmlAddChild(node,son_node);
+		xmlAddChild(son_node,content);
+	}
 
+	// guard
+	for (int i=0; i<guards->count(); i++)
+	{
+		node = xmlNewNode(NULL, BAD_CAST"guard");
+		xmlAddChild(root_node, node);
 
+		dic = (CCMutableDictionary<std::string, CCString*>*)guards->objectAtIndex(i);
 
+		vc = dic->allKeys();
+		for (it = vc.begin(); it != vc.end(); it++)
+		{
+			key = *it;
+			son_node = xmlNewNode(NULL, BAD_CAST(key.c_str()));
+			content = xmlNewText(BAD_CAST(dic->objectForKey(key)->toStdString().c_str()));
+			xmlAddChild(node,son_node);
+			xmlAddChild(son_node,content);
+		}
+	}
+
+	// thief
+	for (int i=0; i<thieves->count(); i++)
+	{
+		node = xmlNewNode(NULL, BAD_CAST"thief");
+		xmlAddChild(root_node, node);
+
+		dic = (CCMutableDictionary<std::string, CCString*>*)thieves->objectAtIndex(i);
+
+		vc = dic->allKeys();
+		for (it = vc.begin(); it != vc.end(); it++)
+		{
+			key = *it;
+			son_node = xmlNewNode(NULL, BAD_CAST(key.c_str()));
+			content = xmlNewText(BAD_CAST(dic->objectForKey(key)->toStdString().c_str()));
+			xmlAddChild(node,son_node);
+			xmlAddChild(son_node,content);
+		}
+	}
 
 	//xmlNewProp(node,BAD_CAST"attribute",BAD_CAST "yes");
 
@@ -123,7 +161,7 @@ bool Level::save()
 	xmlAddChild(grandson, xmlNewText(BAD_CAST "This is a grandson node"));
 */
 	//存储xml文档
-	int nRel = xmlSaveFileEnc("level.xml",doc,"UTF-8");
+	int nRel = xmlSaveFormatFileEnc("level.xml",doc,"UTF-8",1);
 	if (nRel == -1)
 	{
 		return false;
@@ -145,8 +183,8 @@ bool Level::load()
 	char *szDocName;
 	CCMutableDictionary<std::string, CCString*>* dic; 
 	//CCMutableDictionary<std::string, CCString*>* props = new CCMutableDictionary<std::string, CCString*>();
-	szDocName = "CreatedXml.xml";
-	doc = xmlReadFile(szDocName,"UTF-8",XML_PARSE_RECOVER); //解析文件
+	szDocName = "level.xml";
+	doc = xmlReadFile(szDocName,"UTF-8",XML_PARSE_NOBLANKS); //解析文件
 	//检查解析文档是否成功，如果不成功，libxml将指一个注册的错误并停止。
 	//一个常见错误是不适当的编码。XML标准文档除了用UTF-8或UTF-16外还可用其它编码保存。
 	//如果文档是这样，libxml将自动地为你转换到UTF-8。更多关于XML编码信息包含在XML标准中.
