@@ -21,20 +21,50 @@ LevelEditor::~LevelEditor(void)
 		mapLayer->release();
 		mapLayer = NULL;
 	}
+	if (obstacles)
+	{
+		obstacles->release();
+	}
+	if (level)
+	{
+		level->release();
+	}
 }
 
+CCScene* LevelEditor::scene()
+{
+	CCScene * scene = NULL;
+	do 
+	{
+		// 'scene' is an autorelease object
+		scene = CCScene::node();
+		CC_BREAK_IF(! scene);
+
+		// 'layer' is an autorelease object
+		LevelEditor *layer = LevelEditor::node();
+		CC_BREAK_IF(! layer);
+
+		// add layer as a child to scene
+		scene->addChild(layer);
+
+	} while (0);
+
+	// return the scene
+	return scene;
+}
 
 bool LevelEditor::init()
 {
-	if( CCScene::init() )
+	if( CCLayer::init() )
 	{
 
 		level = Level::level();
+		level->retain();
 		level->load();
 		level->save();
 		
 		// map
-		mapLayer = MapLayer::node();
+		mapLayer = CCLayer::node();
 		mapLayer->retain();
 		mapLayer->setAnchorPoint(ccp(0,1));
 		mapLayer->setScale(0.8);
@@ -55,6 +85,7 @@ bool LevelEditor::init()
  		mapLayer->addChild(background);
 		// obstacle
 		obstacles = CCArray::array();
+		obstacles->retain();
 //		obstacles = new int*[mapWidth];
 // 		for (int i=0; i<mapWidth; i++)
 // 		{
@@ -86,7 +117,7 @@ bool LevelEditor::init()
 
 
 
-		mapLayer->setIsTouchEnabled(true);
+		setIsTouchEnabled(true);
 
 		return true;
 	}
@@ -96,19 +127,32 @@ bool LevelEditor::init()
 	}
 }
 
-void MapLayer::ccTouchesEnded(CCSet* touches, CCEvent* event)
+void LevelEditor::ccTouchesEnded(CCSet* touches, CCEvent* event)
 {
 	CCSetIterator it = touches->begin();
 	CCTouch* touch = (CCTouch*)(*it);
 
 	CCPoint m_tTouchPos;
-	m_tTouchPos = convertTouchToNodeSpace(touch);
+	m_tTouchPos = mapLayer->convertTouchToNodeSpace(touch);
 // 	m_tTouchPos = touch->locationInView( touch->view() );
 // 	m_tTouchPos = CCDirector::sharedDirector()->convertToGL( m_tTouchPos );
+	int tX = m_tTouchPos.x / level->tileWidth;
+	int tY = m_tTouchPos.y / level->tileHeight;
+
+	Obstacle* obsTemp;
+	for (int i=0; i<obstacles->count(); i++)
+	{
+		obsTemp = (Obstacle*)obstacles->objectAtIndex(i);
+		if (CCRect::CCRectContainsPoint(obsTemp->getRectOut(),m_tTouchPos))
+		{
+			obstacles->removeObject(obsTemp);
+			mapLayer->removeChild(obsTemp, true);
+		}
+	}
 
 
 
-
-
+// 	CCPoint obsPos = ccp(tX * level->tileWidth, tY * level->tileHeight);
+// 	mapLayer->addChild(Obstacle::obstacle(1, obsPos));
 
 }
