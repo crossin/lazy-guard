@@ -4,23 +4,20 @@
 
 using namespace cocos2d;
 
-class MapLayer : public CCLayer
-{
-public:
-	LAYER_NODE_FUNC(MapLayer);
-	void ccTouchesEnded(CCSet* touches, CCEvent* event);
-};
-
 class LevelEditor :
-	public CCScene
+	public CCLayer
 {
 public:
 	LevelEditor(void);
 	~LevelEditor(void);
 
-	bool init();
+	static CCScene* scene();
+
 	SCENE_NODE_FUNC(LevelEditor);
-	CC_SYNTHESIZE_READONLY(MapLayer*, mapLayer, Map);
+	CC_SYNTHESIZE_READONLY(CCLayer*, mapLayer, Map);
+
+	bool init();
+	void ccTouchesEnded(CCSet* touches, CCEvent* event);
 
 	Level *level;
 	CCArray* obstacles;
