@@ -154,6 +154,13 @@ bool LevelEditor::init()
 		frameSelect->setIsVisible(false);
 		addChild(frameSelect);
 
+
+		CCLabelTTF* label = CCLabelTTF::labelWithString("BUTTON", "Arial", 24);
+		CCMenuItemLabel* pMenuItem = CCMenuItemLabel::itemWithLabel(label, this, menu_selector(LevelEditor::menuCallback));
+		//m_pItmeMenu->addChild(pMenuItem);
+		CCMenu* m_pItmeMenu = CCMenu::menuWithItems(pMenuItem, NULL);
+		addChild(m_pItmeMenu);
+
 		thingSelect = NULL;
 		isEraser = false;
 
@@ -225,4 +232,9 @@ layerObs->setIsVisible(false);
 		}
 	}
 
+}
+
+void LevelEditor::menuCallback(CCObject * pSender)
+{
+	layerObs->setIsVisible(false);
 }
