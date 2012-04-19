@@ -176,7 +176,7 @@ void LevelEditor::ccTouchesEnded(CCSet* touches, CCEvent* event)
 	m_tTouchPos = touch->locationInView( touch->view() );
 	m_tTouchPos = CCDirector::sharedDirector()->convertToGL( m_tTouchPos );
 
-
+layerObs->setIsVisible(false);
 
  	Thing* objectTemp;
 // 	for (int i=0; i<obstacles->count(); i++)
