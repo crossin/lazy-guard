@@ -20,3 +20,30 @@ CCRect Thing::getRectOut()
 // 		sprite->getContentSize().width,
 // 		sprite->getContentSize().height);
 }
+
+bool Eraser::init()
+{
+	bool bRet = false;
+	do{
+		sprite = CCSprite::spriteWithSpriteFrameName("eraser.png");
+		sprite->setAnchorPoint(CCPointZero);
+		addChild(sprite);
+
+		bRet=true;
+	}while(0);
+
+	return bRet;
+}
+
+Eraser* Eraser::eraser()
+{
+	Eraser *eraser = new Eraser;
+
+	if (eraser && eraser->init())
+	{
+		eraser->autorelease();
+		return eraser;
+	}
+
+	return NULL;
+}
