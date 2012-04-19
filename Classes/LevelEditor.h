@@ -16,10 +16,10 @@ public:
 
 	bool init();
 	void ccTouchesEnded(CCSet* touches, CCEvent* event);
-
+	void menuCallback(CCObject * pSender);
 	SCENE_NODE_FUNC(LevelEditor);
 	CC_SYNTHESIZE_READONLY(CCLayer*, mapLayer, Map);
-
+	
 	Level *level;
 	CCLayer* layerObs;
 	CCArray* obstacles;
