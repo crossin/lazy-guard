@@ -260,11 +260,11 @@ bool Level::load()
 			{
 				CCString* str = new CCString((const char*)xmlNodeGetContent(sonNode));
 				dic->setObject(str, string((char*)sonNode->name));
-				str->autorelease();
+				str->release();
 				sonNode = sonNode->next;
 			}
 			obstacles->addObject(dic);
-			dic->autorelease();
+			dic->release();
 		}
 		else if (!xmlStrcmp(curNode->name, (const xmlChar *)"treasure"))
 		{
@@ -273,7 +273,7 @@ bool Level::load()
 			{
 				CCString* str = new CCString((const char*)xmlNodeGetContent(sonNode));
 				treasure->setObject(str, string((char*)sonNode->name));
-				str->autorelease();
+				str->release();
 				sonNode = sonNode->next;
 			}
 		}
@@ -285,11 +285,11 @@ bool Level::load()
 			{
 				CCString* str = new CCString((const char*)xmlNodeGetContent(sonNode));
 				dic->setObject(str, string((char*)sonNode->name));
-				str->autorelease();
+				str->release();
 				sonNode = sonNode->next;
 			}
 			guards->addObject(dic);
-			dic->autorelease();
+			dic->release();
 		}
 		else if (!xmlStrcmp(curNode->name, (const xmlChar *)"thief"))
 		{
@@ -299,17 +299,17 @@ bool Level::load()
 			{
 				CCString* str = new CCString((const char*)xmlNodeGetContent(sonNode));
 				dic->setObject(str, string((char*)sonNode->name));
-				str->autorelease();
+				str->release();
 				sonNode = sonNode->next;
 			}
 			thieves->addObject(dic);
-			dic->autorelease();
+			dic->release();
 		}
 		else if (!xmlStrcmp(curNode->name, (const xmlChar *)"background"))
 		{
 			CCString* str = new CCString((const char*)xmlNodeGetContent(curNode));
 			background = str->toInt();
-			str->autorelease();
+			str->release();
 		}
 		/*
 		//取出节点中的内容
