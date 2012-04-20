@@ -17,20 +17,25 @@ public:
 	bool init();
 	void ccTouchesEnded(CCSet* touches, CCEvent* event);
 	void menuCallback(CCObject * pSender);
+	void editObstacle(CCPoint posTouch, CCPoint posInMap);
+	bool save();
 	SCENE_NODE_FUNC(LevelEditor);
 	CC_SYNTHESIZE_READONLY(CCLayer*, mapLayer, Map);
-	
+
 	Level *level;
 	CCLayer* layerObs;
+	CCLayer* layerThief;
 	CCArray* obstacles;
 	CCArray* buttonObs;
+	CCArray* buttonThief;
 	CCSprite* background;
-	CCSprite* frameSelect;
+	//CCSprite* frameSelect;
 //	int** obstacles;
 	//int mapWidth;
 	//int mapHeight;
 	Thing* thingSelect;
 	bool isEraser;
+	int status;
 	//int typeSelect;
 };
 

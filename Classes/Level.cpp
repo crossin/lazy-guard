@@ -14,6 +14,21 @@ Level::~Level(void)
 		treasure->release();
 		treasure = NULL;
 	}
+	if (obstacles)
+	{
+		obstacles->release();
+		obstacles = NULL;
+	}
+	if (guards)
+	{
+		guards->release();
+		guards = NULL;
+	}
+	if (thieves)
+	{
+		thieves->release();
+		thieves = NULL;
+	}
 }
 
 Level* Level::level()
@@ -34,8 +49,11 @@ bool Level::init()
 	bool bRet = false;
 	do{
 		obstacles = CCArray::array();
+		obstacles->retain();
 		guards = CCArray::array();
+		guards->retain();
 		thieves = CCArray::array();
+		thieves->retain();
 		treasure = new CCMutableDictionary<std::string, CCString*>();
 		width = 15;
 		height = 10;
