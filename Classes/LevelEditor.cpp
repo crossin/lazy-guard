@@ -227,7 +227,9 @@ void LevelEditor::ccTouchesEnded(CCSet* touches, CCEvent* event)
 		editObstacle(m_tTouchPos, m_tTouchPosInMap);
 	}
 
-	save();
+///////////////////////////////
+save();
+///////////////////////////////
 }
 
 void LevelEditor::editObstacle(CCPoint posTouch, CCPoint posInMap)
@@ -307,6 +309,34 @@ void LevelEditor::menuCallback(CCObject * pSender)
 
 bool LevelEditor::save()
 {
-	//level->obstacles->removeAllObjects();
+	level->obstacles->removeAllObjects();
+	CCMutableDictionary<std::string, CCString*>* dic;
+	Obstacle* obsTemp;
+	char number[4];
+	CCString* str;
+	int len;
+	for (int i=0; i<obstacles->count(); i++)
+	{
+		obsTemp = (Obstacle*)obstacles->objectAtIndex(i);
+		dic = new CCMutableDictionary<std::string, CCString*>();
+		//type
+		sprintf_s(number, "%d", obsTemp->typeIndex);
+		str = new CCString(number);
+		dic->setObject(str, "type");
+		//x
+		len = (int)obsTemp->getPosition().x / level->tileWidth;
+		sprintf_s(number, "%d", len);
+		str = new CCString(number);
+		dic->setObject(str, "x");
+		//y
+		len = (int)obsTemp->getPosition().y / level->tileHeight;
+		sprintf_s(number, "%d", len);
+		str = new CCString(number);
+		dic->setObject(str, "y");
+
+		level->obstacles->addObject(dic);
+		str->release();
+		dic->release();
+	}
 	return level->save();
 }
