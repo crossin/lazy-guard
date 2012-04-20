@@ -1,5 +1,6 @@
 #include "LevelEditor.h"
 #include "Obstacle.h"
+#include "Thief.h"
 #include "AnimatePacker.h"
 
 
@@ -28,6 +29,10 @@ LevelEditor::~LevelEditor(void)
 	if (buttonObs)
 	{
 		buttonObs->release();
+	}
+	if (buttonThief)
+	{
+		buttonThief->release();
 	}
 	if (level)
 	{
@@ -105,64 +110,94 @@ bool LevelEditor::init()
 // 				obstacles[i][j] = 0;
 // 			}
 // 		}
-		Thing* obsTemp;
-		int obsType;
-		int obsX;
-		int obsY;
-		CCPoint obsPos;
+		Thing* objTemp;
+		int objType;
+		int objX;
+		int objY;
+		CCPoint objPos;
 		CCMutableDictionary<std::string, CCString*>* propsTemp;
 		for (int i=0; i<level->obstacles->count(); i++)
 		{
 			propsTemp = (CCMutableDictionary<std::string, CCString*>*)level->obstacles->objectAtIndex(i);
-			obsType = propsTemp->objectForKey("type")->toInt();
-			obsX = propsTemp->objectForKey("x")->toInt();
-			obsY = propsTemp->objectForKey("y")->toInt();
-			obsPos = ccp(obsX * level->tileWidth, obsY * level->tileHeight);
-			obsTemp = Obstacle::obstacle(obsType, obsPos);
-			obstacles->addObject(obsTemp);
-			mapLayer->addChild(obsTemp,20-obsY);
+			objType = propsTemp->objectForKey("type")->toInt();
+			objX = propsTemp->objectForKey("x")->toInt();
+			objY = propsTemp->objectForKey("y")->toInt();
+			objPos = ccp(objX * level->tileWidth, objY * level->tileHeight);
+			objTemp = Obstacle::obstacle(objType, objPos);
+			obstacles->addObject(objTemp);
+			mapLayer->addChild(objTemp,20-objY);
 		}
 
 
-		// menu
+		// button
+		// obstacle
 		layerObs = CCLayer::node();
 		buttonObs = CCArray::array();
 		buttonObs->retain();
 		for (int i=0; i<4; i++)
 		{
-			obsPos = ccp(400+i%2*40, 260-i/2*50);
-			obsTemp =  Obstacle::obstacle(i, obsPos);
-			layerObs->addChild(obsTemp);
-			buttonObs->addObject(obsTemp);
+			objPos = ccp(400+i%2*40, 260-i/2*50);
+			objTemp =  Obstacle::obstacle(i, objPos);
+			layerObs->addChild(objTemp);
+			buttonObs->addObject(objTemp);
 		}
 		Eraser* eraser = Eraser::eraser();
 		eraser->setPosition(ccp(400, 160));
-		layerObs->addChild(eraser,0,Thing::ERASER);
 		buttonObs->addObject(eraser);
-		//mapLayer->retain();
-		//mapLayer->setAnchorPoint(ccp(0.2,0.7));
-		//mapLayer->setScale(0.7);
+		layerObs->addChild(eraser,0,Thing::ERASER);
+		//layerObs->setIsVisible(false);
 		addChild(layerObs);
 
-		// the frame of select button
-		frameSelect = CCSprite::spriteWithFile("blank.png");
-		frameSelect->setAnchorPoint(ccp(0,0));
-		
-		//frameSelect->setPosition(ccp(440,300));
-		//frameSelect->setColor(ccORANGE);
-		frameSelect->setOpacity(127);
-		frameSelect->setIsVisible(false);
-		addChild(frameSelect);
+		// thief
+		layerThief = CCLayer::node();
+		buttonThief = CCArray::array();
+		buttonThief->retain();
+// 		for (int i=0; i<1; i++)
+// 		{
+// 			obsPos = ccp(400+i%2*40, 260-i/2*50);
+// 			obsTemp =  Obstacle::obstacle(i, obsPos);
+// 			layerObs->addChild(obsTemp);
+// 			buttonObs->addObject(obsTemp);
+// 		}
+		objPos = ccp(415, 260);
+		objTemp = Thief::thief(0);
+		objTemp->unscheduleAllSelectors();
+		objTemp->setPosition(objPos);
+		layerThief->addChild(objTemp);
+		buttonThief->addObject(objTemp);
+		eraser = Eraser::eraser();
+		eraser->setPosition(ccp(440, 260));
+		buttonThief->addObject(eraser);
+		layerThief->addChild(eraser,0,Thing::ERASER);
+		layerThief->setIsVisible(false);
+		addChild(layerThief);
 
-
-		CCLabelTTF* label = CCLabelTTF::labelWithString("BUTTON", "Arial", 24);
-		CCMenuItemLabel* pMenuItem = CCMenuItemLabel::itemWithLabel(label, this, menu_selector(LevelEditor::menuCallback));
-		//m_pItmeMenu->addChild(pMenuItem);
-		CCMenu* m_pItmeMenu = CCMenu::menuWithItems(pMenuItem, NULL);
+		// menu
+		char* menu_name[2] = {"Obstacle", "Thief"};
+		int menu_tag[2] = {Thing::OBSTACLE, Thing::THIEF};
+		CCLabelTTF* label;
+		CCMenuItemLabel* pMenuItem;
+		CCMenu* m_pItmeMenu = CCMenu::menuWithItems(NULL);
+		for (int i = 0; i < 2; i++)
+		{
+			label = CCLabelTTF::labelWithString(menu_name[i], "Arial", 24);
+			pMenuItem = CCMenuItemLabel::itemWithLabel(label, this, menu_selector(LevelEditor::menuCallback));
+			m_pItmeMenu->addChild(pMenuItem, 0, menu_tag[i]);
+		}
+		m_pItmeMenu->alignItemsHorizontallyWithPadding(10);
+		m_pItmeMenu->setPosition(ccp(100,20));
 		addChild(m_pItmeMenu);
+
+
+
+
+
+
+
 
 		thingSelect = NULL;
 		isEraser = false;
+		status = Thing::OBSTACLE;
 
 		setIsTouchEnabled(true);
 
@@ -183,26 +218,27 @@ void LevelEditor::ccTouchesEnded(CCSet* touches, CCEvent* event)
 	m_tTouchPos = touch->locationInView( touch->view() );
 	m_tTouchPos = CCDirector::sharedDirector()->convertToGL( m_tTouchPos );
 
-layerObs->setIsVisible(false);
+ 	CCPoint m_tTouchPosInMap = mapLayer->convertTouchToNodeSpace(touch);
 
- 	Thing* objectTemp;
-// 	for (int i=0; i<obstacles->count(); i++)
-// 	{
-// 		obsTemp = (Obstacle*)obstacles->objectAtIndex(i);
-// 		if (CCRect::CCRectContainsPoint(obsTemp->getRectOut(),m_tTouchPos))
-// 		{
-// 			obstacles->removeObject(obsTemp);
-// 			mapLayer->removeChild(obsTemp, true);
-// 		}
-// 	}
 
+	switch (status)
+	{
+	case Thing::OBSTACLE:
+		editObstacle(m_tTouchPos, m_tTouchPosInMap);
+	}
+
+	save();
+}
+
+void LevelEditor::editObstacle(CCPoint posTouch, CCPoint posInMap)
+{
+	Thing* objectTemp;
 	for (int i=0; i<5; i++)
 	{
-
-	 	objectTemp = (Thing*)buttonObs->objectAtIndex(i);
+		objectTemp = (Thing*)buttonObs->objectAtIndex(i);
 		CCRect a =objectTemp->getRectOut();
-	 	if (CCRect::CCRectContainsPoint(objectTemp->getRectOut(),m_tTouchPos))
-	 	{
+		if (CCRect::CCRectContainsPoint(objectTemp->getRectOut(), posTouch))
+		{
 			isEraser = (objectTemp->getTag() == Thing::ERASER);
 
 			if (thingSelect)
@@ -213,28 +249,64 @@ layerObs->setIsVisible(false);
 			//typeSelect = obsTemp->typeIndex;
 			thingSelect->sprite->setColor(ccGRAY/*ccc3(122,122,255)*/);
 
-// 			frameSelect->setTextureRect(obsTemp->getRectOut());
-// 			frameSelect->setPosition(obsTemp->getPosition());
-// 			frameSelect->setIsVisible(true);
+			// 			frameSelect->setTextureRect(obsTemp->getRectOut());
+			// 			frameSelect->setPosition(obsTemp->getPosition());
+			// 			frameSelect->setIsVisible(true);
 			return;
-	 	}
+		}
 	}
 
 	if (thingSelect)
 	{
-		m_tTouchPos = mapLayer->convertTouchToNodeSpace(touch);
-		int tX = m_tTouchPos.x / level->tileWidth;
-		int tY = m_tTouchPos.y / level->tileHeight;
-		if (CCRect::CCRectContainsPoint(background->boundingBox(),m_tTouchPos))
+		int tX = posInMap.x / level->tileWidth;
+		int tY = posInMap.y / level->tileHeight;
+		if (CCRect::CCRectContainsPoint(background->boundingBox(), posInMap))
 		{
 			CCPoint obsPos = ccp(tX * level->tileWidth, tY * level->tileHeight);
-			mapLayer->addChild(Obstacle::obstacle(((Obstacle*)thingSelect)->typeIndex, obsPos), 20-tY);
+			// check if hit obstacles
+			for (int i=0; i<obstacles->count(); i++)
+			{
+				objectTemp = (Obstacle*)obstacles->objectAtIndex(i);
+				if (CCPoint::CCPointEqualToPoint(objectTemp->getPosition(), obsPos))
+				{
+					if (isEraser)
+					{
+						obstacles->removeObject(objectTemp);
+						mapLayer->removeChild(objectTemp, true);
+					}
+					return;
+				}
+			}
+			if (!isEraser)
+			{
+				objectTemp = Obstacle::obstacle(((Obstacle*)thingSelect)->typeIndex, obsPos);
+				obstacles->addObject(objectTemp);
+				mapLayer->addChild(objectTemp, 20-tY);
+			}
 		}
 	}
-
 }
 
 void LevelEditor::menuCallback(CCObject * pSender)
 {
 	layerObs->setIsVisible(false);
+	layerThief->setIsVisible(false);
+	status = ((CCMenuItem*)pSender)->getTag();
+	CCLayer* layer;
+	switch (status)
+	{
+	case Thing::OBSTACLE:
+		layer = layerObs;
+		break;
+	case Thing::THIEF:
+		layer = layerThief;
+		break;
+	}
+	layer->setIsVisible(true);
+}
+
+bool LevelEditor::save()
+{
+	//level->obstacles->removeAllObjects();
+	return level->save();
 }
