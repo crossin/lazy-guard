@@ -88,7 +88,7 @@ bool LevelEditor::init()
 		mapLayer->addChild(canvas);
 
  		char bacImg[16];
- 		sprintf_s(bacImg, "back%d.png", level->background);
+		sprintf_s(bacImg, "back%d.png", level->background);
  		CCTexture2D *texture = CCTextureCache::sharedTextureCache()->addImage(bacImg);
  		ccTexParams tp = {GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT};
  		texture->setTexParameters(&tp);
@@ -169,8 +169,24 @@ bool LevelEditor::init()
 		eraser->setPosition(ccp(440, 260));
 		buttonThief->addObject(eraser);
 		layerThief->addChild(eraser,0,Thing::ERASER);
+
+
+		//thief start time
+		startTime = (SGText*)CCTextFieldTTF::textFieldWithPlaceHolder("InputHere","Thonburi",50);
+		//設定顏色
+		startTime->setColor(ccc3(255,0,0));
+		//設定位置
+		startTime->setPosition(ccp(415,260));
+		startTime->setDelegate(startTime);
+		//開啟文字輸入框
+		//startTime->attachWithIME();
+
+		layerThief->addChild(startTime);
+
 		layerThief->setIsVisible(false);
 		addChild(layerThief);
+		//startTime->detachWithIME();
+
 
 		// menu
 		char* menu_name[2] = {"Obstacle", "Thief"};
@@ -211,6 +227,10 @@ bool LevelEditor::init()
 
 void LevelEditor::ccTouchesEnded(CCSet* touches, CCEvent* event)
 {
+//////////////////////////////////////////////////////////////////////////
+CCLOG("%s",startTime->getString());
+
+
 	CCSetIterator it = touches->begin();
 	CCTouch* touch = (CCTouch*)(*it);
 
@@ -339,4 +359,17 @@ bool LevelEditor::save()
 		dic->release();
 	}
 	return level->save();
+}
+
+// SGText
+bool SGText::onTextFieldAttachWithIME(CCTextFieldTTF * pSender)
+{	
+	//setColor(ccc3(255,255,255));
+	return true;
+}
+
+bool SGText::onTextFieldDetachWithIME(CCTextFieldTTF * pSender)
+{	
+	setColor(ccc3(255,255,255));
+	return true;
 }
