@@ -5,6 +5,16 @@
 
 using namespace cocos2d;
 
+class SGText :
+	public CCTextFieldTTF, public CCTextFieldDelegate
+{
+public:
+	//void onEnter();
+	bool onTextFieldAttachWithIME(CCTextFieldTTF * pSender);
+	bool onTextFieldDetachWithIME(CCTextFieldTTF * pSender);
+};
+
+
 class LevelEditor :
 	public CCLayer
 {
@@ -29,6 +39,7 @@ public:
 	CCArray* buttonObs;
 	CCArray* buttonThief;
 	CCSprite* background;
+	SGText*  startTime; 
 	//CCSprite* frameSelect;
 //	int** obstacles;
 	//int mapWidth;

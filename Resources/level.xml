@@ -1,66 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <level>
   <background>1</background>
-  <obstacle>
-    <type>4</type>
-    <x>6</x>
-    <y>4</y>
-  </obstacle>
-  <obstacle>
-    <type>4</type>
-    <x>6</x>
-    <y>5</y>
-  </obstacle>
-  <obstacle>
-    <type>4</type>
-    <x>8</x>
-    <y>4</y>
-  </obstacle>
-  <obstacle>
-    <type>4</type>
-    <x>8</x>
-    <y>5</y>
-  </obstacle>
-  <obstacle>
-    <type>3</type>
-    <x>10</x>
-    <y>6</y>
-  </obstacle>
-  <obstacle>
-    <type>3</type>
-    <x>6</x>
-    <y>7</y>
-  </obstacle>
-  <obstacle>
-    <type>3</type>
-    <x>1</x>
-    <y>7</y>
-  </obstacle>
-  <obstacle>
-    <type>3</type>
-    <x>2</x>
-    <y>1</y>
-  </obstacle>
-  <obstacle>
-    <type>3</type>
-    <x>11</x>
-    <y>1</y>
-  </obstacle>
-  <obstacle>
-    <type>3</type>
-    <x>12</x>
-    <y>5</y>
-  </obstacle>
-  <obstacle>
-    <type>3</type>
-    <x>13</x>
-    <y>8</y>
-  </obstacle>
-  <obstacle>
-    <type>3</type>
-    <x>5</x>
-    <y>1</y>
-  </obstacle>
   <treasure>
     <count>5</count>
     <x>7</x>
