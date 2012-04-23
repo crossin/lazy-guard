@@ -5,18 +5,8 @@
 
 using namespace cocos2d;
 
-class SGText :
-	public CCTextFieldTTF, public CCTextFieldDelegate
-{
-public:
-	//void onEnter();
-	bool onTextFieldAttachWithIME(CCTextFieldTTF * pSender);
-	bool onTextFieldDetachWithIME(CCTextFieldTTF * pSender);
-};
-
-
 class LevelEditor :
-	public CCLayer
+	public CCLayer/*, public CCTextFieldDelegate*/
 {
 public:
 	LevelEditor(void);
@@ -28,6 +18,7 @@ public:
 	void ccTouchesEnded(CCSet* touches, CCEvent* event);
 	void menuCallback(CCObject * pSender);
 	void editObstacle(CCPoint posTouch, CCPoint posInMap);
+	void editThief(CCPoint posTouch, CCPoint posInMap);
 	bool save();
 	SCENE_NODE_FUNC(LevelEditor);
 	CC_SYNTHESIZE_READONLY(CCLayer*, mapLayer, Map);
@@ -39,7 +30,7 @@ public:
 	CCArray* buttonObs;
 	CCArray* buttonThief;
 	CCSprite* background;
-	SGText*  startTime; 
+	CCTextFieldTTF*  startTime; 
 	//CCSprite* frameSelect;
 //	int** obstacles;
 	//int mapWidth;
@@ -48,5 +39,8 @@ public:
 	bool isEraser;
 	int status;
 	//int typeSelect;
+
+	bool onTextFieldAttachWithIME(CCTextFieldTTF * pSender);
+	bool onTextFieldDetachWithIME(CCTextFieldTTF * pSender);
 };
 

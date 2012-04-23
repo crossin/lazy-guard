@@ -150,6 +150,12 @@ bool LevelEditor::init()
 
 		// thief
 		layerThief = CCLayer::node();
+
+		CCSprite* textBack = CCSprite::spriteWithFile("blank.png");
+		textBack->setTextureRect(CCRectMake(0, 0, 80, 20));
+		textBack->setPosition(ccp(434, 304));
+		layerThief->addChild(textBack);
+
 		buttonThief = CCArray::array();
 		buttonThief->retain();
 // 		for (int i=0; i<1; i++)
@@ -170,22 +176,18 @@ bool LevelEditor::init()
 		buttonThief->addObject(eraser);
 		layerThief->addChild(eraser,0,Thing::ERASER);
 
-
 		//thief start time
-		startTime = (SGText*)CCTextFieldTTF::textFieldWithPlaceHolder("InputHere","Thonburi",50);
-		//設定顏色
-		startTime->setColor(ccc3(255,0,0));
+		startTime = CCTextFieldTTF::textFieldWithPlaceHolder("","Thonburi",20);
+		startTime->setColor(ccBLACK);
+		startTime->setString("0");
 		//設定位置
-		startTime->setPosition(ccp(415,260));
-		startTime->setDelegate(startTime);
-		//開啟文字輸入框
-		//startTime->attachWithIME();
-
+		startTime->setPosition(ccp(434,304));
+		//startTime->setDelegate(this);
 		layerThief->addChild(startTime);
 
 		layerThief->setIsVisible(false);
 		addChild(layerThief);
-		//startTime->detachWithIME();
+		//3startTime->detachWithIME();
 
 
 		// menu
@@ -228,7 +230,7 @@ bool LevelEditor::init()
 void LevelEditor::ccTouchesEnded(CCSet* touches, CCEvent* event)
 {
 //////////////////////////////////////////////////////////////////////////
-CCLOG("%s",startTime->getString());
+// CCLOG("%s",startTime->getString());
 
 
 	CCSetIterator it = touches->begin();
@@ -245,6 +247,8 @@ CCLOG("%s",startTime->getString());
 	{
 	case Thing::OBSTACLE:
 		editObstacle(m_tTouchPos, m_tTouchPosInMap);
+	case Thing::THIEF:
+		editThief(m_tTouchPos, m_tTouchPosInMap);
 	}
 
 ///////////////////////////////
@@ -309,6 +313,19 @@ void LevelEditor::editObstacle(CCPoint posTouch, CCPoint posInMap)
 	}
 }
 
+void LevelEditor::editThief(CCPoint posTouch, CCPoint posInMap)
+{
+	if (CCRect::CCRectContainsPoint(startTime->boundingBox(), posTouch))
+	{
+		startTime->attachWithIME();
+		startTime->setString("");
+	}
+	else
+	{
+		startTime->detachWithIME();
+	}
+}
+
 void LevelEditor::menuCallback(CCObject * pSender)
 {
 	layerObs->setIsVisible(false);
@@ -361,15 +378,15 @@ bool LevelEditor::save()
 	return level->save();
 }
 
-// SGText
-bool SGText::onTextFieldAttachWithIME(CCTextFieldTTF * pSender)
-{	
-	//setColor(ccc3(255,255,255));
-	return true;
-}
-
-bool SGText::onTextFieldDetachWithIME(CCTextFieldTTF * pSender)
-{	
-	setColor(ccc3(255,255,255));
-	return true;
-}
+// bool LevelEditor::onTextFieldAttachWithIME(CCTextFieldTTF * pSender)
+// {	
+//	//startTime->setColor(ccc3(255,0,0));
+//	//startTime->setString("");
+//	return false;
+//}
+//
+//bool LevelEditor::onTextFieldDetachWithIME(CCTextFieldTTF * pSender)
+//{	
+//	//startTime->setColor(ccc3(255,255,255));
+//	return false;
+//}
