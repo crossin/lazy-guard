@@ -27,9 +27,11 @@ public:
 	CCLayer* layerObs;
 	CCLayer* layerThief;
 	CCArray* obstacles;
+	CCArray* thieves;
 	CCArray* buttonObs;
 	CCArray* buttonThief;
 	CCSprite* background;
+	CCSprite* canvas;
 	CCTextFieldTTF*  startTime; 
 	//CCSprite* frameSelect;
 //	int** obstacles;
