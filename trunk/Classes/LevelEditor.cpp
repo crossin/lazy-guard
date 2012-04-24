@@ -26,6 +26,10 @@ LevelEditor::~LevelEditor(void)
 	{
 		obstacles->release();
 	}
+	if (thieves)
+	{
+		thieves->release();
+	}
 	if (buttonObs)
 	{
 		buttonObs->release();
@@ -69,7 +73,7 @@ bool LevelEditor::init()
 		level = Level::level();
 		level->retain();
 		level->load();
-		level->save();
+		//level->save();
 		
 		// map
 		mapLayer = CCLayer::node();
@@ -82,7 +86,7 @@ bool LevelEditor::init()
 		AnimatePacker::getInstance()->loadAnimate("sprites.xml");
 		//background
 		CCSize winSize = CCDirector::sharedDirector()->getWinSize();
-		CCSprite* canvas = CCSprite::spriteWithFile("blank.png");
+		canvas = CCSprite::spriteWithFile("blank.png");
 		canvas->setTextureRect(CCRectMake(0, 0, winSize.width+2*level->tileWidth, winSize.height+2*level->tileHeight));
 		canvas->setPosition(ccp(winSize.width/2, winSize.height/2));
 		mapLayer->addChild(canvas);
@@ -111,7 +115,7 @@ bool LevelEditor::init()
 // 			}
 // 		}
 		Thing* objTemp;
-		int objType;
+		int objParam;
 		int objX;
 		int objY;
 		CCPoint objPos;
@@ -119,15 +123,31 @@ bool LevelEditor::init()
 		for (int i=0; i<level->obstacles->count(); i++)
 		{
 			propsTemp = (CCMutableDictionary<std::string, CCString*>*)level->obstacles->objectAtIndex(i);
-			objType = propsTemp->objectForKey("type")->toInt();
+			objParam = propsTemp->objectForKey("type")->toInt();
 			objX = propsTemp->objectForKey("x")->toInt();
 			objY = propsTemp->objectForKey("y")->toInt();
 			objPos = ccp(objX * level->tileWidth, objY * level->tileHeight);
-			objTemp = Obstacle::obstacle(objType, objPos);
+			objTemp = Obstacle::obstacle(objParam, objPos);
 			obstacles->addObject(objTemp);
 			mapLayer->addChild(objTemp,20-objY);
 		}
+		//Thief
+		thieves = CCArray::array();
+		thieves->retain();
 
+		for (int i=0; i<level->thieves->count(); i++)
+		{
+			propsTemp = (CCMutableDictionary<std::string, CCString*>*)level->thieves->objectAtIndex(i);
+			objParam = propsTemp->objectForKey("time")->toInt();
+			objX = propsTemp->objectForKey("x")->toInt();
+			objY = propsTemp->objectForKey("y")->toInt();
+			//objPos = ccp(objX * level->tileWidth, objY * level->tileHeight);
+			objTemp = Thief::thief(objParam);
+			objTemp->unscheduleAllSelectors();
+			objTemp->setPosition(ccp(objX,objY));
+			thieves->addObject(objTemp);
+			mapLayer->addChild(objTemp,340-objY);
+		}
 
 		// button
 		// obstacle
@@ -165,14 +185,14 @@ bool LevelEditor::init()
 // 			layerObs->addChild(obsTemp);
 // 			buttonObs->addObject(obsTemp);
 // 		}
-		objPos = ccp(415, 260);
+		objPos = ccp(415, 250);
 		objTemp = Thief::thief(0);
 		objTemp->unscheduleAllSelectors();
 		objTemp->setPosition(objPos);
 		layerThief->addChild(objTemp);
 		buttonThief->addObject(objTemp);
 		eraser = Eraser::eraser();
-		eraser->setPosition(ccp(440, 260));
+		eraser->setPosition(ccp(440, 250));
 		buttonThief->addObject(eraser);
 		layerThief->addChild(eraser,0,Thing::ERASER);
 
@@ -180,7 +200,6 @@ bool LevelEditor::init()
 		startTime = CCTextFieldTTF::textFieldWithPlaceHolder("","Thonburi",20);
 		startTime->setColor(ccBLACK);
 		startTime->setString("0");
-		//ÔO¶¨Î»ÖÃ
 		startTime->setPosition(ccp(434,304));
 		//startTime->setDelegate(this);
 		layerThief->addChild(startTime);
@@ -247,8 +266,10 @@ void LevelEditor::ccTouchesEnded(CCSet* touches, CCEvent* event)
 	{
 	case Thing::OBSTACLE:
 		editObstacle(m_tTouchPos, m_tTouchPosInMap);
+		break;
 	case Thing::THIEF:
 		editThief(m_tTouchPos, m_tTouchPosInMap);
+		break;
 	}
 
 ///////////////////////////////
@@ -262,7 +283,6 @@ void LevelEditor::editObstacle(CCPoint posTouch, CCPoint posInMap)
 	for (int i=0; i<5; i++)
 	{
 		objectTemp = (Thing*)buttonObs->objectAtIndex(i);
-		CCRect a =objectTemp->getRectOut();
 		if (CCRect::CCRectContainsPoint(objectTemp->getRectOut(), posTouch))
 		{
 			isEraser = (objectTemp->getTag() == Thing::ERASER);
@@ -324,13 +344,79 @@ void LevelEditor::editThief(CCPoint posTouch, CCPoint posInMap)
 	{
 		startTime->detachWithIME();
 	}
+
+	Thing* objectTemp;
+	for (int i=0; i<2; i++)
+	{
+		objectTemp = (Thing*)buttonThief->objectAtIndex(i);
+		if (CCRect::CCRectContainsPoint(objectTemp->getRectOut(), posTouch))
+		{
+			isEraser = (objectTemp->getTag() == Thing::ERASER);
+
+			if (thingSelect)
+			{
+				thingSelect->sprite->setColor(ccWHITE);
+			}
+			thingSelect = objectTemp;
+			thingSelect->sprite->setColor(ccGRAY);
+			return;
+		}
+	}
+
+	if (thingSelect)
+	{
+		CCString* str;
+		//int tX = posInMap.x / level->tileWidth;
+		//int tY = posInMap.y / level->tileHeight;
+		if (CCRect::CCRectContainsPoint(canvas->boundingBox(), posInMap)
+			&& !CCRect::CCRectContainsPoint(background->boundingBox(), posInMap))
+		{
+			posInMap.x = posInMap.x<0 ? -16 : (posInMap.x>480 ? 496 : posInMap.x);
+			posInMap.y = posInMap.y<0 ? -32 : (posInMap.y>320 ? 320 : posInMap.y);
+
+			//CCPoint obsPos = ccp(tX * level->tileWidth, tY * level->tileHeight);
+			if (!isEraser)
+			{
+				str = new CCString(startTime->getString());
+				objectTemp = Thief::thief(str->toInt());
+				objectTemp->unscheduleAllSelectors();
+				objectTemp->setPosition(posInMap);
+				thieves->addObject(objectTemp);
+				mapLayer->addChild(objectTemp, 340-posInMap.y);
+				str->release();
+			}
+			else
+			{
+				for (int i=thieves->count()-1; i>=0; i--)
+				{
+					objectTemp = (Thief*)thieves->objectAtIndex(i);
+					if (CCRect::CCRectContainsPoint(objectTemp->getRectOut(), posInMap))
+					{
+						thieves->removeObject(objectTemp);
+						mapLayer->removeChild(objectTemp, true);
+						return;
+					}
+				}
+			}
+		}
+	}
 }
 
 void LevelEditor::menuCallback(CCObject * pSender)
 {
+	if (status == ((CCMenuItem*)pSender)->getTag())
+	{
+		return;
+	}
+	status = ((CCMenuItem*)pSender)->getTag();
 	layerObs->setIsVisible(false);
 	layerThief->setIsVisible(false);
-	status = ((CCMenuItem*)pSender)->getTag();
+	isEraser = false;
+	if (thingSelect)
+	{
+		thingSelect->sprite->setColor(ccWHITE);
+		thingSelect = NULL;
+	}
 	CCLayer* layer;
 	switch (status)
 	{
@@ -346,6 +432,7 @@ void LevelEditor::menuCallback(CCObject * pSender)
 
 bool LevelEditor::save()
 {
+	//obstacle
 	level->obstacles->removeAllObjects();
 	CCMutableDictionary<std::string, CCString*>* dic;
 	Obstacle* obsTemp;
@@ -360,19 +447,49 @@ bool LevelEditor::save()
 		sprintf_s(number, "%d", obsTemp->typeIndex);
 		str = new CCString(number);
 		dic->setObject(str, "type");
+		str->release();
 		//x
 		len = (int)obsTemp->getPosition().x / level->tileWidth;
 		sprintf_s(number, "%d", len);
 		str = new CCString(number);
 		dic->setObject(str, "x");
+		str->release();
 		//y
 		len = (int)obsTemp->getPosition().y / level->tileHeight;
 		sprintf_s(number, "%d", len);
 		str = new CCString(number);
 		dic->setObject(str, "y");
+		str->release();
 
 		level->obstacles->addObject(dic);
+		dic->release();
+	}
+	//thief
+	level->thieves->removeAllObjects();
+	Thief* tfTemp;
+	for (int i=0; i<thieves->count(); i++)
+	{
+		tfTemp = (Thief*)thieves->objectAtIndex(i);
+		dic = new CCMutableDictionary<std::string, CCString*>();
+		//time
+		sprintf_s(number, "%d", tfTemp->timeStart);
+		str = new CCString(number);
+		dic->setObject(str, "time");
 		str->release();
+		//x
+		len = (int)tfTemp->getPosition().x;
+		sprintf_s(number, "%d", len);
+		str = new CCString(number);
+		dic->setObject(str, "x");
+		str->release();
+		//y
+		len = (int)tfTemp->getPosition().y;
+		sprintf_s(number, "%d", len);
+		str = new CCString(number);
+		dic->setObject(str, "y");
+		str->release();
+
+		level->thieves->addObject(dic);
 		dic->release();
 	}
 	return level->save();
