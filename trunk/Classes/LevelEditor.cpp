@@ -1,6 +1,8 @@
 #include "LevelEditor.h"
 #include "Obstacle.h"
 #include "Thief.h"
+#include "Guard.h"
+#include "Gem.h"
 #include "AnimatePacker.h"
 
 
@@ -37,6 +39,10 @@ LevelEditor::~LevelEditor(void)
 	if (buttonThief)
 	{
 		buttonThief->release();
+	}
+	if (buttonGuard)
+	{
+		buttonGuard->release();
 	}
 	if (level)
 	{
@@ -171,28 +177,22 @@ bool LevelEditor::init()
 		// thief
 		layerThief = CCLayer::node();
 
-		CCSprite* textBack = CCSprite::spriteWithFile("blank.png");
+		textBack = CCSprite::spriteWithFile("blank.png");
 		textBack->setTextureRect(CCRectMake(0, 0, 80, 20));
 		textBack->setPosition(ccp(434, 304));
 		layerThief->addChild(textBack);
 
 		buttonThief = CCArray::array();
 		buttonThief->retain();
-// 		for (int i=0; i<1; i++)
-// 		{
-// 			obsPos = ccp(400+i%2*40, 260-i/2*50);
-// 			obsTemp =  Obstacle::obstacle(i, obsPos);
-// 			layerObs->addChild(obsTemp);
-// 			buttonObs->addObject(obsTemp);
-// 		}
-		objPos = ccp(415, 250);
+		objPos = ccp(415, 240);
 		objTemp = Thief::thief(0);
+		objTemp->setScale(1.5);
 		objTemp->unscheduleAllSelectors();
 		objTemp->setPosition(objPos);
 		layerThief->addChild(objTemp);
 		buttonThief->addObject(objTemp);
 		eraser = Eraser::eraser();
-		eraser->setPosition(ccp(440, 250));
+		eraser->setPosition(ccp(440, 240));
 		buttonThief->addObject(eraser);
 		layerThief->addChild(eraser,0,Thing::ERASER);
 
@@ -201,28 +201,53 @@ bool LevelEditor::init()
 		startTime->setColor(ccBLACK);
 		startTime->setString("0");
 		startTime->setPosition(ccp(434,304));
-		//startTime->setDelegate(this);
 		layerThief->addChild(startTime);
 
 		layerThief->setIsVisible(false);
 		addChild(layerThief);
-		//3startTime->detachWithIME();
 
+		// guard
+		layerGuard = CCLayer::node();
+		buttonGuard = CCArray::array();
+		buttonGuard->retain();
+		objPos = ccp(415, 260);
+		objTemp = Guard::guard();
+		objTemp->unscheduleAllSelectors();
+		objTemp->setPosition(objPos);
+		layerGuard->addChild(objTemp);
+		buttonGuard->addObject(objTemp);
+		eraser = Eraser::eraser();
+		eraser->setPosition(ccp(440, 260));
+		buttonGuard->addObject(eraser);
+		layerGuard->addChild(eraser,0,Thing::ERASER);
+		layerGuard->setIsVisible(false);
+		addChild(layerGuard);
+
+		// gem
+		layerGem = CCLayer::node();
+		objPos = ccp(415, 280);
+		objTemp = Gem::gem();
+		objTemp->setScale(2);
+		objTemp->setPosition(objPos);
+		layerGem->addChild(objTemp);
+		buttonGem = objTemp;
+		layerGem->setIsVisible(false);
+		addChild(layerGem);
 
 		// menu
-		char* menu_name[2] = {"Obstacle", "Thief"};
-		int menu_tag[2] = {Thing::OBSTACLE, Thing::THIEF};
+		char* menu_name[4] = {"Obstacle", "Thief", "Guard", "Gem"};
+		int menu_tag[4] = {Thing::OBSTACLE, Thing::THIEF, Thing::GUARD, Thing::GEM};
 		CCLabelTTF* label;
 		CCMenuItemLabel* pMenuItem;
 		CCMenu* m_pItmeMenu = CCMenu::menuWithItems(NULL);
-		for (int i = 0; i < 2; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			label = CCLabelTTF::labelWithString(menu_name[i], "Arial", 24);
 			pMenuItem = CCMenuItemLabel::itemWithLabel(label, this, menu_selector(LevelEditor::menuCallback));
 			m_pItmeMenu->addChild(pMenuItem, 0, menu_tag[i]);
 		}
-		m_pItmeMenu->alignItemsHorizontallyWithPadding(10);
-		m_pItmeMenu->setPosition(ccp(100,20));
+		m_pItmeMenu->alignItemsHorizontallyWithPadding(20);
+		m_pItmeMenu->setPosition(ccp(200,20));
 		addChild(m_pItmeMenu);
 
 
@@ -335,7 +360,7 @@ void LevelEditor::editObstacle(CCPoint posTouch, CCPoint posInMap)
 
 void LevelEditor::editThief(CCPoint posTouch, CCPoint posInMap)
 {
-	if (CCRect::CCRectContainsPoint(startTime->boundingBox(), posTouch))
+	if (CCRect::CCRectContainsPoint(textBack->boundingBox(), posTouch))
 	{
 		startTime->attachWithIME();
 		startTime->setString("");
@@ -411,6 +436,8 @@ void LevelEditor::menuCallback(CCObject * pSender)
 	status = ((CCMenuItem*)pSender)->getTag();
 	layerObs->setIsVisible(false);
 	layerThief->setIsVisible(false);
+	layerGuard->setIsVisible(false);
+	layerGem->setIsVisible(false);
 	isEraser = false;
 	if (thingSelect)
 	{
@@ -421,10 +448,17 @@ void LevelEditor::menuCallback(CCObject * pSender)
 	switch (status)
 	{
 	case Thing::OBSTACLE:
+	default:
 		layer = layerObs;
 		break;
 	case Thing::THIEF:
 		layer = layerThief;
+		break;
+	case Thing::GUARD:
+		layer = layerGuard;
+		break;
+	case Thing::GEM:
+		layer = layerGem;
 		break;
 	}
 	layer->setIsVisible(true);

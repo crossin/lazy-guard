@@ -57,7 +57,17 @@
     <y>1</y>
   </obstacle>
   <obstacle>
-    <type>2</type>
+    <type>0</type>
+    <x>11</x>
+    <y>4</y>
+  </obstacle>
+  <obstacle>
+    <type>0</type>
+    <x>11</x>
+    <y>2</y>
+  </obstacle>
+  <obstacle>
+    <type>0</type>
     <x>12</x>
     <y>3</y>
   </obstacle>
@@ -103,5 +113,25 @@
     <time>694</time>
     <x>496</x>
     <y>212</y>
+  </thief>
+  <thief>
+    <time>0</time>
+    <x>496</x>
+    <y>193</y>
+  </thief>
+  <thief>
+    <time>0</time>
+    <x>496</x>
+    <y>109</y>
+  </thief>
+  <thief>
+    <time>0</time>
+    <x>496</x>
+    <y>28</y>
+  </thief>
+  <thief>
+    <time>234</time>
+    <x>496</x>
+    <y>308</y>
   </thief>
 </level>

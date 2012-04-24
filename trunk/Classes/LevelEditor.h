@@ -26,12 +26,17 @@ public:
 	Level *level;
 	CCLayer* layerObs;
 	CCLayer* layerThief;
+	CCLayer* layerGuard;
+	CCLayer* layerGem;
 	CCArray* obstacles;
 	CCArray* thieves;
 	CCArray* buttonObs;
 	CCArray* buttonThief;
+	CCArray* buttonGuard;
+	Thing* buttonGem;
 	CCSprite* background;
 	CCSprite* canvas;
+	CCSprite* textBack;
 	CCTextFieldTTF*  startTime; 
 	//CCSprite* frameSelect;
 //	int** obstacles;
