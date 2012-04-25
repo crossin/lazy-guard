@@ -43,6 +43,11 @@ Gameplay::~Gameplay(void)
 		thieves->release();
 		thieves = NULL;
 	}
+	if (guards)
+	{
+		guards->release();
+		guards = NULL;
+	}
 	if (gemsOutside)
 	{
 		gemsOutside->release();
@@ -116,7 +121,7 @@ bool Gameplay::init()
 		Level* level = Level::level();
 		level->load();	
 
-		level->save();
+//level->save();
 
 // 		CCTMXLayer *meta=pDesertTileMap->layerNamed("Meta");
 // 		meta->setIsVisible(false);
@@ -267,8 +272,8 @@ background->setOpacity(122);
 		//gem
 		//CCTMXObjectGroup *objects = pDesertTileMap->objectGroupNamed("Objects");
 		//props = objects->objectNamed("Treasure");
-		CCPoint posTemp = ccp((level->treasure->objectForKey("x")->toInt()+0.5) * level->tileWidth, (level->treasure->objectForKey("y")->toInt()+0.5) * level->tileHeight);
-		countGem = level->treasure->objectForKey("count")->toInt();
+		CCPoint posTemp = ccp(level->treasure->objectForKey("x")->toInt(), level->treasure->objectForKey("y")->toInt());
+		countGem = 5;
 //countGem = 1;
 // 		for (int i=0;i<r;i++){
 // 			for (int j=0;j<c;j++){
@@ -297,14 +302,16 @@ background->setOpacity(122);
 		gemsOutside->retain();
 
 		//guard
-		for (int i = 0; i < 2; i++)
+		guards = new CCMutableArray<Guard*>;
+		for (int i = 0; i < level->guards->count(); i++)
 		{
 			propsTemp = (CCMutableDictionary<std::string, CCString*>*)level->guards->objectAtIndex(i);
-			guard[i] = Guard::guard();
-			guard[i]->setPosition(ccp((propsTemp->objectForKey("x")->toInt()+0.5) * level->tileWidth, propsTemp->objectForKey("y")->toInt() * level->tileHeight));
-			addChild(guard[i], 1, Thing::GUARD);
-			addChild(guard[i]->bar, 1001);
-			things->addObject(guard[i]);
+			Guard* gd = Guard::guard();
+			gd->setPosition(ccp(propsTemp->objectForKey("x")->toInt(), propsTemp->objectForKey("y")->toInt()));
+			addChild(gd, 1, Thing::GUARD);
+			addChild(gd->bar, 1001);
+			things->addObject(gd);
+			guards->addObject(gd);
 		}
 		
 /*
@@ -486,12 +493,15 @@ for (int i=0;i<10;i++){
 
 	//game_map[int(m_tTouchPos.y / w)][int(m_tTouchPos.x / w)] = 2;
 // 	CCRect rectGuard;
-	for (int i = 0; i < 2; i++)
+	CCMutableArray<Guard*>::CCMutableArrayIterator git;
+	Guard* gd;
+	for (git = guards->begin(); git != guards->end(); git++)
 	{
+		gd = *git;
 // 		rectGuard = CCRectMake(guard[i]->getPosition().x, guard[i]->getPosition().y, guard[i]->sprite->getContentSize().width, guard[i]->sprite->getContentSize().height);
-		if (!guard[i]->status != Guard::SLEEPING && CCRect::CCRectContainsPoint(guard[i]->getRectClick(), m_tTouchPos))
+		if (!gd->status != Guard::SLEEPING && CCRect::CCRectContainsPoint(gd->getRectClick(), m_tTouchPos))
 		{
-			guard[i]->onHit();
+			gd->onHit();
 			break;
 // 			guard[i]->isAwake = true;
 // 			guard[i]->findThief();
