@@ -32,6 +32,10 @@ LevelEditor::~LevelEditor(void)
 	{
 		thieves->release();
 	}
+	if (guards)
+	{
+		guards->release();
+	}
 	if (buttonObs)
 	{
 		buttonObs->release();
@@ -135,12 +139,11 @@ bool LevelEditor::init()
 			objPos = ccp(objX * level->tileWidth, objY * level->tileHeight);
 			objTemp = Obstacle::obstacle(objParam, objPos);
 			obstacles->addObject(objTemp);
-			mapLayer->addChild(objTemp,20-objY);
+			mapLayer->addChild(objTemp,340-objPos.y);
 		}
 		//Thief
 		thieves = CCArray::array();
 		thieves->retain();
-
 		for (int i=0; i<level->thieves->count(); i++)
 		{
 			propsTemp = (CCMutableDictionary<std::string, CCString*>*)level->thieves->objectAtIndex(i);
@@ -152,6 +155,32 @@ bool LevelEditor::init()
 			objTemp->unscheduleAllSelectors();
 			objTemp->setPosition(ccp(objX,objY));
 			thieves->addObject(objTemp);
+			mapLayer->addChild(objTemp,340-objY);
+		}
+		//guard
+		guards = CCArray::array();
+		guards->retain();
+		for (int i=0; i<level->guards->count(); i++)
+		{
+			propsTemp = (CCMutableDictionary<std::string, CCString*>*)level->guards->objectAtIndex(i);
+			objX = propsTemp->objectForKey("x")->toInt();
+			objY = propsTemp->objectForKey("y")->toInt();
+			objTemp = Guard::guard();
+			objTemp->unscheduleAllSelectors();
+			objTemp->setPosition(ccp(objX,objY));
+			guards->addObject(objTemp);
+			mapLayer->addChild(objTemp,340-objY);
+		}
+		//gem
+		gem = NULL;
+		if (level->treasure)
+		{
+			propsTemp = level->treasure;
+			objX = propsTemp->objectForKey("x")->toInt();
+			objY = propsTemp->objectForKey("y")->toInt();
+			objTemp = Gem::gem();
+			objTemp->setPosition(ccp(objX,objY));
+			gem = (Gem*)objTemp;
 			mapLayer->addChild(objTemp,340-objY);
 		}
 
@@ -295,6 +324,12 @@ void LevelEditor::ccTouchesEnded(CCSet* touches, CCEvent* event)
 	case Thing::THIEF:
 		editThief(m_tTouchPos, m_tTouchPosInMap);
 		break;
+	case Thing::GUARD:
+		editGuard(m_tTouchPos, m_tTouchPosInMap);
+		break;
+	case Thing::GEM:
+		editGem(m_tTouchPos, m_tTouchPosInMap);
+		break;
 	}
 
 ///////////////////////////////
@@ -352,7 +387,7 @@ void LevelEditor::editObstacle(CCPoint posTouch, CCPoint posInMap)
 			{
 				objectTemp = Obstacle::obstacle(((Obstacle*)thingSelect)->typeIndex, obsPos);
 				obstacles->addObject(objectTemp);
-				mapLayer->addChild(objectTemp, 20-tY);
+				mapLayer->addChild(objectTemp, 340-posInMap.y);
 			}
 		}
 	}
@@ -397,9 +432,7 @@ void LevelEditor::editThief(CCPoint posTouch, CCPoint posInMap)
 			&& !CCRect::CCRectContainsPoint(background->boundingBox(), posInMap))
 		{
 			posInMap.x = posInMap.x<0 ? -16 : (posInMap.x>480 ? 496 : posInMap.x);
-			posInMap.y = posInMap.y<0 ? -32 : (posInMap.y>320 ? 320 : posInMap.y);
-
-			//CCPoint obsPos = ccp(tX * level->tileWidth, tY * level->tileHeight);
+			posInMap.y = posInMap.y<0 ? -32 : (posInMap.y>320 ? 320 : posInMap.y-10);
 			if (!isEraser)
 			{
 				str = new CCString(startTime->getString());
@@ -423,6 +456,108 @@ void LevelEditor::editThief(CCPoint posTouch, CCPoint posInMap)
 					}
 				}
 			}
+		}
+	}
+}
+
+void LevelEditor::editGuard(CCPoint posTouch, CCPoint posInMap)
+{
+	Thing* objectTemp;
+	for (int i=0; i<2; i++)
+	{
+		objectTemp = (Thing*)buttonGuard->objectAtIndex(i);
+		if (CCRect::CCRectContainsPoint(objectTemp->getRectOut(), posTouch))
+		{
+			isEraser = (objectTemp->getTag() == Thing::ERASER);
+
+			if (thingSelect)
+			{
+				thingSelect->sprite->setColor(ccWHITE);
+			}
+			thingSelect = objectTemp;
+			thingSelect->sprite->setColor(ccGRAY);
+			return;
+		}
+	}
+
+	if (thingSelect)
+	{
+		posInMap.y -= 20;
+		if (CCRect::CCRectContainsPoint(background->boundingBox(), posInMap))
+		{
+			//CCPoint obsPos = ccp(tX * level->tileWidth, tY * level->tileHeight);
+
+			if (!isEraser)
+			{
+				if (guards->count()<5)
+				{
+					for (int i=0; i<obstacles->count(); i++)
+					{
+						CCPoint obsPos = ccp((int)posInMap.x/level->tileWidth*level->tileWidth, (int)posInMap.y/level->tileHeight*level->tileHeight);
+						objectTemp = (Obstacle*)obstacles->objectAtIndex(i);
+						if (CCPoint::CCPointEqualToPoint(objectTemp->getPosition(), obsPos))
+						{
+							return;
+						}
+					}
+
+					objectTemp = Guard::guard();
+					objectTemp->unscheduleAllSelectors();
+					objectTemp->setPosition(posInMap);
+					guards->addObject(objectTemp);
+					mapLayer->addChild(objectTemp, 340-posInMap.y);
+				}
+			}
+			else
+			{
+				posInMap.y += 20;
+				for (int i=guards->count()-1; i>=0; i--)
+				{
+					objectTemp = (Guard*)guards->objectAtIndex(i);
+					if (CCRect::CCRectContainsPoint(objectTemp->getRectOut(), posInMap))
+					{
+						guards->removeObject(objectTemp);
+						mapLayer->removeChild(objectTemp, true);
+						return;
+					}
+				}
+			}
+		}
+	}
+}
+
+void LevelEditor::editGem(CCPoint posTouch, CCPoint posInMap)
+{
+	Thing* objectTemp;
+	if (CCRect::CCRectContainsPoint(buttonGem->getRectOut(), posTouch))
+	{
+		thingSelect = buttonGem;
+		thingSelect->sprite->setColor(ccGRAY);
+		return;
+	}
+
+	if (thingSelect)
+	{
+		//posInMap.y -= 20;
+		if (CCRect::CCRectContainsPoint(background->boundingBox(), posInMap))
+		{
+			//CCPoint obsPos = ccp(tX * level->tileWidth, tY * level->tileHeight);
+			for (int i=0; i<obstacles->count(); i++)
+			{
+				CCPoint obsPos = ccp((int)posInMap.x/level->tileWidth*level->tileWidth, (int)posInMap.y/level->tileHeight*level->tileHeight);
+				objectTemp = (Obstacle*)obstacles->objectAtIndex(i);
+				if (CCPoint::CCPointEqualToPoint(objectTemp->getPosition(), obsPos))
+				{
+					return;
+				}
+			}
+			if (!gem)
+			{
+				gem = Gem::gem();
+				mapLayer->addChild(gem);
+			}
+			gem->setPosition(posInMap);
+			mapLayer->reorderChild(gem, 340-posInMap.y);
 		}
 	}
 }
@@ -526,6 +661,47 @@ bool LevelEditor::save()
 		level->thieves->addObject(dic);
 		dic->release();
 	}
+	//guard
+	level->guards->removeAllObjects();
+	Guard* gdTemp;
+	for (int i=0; i<guards->count(); i++)
+	{
+		gdTemp = (Guard*)guards->objectAtIndex(i);
+		dic = new CCMutableDictionary<std::string, CCString*>();
+		//x
+		len = (int)gdTemp->getPosition().x;
+		sprintf_s(number, "%d", len);
+		str = new CCString(number);
+		dic->setObject(str, "x");
+		str->release();
+		//y
+		len = (int)gdTemp->getPosition().y;
+		sprintf_s(number, "%d", len);
+		str = new CCString(number);
+		dic->setObject(str, "y");
+		str->release();
+
+		level->guards->addObject(dic);
+		dic->release();
+	}
+	//gem
+	level->treasure->removeAllObjects();
+	if (gem)
+	{
+		//x
+		len = (int)gem->getPosition().x;
+		sprintf_s(number, "%d", len);
+		str = new CCString(number);
+		level->treasure->setObject(str, "x");
+		str->release();
+		//y
+		len = (int)gem->getPosition().y;
+		sprintf_s(number, "%d", len);
+		str = new CCString(number);
+		level->treasure->setObject(str, "y");
+		str->release();
+	}
+
 	return level->save();
 }
 

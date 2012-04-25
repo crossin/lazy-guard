@@ -34,7 +34,7 @@ virtual void draw();
  //   virtual void ccTouchesMoved(CCSet *pTouches, CCEvent *pEvent);
 	CCMutableArray<Thief*>* thieves;
 	CCMutableArray<Thing*>* things;
-	Guard* guard[2];
+	CCMutableArray<Guard*>* guards;
 	Porter* porter;
 	CCArray* gemsOutside;
 	CCArray* thievesPool;

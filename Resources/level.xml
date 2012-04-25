@@ -72,17 +72,16 @@
     <y>3</y>
   </obstacle>
   <treasure>
-    <count>5</count>
-    <x>7</x>
-    <y>5</y>
+    <x>217</x>
+    <y>299</y>
   </treasure>
   <guard>
-    <x>2</x>
-    <y>3</y>
+    <x>98</x>
+    <y>28</y>
   </guard>
   <guard>
-    <x>10</x>
-    <y>7</y>
+    <x>405</x>
+    <y>218</y>
   </guard>
   <thief>
     <time>0</time>
@@ -100,17 +99,12 @@
     <y>-32</y>
   </thief>
   <thief>
-    <time>0</time>
-    <x>-16</x>
-    <y>179</y>
-  </thief>
-  <thief>
-    <time>123</time>
+    <time>13</time>
     <x>496</x>
     <y>122</y>
   </thief>
   <thief>
-    <time>694</time>
+    <time>14</time>
     <x>496</x>
     <y>212</y>
   </thief>
@@ -120,18 +114,18 @@
     <y>193</y>
   </thief>
   <thief>
-    <time>0</time>
-    <x>496</x>
-    <y>109</y>
-  </thief>
-  <thief>
-    <time>0</time>
-    <x>496</x>
-    <y>28</y>
-  </thief>
-  <thief>
-    <time>234</time>
+    <time>14</time>
     <x>496</x>
     <y>308</y>
+  </thief>
+  <thief>
+    <time>0</time>
+    <x>-16</x>
+    <y>239</y>
+  </thief>
+  <thief>
+    <time>0</time>
+    <x>-16</x>
+    <y>132</y>
   </thief>
 </level>
