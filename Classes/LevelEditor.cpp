@@ -4,6 +4,7 @@
 #include "Guard.h"
 #include "Gem.h"
 #include "AnimatePacker.h"
+#include "Gameplay.h"
 
 
 LevelEditor::LevelEditor(void)
@@ -173,7 +174,7 @@ bool LevelEditor::init()
 		}
 		//gem
 		gem = NULL;
-		if (level->treasure)
+		if (level->treasure->count()>0)
 		{
 			propsTemp = level->treasure;
 			objX = propsTemp->objectForKey("x")->toInt();
@@ -264,19 +265,19 @@ bool LevelEditor::init()
 		addChild(layerGem);
 
 		// menu
-		char* menu_name[4] = {"Obstacle", "Thief", "Guard", "Gem"};
-		int menu_tag[4] = {Thing::OBSTACLE, Thing::THIEF, Thing::GUARD, Thing::GEM};
+		char* menu_name[5] = {"Obstacle", "Thief", "Guard", "Gem", "Save/Play"};
+		int menu_tag[5] = {Thing::OBSTACLE, Thing::THIEF, Thing::GUARD, Thing::GEM, -1};
 		CCLabelTTF* label;
 		CCMenuItemLabel* pMenuItem;
 		CCMenu* m_pItmeMenu = CCMenu::menuWithItems(NULL);
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 5; i++)
 		{
 			label = CCLabelTTF::labelWithString(menu_name[i], "Arial", 24);
 			pMenuItem = CCMenuItemLabel::itemWithLabel(label, this, menu_selector(LevelEditor::menuCallback));
 			m_pItmeMenu->addChild(pMenuItem, 0, menu_tag[i]);
 		}
 		m_pItmeMenu->alignItemsHorizontallyWithPadding(20);
-		m_pItmeMenu->setPosition(ccp(200,20));
+		m_pItmeMenu->setPosition(ccp(240,20));
 		addChild(m_pItmeMenu);
 
 
@@ -333,7 +334,7 @@ void LevelEditor::ccTouchesEnded(CCSet* touches, CCEvent* event)
 	}
 
 ///////////////////////////////
-save();
+//save();
 ///////////////////////////////
 }
 
@@ -595,6 +596,11 @@ void LevelEditor::menuCallback(CCObject * pSender)
 	case Thing::GEM:
 		layer = layerGem;
 		break;
+	case -1:
+		save();
+		CCScene *pScene = Gameplay::scene();
+		CCDirector::sharedDirector()->replaceScene(pScene);
+		return;
 	}
 	layer->setIsVisible(true);
 }

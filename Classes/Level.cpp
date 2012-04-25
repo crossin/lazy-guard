@@ -59,6 +59,7 @@ bool Level::init()
 		height = 10;
 		tileWidth = 32;
 		tileHeight = 32;
+		background = 1;
 
 		bRet=true;
 	}while(0);
