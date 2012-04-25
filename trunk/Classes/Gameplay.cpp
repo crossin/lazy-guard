@@ -335,6 +335,9 @@ background->setOpacity(122);
 		{
 			propsTemp = (CCMutableDictionary<std::string, CCString*>*)level->thieves->objectAtIndex(i);
 			Thief *thief = Thief::thief(propsTemp->objectForKey("time")->toInt());
+			thief->startX = propsTemp->objectForKey("x")->toInt();
+			thief->startY = propsTemp->objectForKey("y")->toInt();
+			thief->setPosition(ccp(thief->startX, thief->startY));
 			thievesPool->addObject(thief);
 		}
 
@@ -559,6 +562,7 @@ void Gameplay::addThief(ccTime dt)
 			things->addObject(tf);
 			tf->findGem();
 			thievesPool->removeObject(tf);
+			i--;
 		}
 	}
 }

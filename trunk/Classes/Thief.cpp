@@ -52,38 +52,27 @@ bool Thief::init()
 // 		this->addChild(sprite);
 
 
-		float ranPos = CCRANDOM_0_1();
-		//float startX, startY;
-		//srand(GetTickCount());
-		if (ranPos<0.5)
-		{
-			startX = CCRANDOM_0_1()*500;
-			startY = (ranPos<0.25)?-20:340;
-		} 
-		else
-		{
-			startX = (ranPos<0.75)?-20:500;
-			startY = CCRANDOM_0_1()*340;
-		}
-		setPosition(ccp(startX,startY));
+// 		float ranPos = CCRANDOM_0_1();
+// 		if (ranPos<0.5)
+// 		{
+// 			startX = CCRANDOM_0_1()*500;
+// 			startY = (ranPos<0.25)?-20:340;
+// 		} 
+// 		else
+// 		{
+// 			startX = (ranPos<0.75)?-20:500;
+// 			startY = CCRANDOM_0_1()*340;
+// 		}
+// 		setPosition(ccp(startX,startY));
+
 		gem = NULL;
-// 		isFleeing = false;
 		speed = 50;
-		//timeRot = 0.3;
 		status = FINDING;
 		findingInterval = INTERVAL;
 		hasVisited = false;
-		//timeLife = 0;
-		//behaviour=STAND;
-		//direction=DOWN;
 
 		schedule( schedule_selector(Thief::updateFrame));
-		//schedule(schedule_selector(Thief::checkStart), 1);
 
-		//CCActionInterval *action=getAnimate(MOVE,OVERLOOK);
-		//spirte->runAction(CCRepeatForever::actionWithAction(action));
-
-		//this->schedule(schedule_selector(Monster::moveUpdate));
 		bRet=true;
 	}while(0);
 	return bRet;
