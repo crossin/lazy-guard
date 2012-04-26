@@ -270,14 +270,18 @@ bool LevelEditor::init()
 		CCLabelTTF* label;
 		CCMenuItemLabel* pMenuItem;
 		CCMenu* m_pItmeMenu = CCMenu::menuWithItems(NULL);
+		int offset = 20;
 		for (int i = 0; i < 5; i++)
 		{
 			label = CCLabelTTF::labelWithString(menu_name[i], "Arial", 24);
 			pMenuItem = CCMenuItemLabel::itemWithLabel(label, this, menu_selector(LevelEditor::menuCallback));
+			offset += (pMenuItem->getContentSize().width/2);
+			pMenuItem->setPosition(ccp(offset, 20));
 			m_pItmeMenu->addChild(pMenuItem, 0, menu_tag[i]);
+			offset += (pMenuItem->getContentSize().width/2+20);
 		}
-		m_pItmeMenu->alignItemsHorizontallyWithPadding(20);
-		m_pItmeMenu->setPosition(ccp(240,20));
+		//m_pItmeMenu->alignItemsHorizontallyWithPadding(20);
+		m_pItmeMenu->setPosition(CCPointZero);
 		addChild(m_pItmeMenu);
 
 
@@ -292,6 +296,7 @@ bool LevelEditor::init()
 		status = Thing::OBSTACLE;
 
 		setIsTouchEnabled(true);
+		//CCTouchDispatcher::sharedDispatcher()->addStandardDelegate(this, 0);
 
 		return true;
 	}
@@ -301,12 +306,58 @@ bool LevelEditor::init()
 	}
 }
 
+void LevelEditor::registerWithTouchDispatcher()
+{
+	CCTouchDispatcher::sharedDispatcher()->addTargetedDelegate(this, 0, true);
+}
+
+bool LevelEditor::ccTouchBegan(CCTouch* touch, CCEvent* event)
+{
+	return true;
+}
+
+void LevelEditor::ccTouchEnded(CCTouch* touch, CCEvent* event)
+{
+// 	if (!touches || !touches->count())
+// 	{
+// 		return;
+// 	}
+// 	CCSetIterator it = touches->begin();
+// 	CCTouch* touch = (CCTouch*)(*it);
+
+	CCPoint m_tTouchPos;
+	m_tTouchPos = touch->locationInView( touch->view() );
+	m_tTouchPos = CCDirector::sharedDirector()->convertToGL( m_tTouchPos );
+
+	CCPoint m_tTouchPosInMap = mapLayer->convertTouchToNodeSpace(touch);
+
+
+	switch (status)
+	{
+	case Thing::OBSTACLE:
+		editObstacle(m_tTouchPos, m_tTouchPosInMap);
+		break;
+	case Thing::THIEF:
+		editThief(m_tTouchPos, m_tTouchPosInMap);
+		break;
+	case Thing::GUARD:
+		editGuard(m_tTouchPos, m_tTouchPosInMap);
+		break;
+	case Thing::GEM:
+		editGem(m_tTouchPos, m_tTouchPosInMap);
+		break;
+	}
+}
+/*
 void LevelEditor::ccTouchesEnded(CCSet* touches, CCEvent* event)
 {
 //////////////////////////////////////////////////////////////////////////
 // CCLOG("%s",startTime->getString());
 
-
+	if (!touches || !touches->count())
+	{
+		return;
+	}
 	CCSetIterator it = touches->begin();
 	CCTouch* touch = (CCTouch*)(*it);
 
@@ -337,7 +388,7 @@ void LevelEditor::ccTouchesEnded(CCSet* touches, CCEvent* event)
 //save();
 ///////////////////////////////
 }
-
+*/
 void LevelEditor::editObstacle(CCPoint posTouch, CCPoint posInMap)
 {
 	Thing* objectTemp;

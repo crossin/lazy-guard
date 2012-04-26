@@ -16,7 +16,8 @@ public:
 	static CCScene* scene();
 
 	bool init();
-	void ccTouchesEnded(CCSet* touches, CCEvent* event);
+	//void ccTouchesEnded(CCSet* touches, CCEvent* event);
+	void ccTouchEnded(CCTouch* touch, CCEvent* event);
 	void menuCallback(CCObject * pSender);
 	void editObstacle(CCPoint posTouch, CCPoint posInMap);
 	void editThief(CCPoint posTouch, CCPoint posInMap);
@@ -27,7 +28,8 @@ public:
 // 	bool onTextFieldDetachWithIME(CCTextFieldTTF * pSender);
 	SCENE_NODE_FUNC(LevelEditor);
 	CC_SYNTHESIZE_READONLY(CCLayer*, mapLayer, Map);
-
+	void registerWithTouchDispatcher();
+	bool ccTouchBegan(CCTouch* touch, CCEvent* event);
 	Level *level;
 	CCLayer* layerObs;
 	CCLayer* layerThief;
