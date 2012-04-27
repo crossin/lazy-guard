@@ -198,8 +198,6 @@
         </animation>
     </animations>
     <sprites>
-        <sprite>box.png</sprite>
-        <sprite>brick.png</sprite>
         <sprite>guard/guard-walk-down-0.png</sprite>
         <sprite>guard/guard-walk-down-1.png</sprite>
         <sprite>guard/guard-walk-down-2.png</sprite>
@@ -224,7 +222,6 @@
         <sprite>guard/guard-walk-upright-0.png</sprite>
         <sprite>guard/guard-walk-upright-1.png</sprite>
         <sprite>guard/guard-walk-upright-2.png</sprite>
-        <sprite>house.png</sprite>
         <sprite>porter/porter-walk-down-0.png</sprite>
         <sprite>porter/porter-walk-down-1.png</sprite>
         <sprite>porter/porter-walk-down-2.png</sprite>
@@ -274,5 +271,8 @@
         <sprite>thief/thief-walk-upright-1.png</sprite>
         <sprite>thief/thief-walk-upright-2.png</sprite>
         <sprite>tree.png</sprite>
+        <sprite>wood.png</sprite>
+        <sprite>rock.png</sprite>
+        <sprite>steel.png</sprite>
     </sprites>
 </root>
