@@ -245,7 +245,9 @@ background->setOpacity(122);
 			obsY = propsTemp->objectForKey("y")->toInt();
 			obsPos = ccp(obsX * level->tileWidth, obsY * level->tileHeight);
 			obsTemp = Obstacle::obstacle(obsType, obsPos);
-			pathfinder->setUnwalkable(obsX, obsY, true);
+			
+			pathfinder->setUnwalkable(obsX, obsY, (obsType!=Obstacle::TREE));
+
 			addChild(obsTemp);
 			things->addObject(obsTemp);
 
@@ -348,6 +350,35 @@ background->setOpacity(122);
 		addChild(porter, 1, Thing::PORTER);
 		porter->setPosition(treasure->getPosition());
 		things->addObject(porter);
+
+		//
+		CCLayer* layerHUD = CCLayer::node();
+		CCMenuItemImage* btnBomb1 = CCMenuItemImage::itemFromNormalImage("bomb.png","bomb.png");
+		CCMenuItemImage* btnBomb2 = CCMenuItemImage::itemFromNormalImage("bomb2.png","bomb2.png");
+		CCMenuItemToggle* btnBomb = CCMenuItemToggle::itemWithTarget(this, menu_selector(Gameplay::btnClicked), btnBomb1, btnBomb2, NULL);
+		CCMenu* tools = CCMenu::menuWithItems(btnBomb, NULL);
+		addChild(tools);
+		tools->setPosition(ccp(100,100));
+		/*
+		char* menu_name[5] = {"Obstacle", "Thief", "Guard", "Gem", "Save/Play"};
+		int menu_tag[5] = {Thing::OBSTACLE, Thing::THIEF, Thing::GUARD, Thing::GEM, -1};
+		CCLabelTTF* label;
+		CCMenuItemLabel* pMenuItem;
+		CCMenu* m_pItmeMenu = CCMenu::menuWithItems(NULL);
+		int offset = 20;
+		for (int i = 0; i < 5; i++)
+		{
+			label = CCLabelTTF::labelWithString(menu_name[i], "Arial", 24);
+			pMenuItem = CCMenuItemLabel::itemWithLabel(label, this, menu_selector(LevelEditor::menuCallback));
+			offset += (pMenuItem->getContentSize().width/2);
+			pMenuItem->setPosition(ccp(offset, 20));
+			m_pItmeMenu->addChild(pMenuItem, 0, menu_tag[i]);
+			offset += (pMenuItem->getContentSize().width/2+20);
+		}
+		//m_pItmeMenu->alignItemsHorizontallyWithPadding(20);
+		m_pItmeMenu->setPosition(CCPointZero);
+		addChild(m_pItmeMenu);
+		*/
 
 		timeLife = 0;
 
@@ -548,6 +579,10 @@ pLabel->setString(textout);
 // 	sprintf(a,"%d",thieves->count());
 // 	OutputDebugStringA(a);
 //}
+
+void Gameplay::btnClicked(CCObject * pSender)
+{
+}
 
 void Gameplay::addThief(ccTime dt)
 {

@@ -30,18 +30,18 @@ bool Obstacle::init()
 	do{
 		switch (typeIndex)
 		{
-		case 1:
-			sprite = CCSprite::spriteWithSpriteFrameName("box.png");
-			break;
-		case 2:
-			sprite = CCSprite::spriteWithSpriteFrameName("brick.png");
-			break;
-		case 3:
-			sprite = CCSprite::spriteWithSpriteFrameName("house.png");
-			break;
-		case 4:
+		case TREE:
 		default:
 			sprite = CCSprite::spriteWithSpriteFrameName("tree.png");
+			break;
+		case WOOD:
+			sprite = CCSprite::spriteWithSpriteFrameName("wood.png");
+			break;
+		case ROCK:
+			sprite = CCSprite::spriteWithSpriteFrameName("rock.png");
+			break;
+		case STEEL:
+			sprite = CCSprite::spriteWithSpriteFrameName("steel.png");
 			break;
 		}
 		sprite->setAnchorPoint(CCPointZero);
