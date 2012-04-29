@@ -14,7 +14,8 @@
 #include "AnimatePacker.h"
 #include "Obstacle.h"
 #include "Level.h"
-
+#include "Tool.h"
+#include "Clock.h"
 
 using namespace cocos2d;
 
@@ -352,13 +353,26 @@ background->setOpacity(122);
 		things->addObject(porter);
 
 		//
-		CCLayer* layerHUD = CCLayer::node();
-		CCMenuItemImage* btnBomb1 = CCMenuItemImage::itemFromNormalImage("bomb.png","bomb.png");
-		CCMenuItemImage* btnBomb2 = CCMenuItemImage::itemFromNormalImage("bomb2.png","bomb2.png");
-		CCMenuItemToggle* btnBomb = CCMenuItemToggle::itemWithTarget(this, menu_selector(Gameplay::btnClicked), btnBomb1, btnBomb2, NULL);
-		CCMenu* tools = CCMenu::menuWithItems(btnBomb, NULL);
-		addChild(tools);
-		tools->setPosition(ccp(100,100));
+		//CCLayer* layerHUD = CCLayer::node();
+		CCMenuItem* btnClock = CCMenuItemImage::itemFromNormalImage("clock.png", "clock2.png", this, menu_selector(Gameplay::btnClicked));
+		btnClock->setTag(Tool::CLOCK);
+		CCMenuItem* btnTorch = CCMenuItemImage::itemFromNormalImage("torch.png", "torch2.png", this, menu_selector(Gameplay::btnClicked));
+		btnTorch->setTag(Tool::TORCH);
+		CCMenuItem* btnBomb = CCMenuItemImage::itemFromNormalImage("bomb.png", "bomb2.png", this, menu_selector(Gameplay::btnClicked));
+		btnBomb->setTag(Tool::BOMB);
+// 		CCMenuItem* btn2 = CCMenuItemImage::itemFromNormalImage("clock2.png","clock2.png");
+// 		CCMenuItemToggle* btnClock = CCMenuItemToggle::itemWithTarget(this, , btn1, btn2, NULL);
+// 		btn1 = CCMenuItemImage::itemFromNormalImage("torch.png","torch.png");
+// 		btn2 = CCMenuItemImage::itemFromNormalImage("torch2.png","torch2.png");
+// 		CCMenuItemToggle* btnTorch = CCMenuItemToggle::itemWithTarget(this, menu_selector(Gameplay::btnClicked), btn1, btn2, NULL);
+// 		btn1 = CCMenuItemImage::itemFromNormalImage("bomb.png","bomb.png");
+// 		btn2 = CCMenuItemImage::itemFromNormalImage("bomb2.png","bomb2.png");
+// 		CCMenuItemToggle* btnBomb = CCMenuItemToggle::itemWithTarget(this, menu_selector(Gameplay::btnClicked), btn1, btn2, NULL);
+		CCMenu* tools = CCMenu::menuWithItems(btnClock, btnTorch, btnBomb, NULL);
+		tools->alignItemsHorizontallyWithPadding(10);
+		addChild(tools, 2000);
+		tools->setPosition(ccp(80,300));
+		toolSelected = NULL;
 		/*
 		char* menu_name[5] = {"Obstacle", "Thief", "Guard", "Gem", "Save/Play"};
 		int menu_tag[5] = {Thing::OBSTACLE, Thing::THIEF, Thing::GUARD, Thing::GEM, -1};
@@ -517,7 +531,6 @@ for (int i=0;i<10;i++){
 		}
 	}
 }*/
-
 	CCSetIterator it = touches->begin();
 	CCTouch* touch = (CCTouch*)(*it);
 
@@ -525,24 +538,34 @@ for (int i=0;i<10;i++){
 	m_tTouchPos = touch->locationInView( touch->view() );
 	m_tTouchPos = CCDirector::sharedDirector()->convertToGL( m_tTouchPos );
 
-	//game_map[int(m_tTouchPos.y / w)][int(m_tTouchPos.x / w)] = 2;
-// 	CCRect rectGuard;
-	CCMutableArray<Guard*>::CCMutableArrayIterator git;
-	Guard* gd;
-	for (git = guards->begin(); git != guards->end(); git++)
+
+	if (toolSelected)
 	{
-		gd = *git;
-// 		rectGuard = CCRectMake(guard[i]->getPosition().x, guard[i]->getPosition().y, guard[i]->sprite->getContentSize().width, guard[i]->sprite->getContentSize().height);
-		if (!gd->status != Guard::SLEEPING && CCRect::CCRectContainsPoint(gd->getRectClick(), m_tTouchPos))
+		switch (toolSelected->getTag())
 		{
-			gd->onHit();
+		case Tool::CLOCK:
+			useClock(m_tTouchPos);
 			break;
-// 			guard[i]->isAwake = true;
-// 			guard[i]->findThief();
+
 		}
 	}
+	else
+	{
 
 
+		CCMutableArray<Guard*>::CCMutableArrayIterator git;
+		Guard* gd;
+		for (git = guards->begin(); git != guards->end(); git++)
+		{
+			gd = *git;
+			if (!gd->status != Guard::SLEEPING && CCRect::CCRectContainsPoint(gd->getRectClick(), m_tTouchPos))
+			{
+				gd->onHit();
+				break;
+			}
+		}
+
+//////////////////////////////////////////////////////////////////////////
 CCMutableArray<Thief*>::CCMutableArrayIterator tt;
 Thief* thief;
 for (tt = thieves->begin(); tt != thieves->end(); tt++)
@@ -551,19 +574,23 @@ for (tt = thieves->begin(); tt != thieves->end(); tt++)
 	// 		thief->updateTarget();
 	// update action
 	if( CCRect::CCRectContainsPoint(thief->getRectOut(), m_tTouchPos)){
-	if (thief->gem)
-	{
-		reorderChild(thief->gem, 0);
-		thief->gem->setPosition(thief->getPosition());
-		gemsOutside->addObject(thief->gem);
-		thief->gem = NULL;
+		if (thief->gem)
+		{
+			reorderChild(thief->gem, 0);
+			thief->gem->setPosition(thief->getPosition());
+			gemsOutside->addObject(thief->gem);
+			thief->gem = NULL;
+		}
+		thief->fleeHome();
 	}
-	thief->fleeHome();
-}
 }
 char textout[10];
 _itoa_s(gemsOutside->count(),textout,10);
 pLabel->setString(textout);
+//////////////////////////////////////////////////////////////////////////
+
+	}
+
 
 }
 
@@ -582,6 +609,13 @@ pLabel->setString(textout);
 
 void Gameplay::btnClicked(CCObject * pSender)
 {
+	//((CCMenuItemToggle*)pSender)->setSelectedIndex(1);
+	if (toolSelected)
+	{
+		toolSelected->unselected();
+	}
+	toolSelected = (CCMenuItem*)pSender;
+	toolSelected->selected();
 }
 
 void Gameplay::addThief(ccTime dt)
@@ -783,6 +817,23 @@ void Gameplay::porterGotGem(Porter* pt)
 	}
 }
 
+void Gameplay::useClock(CCPoint posTouch)
+{
+	CCMutableArray<Guard*>::CCMutableArrayIterator igd;
+	Guard* gd;
+	for (igd = guards->begin(); igd != guards->end(); igd++)
+	{
+		gd = *igd;
+		if( CCRect::CCRectContainsPoint(gd->getRectOut(), posTouch)){
+			Clock* clk = Clock::clock();
+			clk->owner = gd;
+			addChild(clk);
+			toolSelected->unselected();
+			toolSelected = NULL;
+		}
+	}
+
+}
 
 /*
 void Gameplay::updateThieves()

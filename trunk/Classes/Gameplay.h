@@ -42,6 +42,7 @@ virtual void draw();
 	//int countThief;
 	int countGem;
 	float timeLife;
+	CCMenuItem* toolSelected;
 CCLabelTTF* pLabel;
 
 private:
@@ -58,6 +59,7 @@ private:
 	void thiefGotGem(Thief* tf);
 	void porterGotGem(Porter* pt);
 	void btnClicked(CCObject * pSender);
+	void useClock(CCPoint posTouch);
 };
 
 #endif
