@@ -66,6 +66,8 @@ bool Guard::init()
 		range = 30;
 		//timeRot = 0.5;
 		findingInterval = INTERVAL;
+		//numClock = 0;
+		onClock = false;
 		//behaviour=STAND;
 		//direction=DOWN;
 
@@ -258,10 +260,18 @@ void Guard::updateFrame(ccTime dt)
 		else
 		{
 			// awake
-			bar->setTextureRect(CCRectMake(0, 0, 36*pointWake/pointWakeMax, bar->getContentSize().height));
-			bar->setIsVisible(true);
-			pointWake -= (20 * dt);
 			findingInterval -= dt;
+			if (onClock)
+			{
+				bar->setIsVisible(false);
+			}
+			else
+			{
+				bar->setTextureRect(CCRectMake(0, 0, 36*pointWake/pointWakeMax, bar->getContentSize().height));
+				bar->setIsVisible(true);
+				pointWake -= (20 * dt);
+			}
+
 			if (numberOfRunningActions() == 0)
 			{
 				status = WAITING;
@@ -299,7 +309,10 @@ void Guard::setAwake(bool w)
 	if (w)
 	{
 		status = WAITING;
-		sprite->runAction(actionWalk);
+		if (sprite->numberOfRunningActions()==0)
+		{
+			sprite->runAction(actionWalk);
+		}
 		//isAwake = true;
 		pointWake = pointWakeMax;
 	}
@@ -321,4 +334,12 @@ CCRect Guard::getRectClick()
 		getPosition().y - sprite->getContentSize().height * sprite->getAnchorPoint().y - border,
 		sprite->getContentSize().width + border * 2,
 		sprite->getContentSize().height + border * 2);
+}
+
+void Guard::setClock( bool on )
+{
+	onClock = on;
+	setAwake(onClock);
+	//numClock = on ? numClock+1 : numClock-1;
+	//setAwake(numClock > 0);
 }

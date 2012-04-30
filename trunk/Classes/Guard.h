@@ -20,6 +20,7 @@ public:
 	void updateFrame(ccTime dt);
 	void setAwake(bool w);
 	void patrol();
+	void setClock(bool on);
 	CCRect getRectClick();
 	static const int SLEEPING = 0, WAITING = 1, CHASING = 2, PATROLING = 3; 
 
@@ -32,6 +33,8 @@ public:
 	float pointWakeMax;
 	int range; 
 	float findingInterval;
+	bool onClock;
+	//int numClock;
 	//CCAction* actionWalk;
 };
 

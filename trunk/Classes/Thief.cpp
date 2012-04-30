@@ -66,7 +66,10 @@ bool Thief::init()
 // 		setPosition(ccp(startX,startY));
 
 		gem = NULL;
+		clock = NULL;
+		actionSpeed = NULL;
 		speed = 50;
+		speedFactor = 1;
 		status = FINDING;
 		findingInterval = INTERVAL;
 		hasVisited = false;
@@ -174,10 +177,10 @@ void Thief::findGem()
 	}
 	actionGo = CCSequence::actionsWithArray(pathGo);
 	//CCFiniteTimeAction* steal = CCCallFuncN::actionWithTarget( this, callfuncN_selector(Thief::getGem));
-
+	actionSpeed = CCSpeed::actionWithAction((CCActionInterval*)actionGo, speedFactor);
 	stopAllActions();
 	//runAction( CCSequence::actions(actionGo, steal, /*actionBack, actionOver,*/ NULL) );
-	runAction(actionGo);
+	runAction(actionSpeed);
 	status = FINDING;
 //	findingInterval = INTERVAL;
 /*
@@ -266,9 +269,9 @@ void Thief::findHome()
 
 	actionGo = CCSequence::actionsWithArray(pathGo);
 	CCFiniteTimeAction* actionOver = CCCallFunc::actionWithTarget( this, callfunc_selector(Thief::moveFinished));
-
+	actionSpeed = CCSpeed::actionWithAction((CCActionInterval*)CCSequence::actions(actionGo, actionOver, NULL), speedFactor);
 	stopAllActions();
-	runAction( CCSequence::actions(actionGo, actionOver, NULL) );
+	runAction( actionSpeed );
 	status = BACKING;
 //	findingInterval = INTERVAL;
 // 	((Gameplay*)getParent())->updateThieves();
@@ -300,6 +303,10 @@ void Thief::kill()
 	{
 		gem->kill();
 		gp->countGem--;
+	}
+	if (clock)
+	{
+		clock->kill();
 	}
 	gp->thieves->removeObject(this);
 	gp->things->removeObject(this);
@@ -372,3 +379,16 @@ bool Thief::inScreen()
 // 		findGem();
 // 	}
 // }
+
+void Thief::setClock( bool on )
+{
+	speedFactor = on ? 2 : 1;
+	if (actionSpeed)
+	{
+		actionSpeed->setSpeed(speedFactor);
+	}
+	if (!on)
+	{
+		clock = NULL;
+	}
+}
