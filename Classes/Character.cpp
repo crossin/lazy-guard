@@ -61,3 +61,8 @@ CCRect Character::getRectIn()
 	//int h = PathFinder::getInstance()->tileHeight;
 	return CCRectMake(getPosition().x - w/2, getPosition().y - w/4,	w, w/2);	
 }
+
+void Character::setClock( bool on )
+{
+	// to be override
+}

@@ -2,6 +2,7 @@
 
 #include "Character.h"
 #include "Gem.h"
+#include "Clock.h"
 
 using namespace cocos2d;
 
@@ -25,7 +26,8 @@ public:
 	void updateFrame(ccTime dt);
 	//void checkStart(ccTime dt);
 	bool inScreen();
-	
+	void setClock( bool on );
+
 	// 	void updateTarget();
 
 	static const int FINDING = 0, FLEEING = 1, BACKING = 2; //, STEALING = 1
@@ -37,5 +39,6 @@ public:
 	int status;
 	float findingInterval;
 	int timeStart;
+	Clock* clock;
 	//float timeLife;
 };

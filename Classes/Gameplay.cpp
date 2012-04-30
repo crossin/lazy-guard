@@ -824,15 +824,32 @@ void Gameplay::useClock(CCPoint posTouch)
 	for (igd = guards->begin(); igd != guards->end(); igd++)
 	{
 		gd = *igd;
-		if( CCRect::CCRectContainsPoint(gd->getRectOut(), posTouch)){
+		if( CCRect::CCRectContainsPoint(gd->getRectOut(), posTouch) && !gd->onClock){
 			Clock* clk = Clock::clock();
 			clk->owner = gd;
-			addChild(clk);
+			addChild(clk, 2000);
+			gd->setClock(true);
 			toolSelected->unselected();
 			toolSelected = NULL;
+			return;
 		}
 	}
-
+	CCMutableArray<Thief*>::CCMutableArrayIterator itf;
+	Thief* tf;
+	for (itf = thieves->begin(); itf != thieves->end(); itf++)
+	{
+		tf = *itf;
+		if( CCRect::CCRectContainsPoint(tf->getRectOut(), posTouch) && !tf->clock){
+			Clock* clk = Clock::clock();
+			clk->owner = tf;
+			addChild(clk, 2000);
+			tf->setClock(true);
+			tf->clock = clk;
+			toolSelected->unselected();
+			toolSelected = NULL;
+			return;
+		}
+	}
 }
 
 /*
