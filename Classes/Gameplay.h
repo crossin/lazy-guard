@@ -60,6 +60,7 @@ private:
 	void porterGotGem(Porter* pt);
 	void btnClicked(CCObject * pSender);
 	void useClock(CCPoint posTouch);
+	void useTorch(CCPoint posTouch);
 };
 
 #endif

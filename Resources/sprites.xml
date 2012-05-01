@@ -196,6 +196,14 @@
             <spriteFrame>porter/porter-walk-upleft-0.png</spriteFrame>
             <spriteFrame>porter/porter-walk-upleft-2.png</spriteFrame>
         </animation>
+        <animation>
+            <name>fire</name>
+            <delay>0.1</delay>
+            <spriteFrame>fire1.png</spriteFrame>
+            <spriteFrame>fire2.png</spriteFrame>
+            <spriteFrame>fire3.png</spriteFrame>
+            <spriteFrame>fire4.png</spriteFrame>
+        </animation>
     </animations>
     <sprites>
         <sprite>guard/guard-walk-down-0.png</sprite>
@@ -274,5 +282,9 @@
         <sprite>wood.png</sprite>
         <sprite>rock.png</sprite>
         <sprite>steel.png</sprite>
+        <sprite>fire1.png</sprite>
+        <sprite>fire2.png</sprite>
+        <sprite>fire3.png</sprite>
+        <sprite>fire4.png</sprite>
     </sprites>
 </root>
