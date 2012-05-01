@@ -16,6 +16,7 @@
 #include "Level.h"
 #include "Tool.h"
 #include "Clock.h"
+#include "Fire.h"
 
 using namespace cocos2d;
 
@@ -546,7 +547,9 @@ for (int i=0;i<10;i++){
 		case Tool::CLOCK:
 			useClock(m_tTouchPos);
 			break;
-
+		case Tool::TORCH:
+			useTorch(m_tTouchPos);
+			break;
 		}
 	}
 	else
@@ -852,6 +855,12 @@ void Gameplay::useClock(CCPoint posTouch)
 	}
 }
 
+void Gameplay::useTorch(CCPoint posTouch)
+{
+	Fire* fr = Fire::fire();
+	addChild(fr, 2000);
+	fr->setPosition(ccp(100,100));
+}
 /*
 void Gameplay::updateThieves()
 {
