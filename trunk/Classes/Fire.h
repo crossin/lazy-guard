@@ -1,5 +1,6 @@
 #pragma once
-#include "d:\cocos2d-x\lazyguard\classes\tool.h"
+#include "Tool.h"
+#include "Character.h"
 
 class Fire :
 	public Tool
@@ -11,4 +12,8 @@ public:
 	static Fire* fire();
 
 	virtual bool init();
+	void update(ccTime dt);
+	void kill();
+
+	Character* owner;
 };

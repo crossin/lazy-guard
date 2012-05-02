@@ -1,5 +1,5 @@
 #pragma once
-#include "tool.h"
+#include "Tool.h"
 #include "Character.h"
 
 class Clock :
@@ -16,5 +16,5 @@ public:
 	void kill();
 
 	Character* owner;
-	float lifetime;
+	
 };

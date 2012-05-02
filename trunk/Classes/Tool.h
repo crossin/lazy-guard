@@ -12,4 +12,6 @@ public:
 	virtual bool init() = 0;
 
 	static const int CLOCK = 1, TORCH = 2, BOMB = 3;
+
+	float lifetime;
 };

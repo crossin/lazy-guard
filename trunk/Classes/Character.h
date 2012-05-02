@@ -16,6 +16,7 @@ public:
 
 	virtual bool init() = 0;
 	virtual void setClock(bool on);
+	virtual void setFire(bool on);
 	CCFiniteTimeAction* makeAction(CCPoint from, CCPoint target);
 	void changeDirection(CCNode *node, void *param);
 	CCRect getRectIn();

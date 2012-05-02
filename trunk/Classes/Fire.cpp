@@ -27,11 +27,11 @@ bool Fire::init()
 	bool bRet = false;
 	do{
 		sprite = CCSprite::spriteWithSpriteFrameName("fire1.png");
-		//sprite->setPosition(ccp(0, 50));
+		sprite->setPosition(ccp(0, 30));
 		addChild(sprite);
-		//owner = NULL;
-		//lifetime = 5;
-		//scheduleUpdate();
+		owner = NULL;
+		lifetime = 5;
+		scheduleUpdate();
 		CCRepeatForever* actBurn = CCRepeatForever::actionWithAction(AnimatePacker::getInstance()->getAnimate("fire"));
 		sprite->runAction(actBurn);
 
@@ -39,4 +39,23 @@ bool Fire::init()
 	}while(0);
 
 	return bRet;
+}
+
+void Fire::kill()
+{
+	owner->setFire(false);
+	removeFromParentAndCleanup(true);
+}
+
+void Fire::update(ccTime dt)
+{
+	lifetime -= dt;
+	if (lifetime < 0)
+	{
+		kill();
+	}
+	if (owner)
+	{
+		setPosition(owner->getPosition());
+	}
 }

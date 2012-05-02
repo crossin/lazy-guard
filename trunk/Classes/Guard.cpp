@@ -68,6 +68,7 @@ bool Guard::init()
 		findingInterval = INTERVAL;
 		//numClock = 0;
 		onClock = false;
+		inAction = false;
 		//behaviour=STAND;
 		//direction=DOWN;
 
@@ -233,10 +234,43 @@ _itoa_s(pathfinder->pathLength,textout,10);
 */
 }
 
+void Guard::runWithFire() 
+{
+	if (numberOfRunningActions() > 0)
+	{
+		return;
+	}
+	CCSize size = CCDirector::sharedDirector()->getWinSize();
+	int randX = CCRANDOM_0_1() * size.width;
+	int randY = CCRANDOM_0_1() * size.height;
+	PathFinder *pathfinder = PathFinder::getInstance();
+	if (PathFinder::found != pathfinder->FindPath(getPosition().x, getPosition().y, randX, randY))
+	{
+		return;
+	}
+
+	CCArray* pathGo = CCArray::array();
+	CCPoint target, from;
+	CCFiniteTimeAction* actionGo;
+
+	for (int i = 0; i < pathfinder->pathLength; i++)
+	{
+		from = (i == 0) ? getPosition() : (ccp((pathfinder->pathBank[2*i-2]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[2*i-1]+0.5) * pathfinder->tileHeight));
+		target = ccp((pathfinder->pathBank[2*i]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[2*i+1]+0.5) * pathfinder->tileHeight);
+		pathGo->addObject(makeAction(from, target));
+	}
+
+	actionGo = CCSequence::actionsWithArray(pathGo);
+	//CCFiniteTimeAction* actionWait = CCDelayTime::actionWithDuration(1);
+	//	CCFiniteTimeAction* actionOver = CCCallFuncN::actionWithTarget( this, callfuncN_selector(Thief::moveFinished));
+	//stopAllActions();
+	runAction( CCSequence::actions(actionGo, NULL) );
+}
+
 void Guard::updateFrame(ccTime dt)
 {
 	// update sleep/wake point
-	if (status == SLEEPING)
+	if (status == SLEEPING)    // sleeping
 	{
 		if (pointSleep <= 0)
 		{
@@ -249,7 +283,12 @@ void Guard::updateFrame(ccTime dt)
 			pointSleep -= (50 * dt);
 		}
 	}
-	else
+	else if (status == BURNING)    // burning
+	{
+		bar->setIsVisible(false);
+		runWithFire();
+	}
+	else							// waiting chasing patroling
 	{
 		if (pointWake <= 0)
 		{
@@ -261,6 +300,7 @@ void Guard::updateFrame(ccTime dt)
 		{
 			// awake
 			findingInterval -= dt;
+			// clock
 			if (onClock)
 			{
 				bar->setIsVisible(false);
@@ -339,7 +379,17 @@ CCRect Guard::getRectClick()
 void Guard::setClock( bool on )
 {
 	onClock = on;
+	inAction = on;
 	setAwake(onClock);
 	//numClock = on ? numClock+1 : numClock-1;
 	//setAwake(numClock > 0);
+}
+
+void Guard::setFire( bool on )
+{
+	inAction = on;
+	setAwake(onClock);
+	status = on ? BURNING : SLEEPING;
+	stopAllActions();
+
 }
