@@ -66,3 +66,8 @@ void Character::setClock( bool on )
 {
 	// to be override
 }
+
+void Character::setFire( bool on )
+{
+	// to be override
+}

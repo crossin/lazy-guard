@@ -822,21 +822,23 @@ void Gameplay::porterGotGem(Porter* pt)
 
 void Gameplay::useClock(CCPoint posTouch)
 {
+	// guard
 	CCMutableArray<Guard*>::CCMutableArrayIterator igd;
 	Guard* gd;
 	for (igd = guards->begin(); igd != guards->end(); igd++)
 	{
 		gd = *igd;
-		if( CCRect::CCRectContainsPoint(gd->getRectOut(), posTouch) && !gd->onClock){
+		if( CCRect::CCRectContainsPoint(gd->getRectOut(), posTouch) && !gd->inAction){
 			Clock* clk = Clock::clock();
 			clk->owner = gd;
-			addChild(clk, 2000);
+			addChild(clk, 900);
 			gd->setClock(true);
 			toolSelected->unselected();
 			toolSelected = NULL;
 			return;
 		}
 	}
+	// thief
 	CCMutableArray<Thief*>::CCMutableArrayIterator itf;
 	Thief* tf;
 	for (itf = thieves->begin(); itf != thieves->end(); itf++)
@@ -845,7 +847,7 @@ void Gameplay::useClock(CCPoint posTouch)
 		if( CCRect::CCRectContainsPoint(tf->getRectOut(), posTouch) && !tf->clock){
 			Clock* clk = Clock::clock();
 			clk->owner = tf;
-			addChild(clk, 2000);
+			addChild(clk, 900);
 			tf->setClock(true);
 			tf->clock = clk;
 			toolSelected->unselected();
@@ -857,9 +859,22 @@ void Gameplay::useClock(CCPoint posTouch)
 
 void Gameplay::useTorch(CCPoint posTouch)
 {
-	Fire* fr = Fire::fire();
-	addChild(fr, 2000);
-	fr->setPosition(ccp(100,100));
+	// guard
+	CCMutableArray<Guard*>::CCMutableArrayIterator igd;
+	Guard* gd;
+	for (igd = guards->begin(); igd != guards->end(); igd++)
+	{
+		gd = *igd;
+		if( CCRect::CCRectContainsPoint(gd->getRectOut(), posTouch) && !gd->inAction){
+			Fire* fr = Fire::fire();
+			fr->owner = gd;
+			addChild(fr, 900);
+			gd->setFire(true);
+			toolSelected->unselected();
+			toolSelected = NULL;
+			return;
+		}
+	}
 }
 /*
 void Gameplay::updateThieves()

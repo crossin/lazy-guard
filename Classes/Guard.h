@@ -20,9 +20,12 @@ public:
 	void updateFrame(ccTime dt);
 	void setAwake(bool w);
 	void patrol();
+	void runWithFire();
 	void setClock(bool on);
+	void setFire(bool on);
 	CCRect getRectClick();
-	static const int SLEEPING = 0, WAITING = 1, CHASING = 2, PATROLING = 3; 
+
+	static const int SLEEPING = 0, WAITING = 1, CHASING = 2, PATROLING = 3, BURNING = 4; 
 
 	CCSprite * bar;
 	//bool isAwake;
@@ -34,6 +37,7 @@ public:
 	int range; 
 	float findingInterval;
 	bool onClock;
+	bool inAction;
 	//int numClock;
 	//CCAction* actionWalk;
 };
