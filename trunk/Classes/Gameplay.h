@@ -7,6 +7,7 @@
 #include "Gem.h"
 #include "Treasure.h"
 #include "Porter.h"
+#include "Obstacle.h"
 
 using namespace cocos2d;
 
@@ -35,6 +36,7 @@ virtual void draw();
 	CCMutableArray<Thief*>* thieves;
 	CCMutableArray<Thing*>* things;
 	CCMutableArray<Guard*>* guards;
+	CCMutableArray<Obstacle*>* obstacles;
 	Porter* porter;
 	CCArray* gemsOutside;
 	CCArray* thievesPool;

@@ -60,6 +60,11 @@ Gameplay::~Gameplay(void)
 		things->release();
 		things = NULL;
 	}
+	if (obstacles)
+	{
+		obstacles->release();
+		obstacles = NULL;
+	}
 	if (thievesPool)
 	{
 		thievesPool->release();
@@ -233,12 +238,13 @@ background->setOpacity(122);
 		addChild(background);
 
 		// obstacles
-		Thing* obsTemp;
+		Obstacle* obsTemp;
 		int obsType;
 		int obsX;
 		int obsY;
 		CCPoint obsPos;
 		CCMutableDictionary<std::string, CCString*>* propsTemp;
+		obstacles = new CCMutableArray<Obstacle*>;
 		for (int i=0; i<level->obstacles->count(); i++)
 		{
 			propsTemp = (CCMutableDictionary<std::string, CCString*>*)level->obstacles->objectAtIndex(i);
@@ -251,6 +257,7 @@ background->setOpacity(122);
 			pathfinder->setUnwalkable(obsX, obsY, (obsType!=Obstacle::TREE));
 
 			addChild(obsTemp);
+			obstacles->addObject(obsTemp);
 			things->addObject(obsTemp);
 
 			game_map[obsY][obsX] = 1;
@@ -894,6 +901,43 @@ void Gameplay::useTorch(CCPoint posTouch)
 			}
 			tf->setFire(true);
 			//tf->clock = clk;
+			toolSelected->unselected();
+			toolSelected = NULL;
+			return;
+		}
+	}
+	// obstacle
+	CCMutableArray<Obstacle*>::CCMutableArrayIterator iobs;
+	Obstacle* obs;
+	for (iobs = obstacles->begin(); iobs != obstacles->end(); iobs++)
+	{
+		obs = *iobs;
+		if((obs->typeIndex==0 || obs->typeIndex==1) && CCRect::CCRectContainsPoint(obs->getRectOut(), posTouch))
+		{
+			int tWidth = PathFinder::getInstance()->tileWidth;
+			int tHeight = PathFinder::getInstance()->tileHeight;
+			Fire* fr = Fire::fire();
+			fr->terrain = obs;
+			addChild(fr, 900);
+			fr->setPosition(ccpAdd(obs->getPosition(), ccp(tWidth/2,0)));
+
+			// spread
+			CCMutableArray<Obstacle*>::CCMutableArrayIterator jobs;
+			Obstacle* obs2;
+			for (jobs = obstacles->begin(); jobs != obstacles->end(); jobs++)
+			{
+				obs2 = *jobs;
+				if((obs2->typeIndex==0 || obs2->typeIndex==1)
+					&& abs((int)obs->getPosition().x/tWidth-(int)obs2->getPosition().x/tWidth) + abs((int)obs->getPosition().y/tHeight-(int)obs2->getPosition().y/tHeight) == 1
+					&& CCRANDOM_0_1() < 0.5)
+				{
+					Fire* fr = Fire::fire();
+					fr->terrain = obs2;
+					addChild(fr, 900);
+					fr->setPosition(ccpAdd(obs2->getPosition(), ccp(tWidth/2,0)));
+				}
+			}
+
 			toolSelected->unselected();
 			toolSelected = NULL;
 			return;

@@ -44,7 +44,10 @@ bool Fire::init()
 
 void Fire::kill()
 {
-	owner->setFire(false);
+	if (owner)
+	{
+		owner->setFire(false);
+	}
 	removeFromParentAndCleanup(true);
 }
 
