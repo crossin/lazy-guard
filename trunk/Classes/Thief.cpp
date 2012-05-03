@@ -73,6 +73,8 @@ bool Thief::init()
 		status = FINDING;
 		findingInterval = INTERVAL;
 		hasVisited = false;
+		inAction = false;
+		onFire = false;
 
 		schedule( schedule_selector(Thief::updateFrame));
 
@@ -291,6 +293,36 @@ for (int i = 0; i < pathfinder->pathLength; i++)
 */
 }
 
+void Thief::runWithFire() 
+{
+	if (numberOfRunningActions() > 0)
+	{
+		return;
+	}
+	CCSize size = CCDirector::sharedDirector()->getWinSize();
+	int randX = CCRANDOM_0_1() * size.width;
+	int randY = CCRANDOM_0_1() * size.height;
+	PathFinder *pathfinder = PathFinder::getInstance();
+	if (PathFinder::found != pathfinder->FindPath(getPosition().x, getPosition().y, randX, randY))
+	{
+		return;
+	}
+
+	CCArray* pathGo = CCArray::array();
+	CCPoint target, from;
+	CCFiniteTimeAction* actionGo;
+
+	for (int i = 0; i < pathfinder->pathLength; i++)
+	{
+		from = (i == 0) ? getPosition() : (ccp((pathfinder->pathBank[2*i-2]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[2*i-1]+0.5) * pathfinder->tileHeight));
+		target = ccp((pathfinder->pathBank[2*i]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[2*i+1]+0.5) * pathfinder->tileHeight);
+		pathGo->addObject(makeAction(from, target));
+	}
+
+	actionGo = CCSequence::actionsWithArray(pathGo);
+	runAction( CCSequence::actions(actionGo, NULL) );
+}
+
 void Thief::moveFinished()
 {
 	kill();
@@ -325,7 +357,11 @@ void Thief::fleeHome()
 
 void Thief::updateFrame(ccTime dt)
 {
-	if (gem)
+	if (onFire)
+	{
+		runWithFire();
+	}
+	else if (gem)
 	{
 		gem->setPosition(ccp(getPosition().x, getPosition().y+16));
 	}
@@ -383,6 +419,7 @@ bool Thief::inScreen()
 void Thief::setClock( bool on )
 {
 	speedFactor = on ? 2 : 1;
+	inAction = on;
 	if (actionSpeed)
 	{
 		actionSpeed->setSpeed(speedFactor);
@@ -390,5 +427,23 @@ void Thief::setClock( bool on )
 	if (!on)
 	{
 		clock = NULL;
+	}
+}
+
+void Thief::setFire( bool on )
+{
+	inAction = on;
+	onFire = on;
+// 	setAwake(onClock);
+// 	status = on ? BURNING : SLEEPING;
+ 	stopAllActions();
+	if (!on)
+	{
+		if (status == FLEEING)
+		{
+			findHome();
+			status = FLEEING;
+		}
+		findingInterval = 0;
 	}
 }

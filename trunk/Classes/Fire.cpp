@@ -27,9 +27,10 @@ bool Fire::init()
 	bool bRet = false;
 	do{
 		sprite = CCSprite::spriteWithSpriteFrameName("fire1.png");
-		sprite->setPosition(ccp(0, 30));
+		sprite->setPosition(ccp(0, 20));
 		addChild(sprite);
 		owner = NULL;
+		terrain = NULL;
 		lifetime = 5;
 		scheduleUpdate();
 		CCRepeatForever* actBurn = CCRepeatForever::actionWithAction(AnimatePacker::getInstance()->getAnimate("fire"));

@@ -713,7 +713,7 @@ void Gameplay::overlapped(Thing* t1, Thing* t2)
 
 void Gameplay::caughtThief(Guard* gd, Thief* tf)
 {
-	if (tf->status != Thief::FLEEING  && tf->inScreen()
+	if (tf->status != Thief::FLEEING && !tf->onFire && tf->inScreen()
 		&& gd->status != Guard::SLEEPING && ccpDistance(gd->getPosition(), tf->getPosition()) < gd->range)
 	{
 		if (tf->gem)
@@ -747,7 +747,7 @@ void Gameplay::robbedPorter( Thief* tf, Porter* pt )
 
 void Gameplay::thiefGotGem(Thief* tf)
 {
-	if (tf->gem)
+	if (tf->gem || tf->onFire)
 	{
 		return;
 	}
@@ -870,6 +870,30 @@ void Gameplay::useTorch(CCPoint posTouch)
 			fr->owner = gd;
 			addChild(fr, 900);
 			gd->setFire(true);
+			toolSelected->unselected();
+			toolSelected = NULL;
+			return;
+		}
+	}
+	// thief
+	CCMutableArray<Thief*>::CCMutableArrayIterator itf;
+	Thief* tf;
+	for (itf = thieves->begin(); itf != thieves->end(); itf++)
+	{
+		tf = *itf;
+		if( CCRect::CCRectContainsPoint(tf->getRectOut(), posTouch) && !tf->inAction){
+			Fire* fr = Fire::fire();
+			fr->owner = tf;
+			addChild(fr, 900);
+			if (tf->gem)
+			{
+ 				reorderChild(tf->gem, 0);
+ 				tf->gem->setPosition(tf->getPosition());
+				gemsOutside->addObject(tf->gem);
+				tf->gem = NULL;
+			}
+			tf->setFire(true);
+			//tf->clock = clk;
 			toolSelected->unselected();
 			toolSelected = NULL;
 			return;
