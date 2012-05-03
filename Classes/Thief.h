@@ -22,15 +22,17 @@ public:
 	void moveFinished();
 //  	void getGem(CCNode* sender);
 	void fleeHome();
+	void runWithFire();
 	void kill();
 	void updateFrame(ccTime dt);
 	//void checkStart(ccTime dt);
 	bool inScreen();
 	void setClock( bool on );
+	void setFire( bool on );
 
 	// 	void updateTarget();
 
-	static const int FINDING = 0, FLEEING = 1, BACKING = 2; //, STEALING = 1
+	static const int FINDING = 0, FLEEING = 1, BACKING = 2, BURNING = 3;
 
 	Gem* gem;
 	float startX;
@@ -40,5 +42,7 @@ public:
 	float findingInterval;
 	int timeStart;
 	Clock* clock;
+	bool inAction;
+	bool onFire;
 	//float timeLife;
 };

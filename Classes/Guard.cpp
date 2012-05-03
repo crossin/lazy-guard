@@ -95,7 +95,7 @@ void Guard::findThief()
 	for (it = thieves->begin(); it != thieves->end(); it++ )
 	{
 		thiefTemp = *it;
-		if (thiefTemp->status != Thief::FLEEING && thiefTemp->inScreen())
+		if (thiefTemp->status != Thief::FLEEING && !thiefTemp->onFire && thiefTemp->inScreen())
 		{
 			dist = ccpDistance(getPosition(), thiefTemp->getPosition());
 			if (dist < dist_min)
@@ -391,5 +391,4 @@ void Guard::setFire( bool on )
 	setAwake(onClock);
 	status = on ? BURNING : SLEEPING;
 	stopAllActions();
-
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "Tool.h"
 #include "Character.h"
+#include "Obstacle.h"
 
 class Fire :
 	public Tool
@@ -16,4 +17,5 @@ public:
 	void kill();
 
 	Character* owner;
+	Obstacle* terrain;
 };
