@@ -321,6 +321,16 @@
     <x>8</x>
     <y>7</y>
   </obstacle>
+  <obstacle>
+    <type>1</type>
+    <x>3</x>
+    <y>4</y>
+  </obstacle>
+  <obstacle>
+    <type>2</type>
+    <x>3</x>
+    <y>5</y>
+  </obstacle>
   <treasure>
     <x>301</x>
     <y>139</y>

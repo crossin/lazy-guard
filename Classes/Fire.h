@@ -18,4 +18,6 @@ public:
 
 	Character* owner;
 	Obstacle* terrain;
+	float spreadInterval;
+	float INTERVAL;
 };

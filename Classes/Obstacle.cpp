@@ -1,4 +1,6 @@
 #include "Obstacle.h"
+#include "Gameplay.h"
+#include "PathFinder.h"
 
 using namespace cocos2d;
 
@@ -46,6 +48,7 @@ bool Obstacle::init()
 		}
 		sprite->setAnchorPoint(CCPointZero);
 		addChild(sprite);
+		onFire = false;
 
 		bRet=true;
 	}while(0);
@@ -59,9 +62,14 @@ bool Obstacle::init(int t, CCPoint pos)
 	typeIndex = t;
 	return init();
 }
-// void Obstacle::kill()
-// {
-// 	//owner = NULL;
-// 	removeFromParentAndCleanup(true);
-// }
+
+void Obstacle::kill()
+{
+	Gameplay* gp = (Gameplay*)getParent();
+	gp->obstacles->removeObject(this);
+	gp->things->removeObject(this);
+	PathFinder* pf = PathFinder::getInstance();
+	pf->setUnwalkable((int)getPosition().x/pf->tileWidth, (int)getPosition().y/pf->tileHeight, false);
+	removeFromParentAndCleanup(true);
+}
 

@@ -528,17 +528,23 @@ void Gameplay::draw()
 
 void Gameplay::ccTouchesEnded(CCSet* touches, CCEvent* event)
 {
-/*
+//////////////////////////////////////////////////////////////////////////
 //clear
-PathFinder* pathfinder = PathFinder::getInstance();
-for (int i=0;i<10;i++){
-	for (int j=0;j<15;j++){
-		if (pathfinder->walkability[j][i] == PathFinder::unwalkable)
-		{
-			game_map[i][j] = 1;
-		}
-	}
-}*/
+// PathFinder* pathfinder = PathFinder::getInstance();
+// for (int i=0;i<10;i++){
+// 	for (int j=0;j<15;j++){
+// 		if (pathfinder->walkability[j][i] == PathFinder::unwalkable)
+// 		{
+// 			game_map[i][j] = 1;
+// 		}
+// 		else
+// 		{
+// 			game_map[i][j] = 0;
+// 		}
+// 	}
+// }
+//////////////////////////////////////////////////////////////////////////
+
 	CCSetIterator it = touches->begin();
 	CCTouch* touch = (CCTouch*)(*it);
 
@@ -866,6 +872,45 @@ void Gameplay::useClock(CCPoint posTouch)
 
 void Gameplay::useTorch(CCPoint posTouch)
 {
+	// obstacle
+	CCMutableArray<Obstacle*>::CCMutableArrayIterator iobs;
+	Obstacle* obs;
+	for (iobs = obstacles->begin(); iobs != obstacles->end(); iobs++)
+	{
+		obs = *iobs;
+		if((obs->typeIndex==0 || obs->typeIndex==1) && !obs->onFire && CCRect::CCRectContainsPoint(obs->getRectOut(), posTouch))
+		{
+			int tWidth = PathFinder::getInstance()->tileWidth;
+			int tHeight = PathFinder::getInstance()->tileHeight;
+			Fire* fr = Fire::fire();
+			fr->terrain = obs;
+			obs->onFire = true;
+			addChild(fr, 900);
+			fr->setPosition(ccpAdd(obs->getPosition(), ccp(tWidth/2,0)));
+
+			// spread
+			CCMutableArray<Obstacle*>::CCMutableArrayIterator jobs;
+			Obstacle* obs2;
+			for (jobs = obstacles->begin(); jobs != obstacles->end(); jobs++)
+			{
+				obs2 = *jobs;
+				if((obs2->typeIndex==0 || obs2->typeIndex==1) && !obs2->onFire
+					&& abs((int)obs->getPosition().x/tWidth-(int)obs2->getPosition().x/tWidth) + abs((int)obs->getPosition().y/tHeight-(int)obs2->getPosition().y/tHeight) == 1
+					&& CCRANDOM_0_1() < 0.5)
+				{
+					Fire* fr = Fire::fire();
+					fr->terrain = obs2;
+					obs2->onFire = true;
+					addChild(fr, 900);
+					fr->setPosition(ccpAdd(obs2->getPosition(), ccp(tWidth/2,0)));
+				}
+			}
+
+			toolSelected->unselected();
+			toolSelected = NULL;
+			return;
+		}
+	}
 	// guard
 	CCMutableArray<Guard*>::CCMutableArrayIterator igd;
 	Guard* gd;
@@ -901,43 +946,6 @@ void Gameplay::useTorch(CCPoint posTouch)
 			}
 			tf->setFire(true);
 			//tf->clock = clk;
-			toolSelected->unselected();
-			toolSelected = NULL;
-			return;
-		}
-	}
-	// obstacle
-	CCMutableArray<Obstacle*>::CCMutableArrayIterator iobs;
-	Obstacle* obs;
-	for (iobs = obstacles->begin(); iobs != obstacles->end(); iobs++)
-	{
-		obs = *iobs;
-		if((obs->typeIndex==0 || obs->typeIndex==1) && CCRect::CCRectContainsPoint(obs->getRectOut(), posTouch))
-		{
-			int tWidth = PathFinder::getInstance()->tileWidth;
-			int tHeight = PathFinder::getInstance()->tileHeight;
-			Fire* fr = Fire::fire();
-			fr->terrain = obs;
-			addChild(fr, 900);
-			fr->setPosition(ccpAdd(obs->getPosition(), ccp(tWidth/2,0)));
-
-			// spread
-			CCMutableArray<Obstacle*>::CCMutableArrayIterator jobs;
-			Obstacle* obs2;
-			for (jobs = obstacles->begin(); jobs != obstacles->end(); jobs++)
-			{
-				obs2 = *jobs;
-				if((obs2->typeIndex==0 || obs2->typeIndex==1)
-					&& abs((int)obs->getPosition().x/tWidth-(int)obs2->getPosition().x/tWidth) + abs((int)obs->getPosition().y/tHeight-(int)obs2->getPosition().y/tHeight) == 1
-					&& CCRANDOM_0_1() < 0.5)
-				{
-					Fire* fr = Fire::fire();
-					fr->terrain = obs2;
-					addChild(fr, 900);
-					fr->setPosition(ccpAdd(obs2->getPosition(), ccp(tWidth/2,0)));
-				}
-			}
-
 			toolSelected->unselected();
 			toolSelected = NULL;
 			return;

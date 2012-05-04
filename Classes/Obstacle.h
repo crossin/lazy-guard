@@ -16,6 +16,8 @@ public:
 
 	virtual bool init();
 	bool init(int t, CCPoint pos);
+	void kill();
 
 	int typeIndex;
+	bool onFire;
 };
