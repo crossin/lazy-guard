@@ -83,21 +83,6 @@
   </obstacle>
   <obstacle>
     <type>0</type>
-    <x>11</x>
-    <y>5</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
-    <x>11</x>
-    <y>4</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
-    <x>11</x>
-    <y>3</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
     <x>12</x>
     <y>4</y>
   </obstacle>
@@ -128,11 +113,6 @@
   </obstacle>
   <obstacle>
     <type>0</type>
-    <x>5</x>
-    <y>2</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
     <x>3</x>
     <y>3</y>
   </obstacle>
@@ -140,16 +120,6 @@
     <type>0</type>
     <x>4</x>
     <y>3</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
-    <x>10</x>
-    <y>2</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
-    <x>11</x>
-    <y>2</y>
   </obstacle>
   <obstacle>
     <type>0</type>
@@ -183,36 +153,6 @@
   </obstacle>
   <obstacle>
     <type>0</type>
-    <x>9</x>
-    <y>5</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
-    <x>8</x>
-    <y>5</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
-    <x>8</x>
-    <y>4</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
-    <x>8</x>
-    <y>3</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
-    <x>9</x>
-    <y>3</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
-    <x>5</x>
-    <y>3</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
     <x>4</x>
     <y>2</y>
   </obstacle>
@@ -224,82 +164,17 @@
   <obstacle>
     <type>0</type>
     <x>6</x>
-    <y>4</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
-    <x>6</x>
     <y>3</y>
   </obstacle>
   <obstacle>
     <type>0</type>
-    <x>7</x>
-    <y>2</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
-    <x>8</x>
-    <y>2</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
-    <x>9</x>
-    <y>2</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
     <x>6</x>
     <y>2</y>
   </obstacle>
   <obstacle>
     <type>0</type>
-    <x>7</x>
-    <y>4</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
-    <x>7</x>
-    <y>5</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
-    <x>5</x>
-    <y>6</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
-    <x>5</x>
-    <y>5</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
-    <x>5</x>
-    <y>4</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
     <x>6</x>
     <y>6</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
-    <x>7</x>
-    <y>6</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
-    <x>8</x>
-    <y>6</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
-    <x>9</x>
-    <y>6</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
-    <x>9</x>
-    <y>7</y>
   </obstacle>
   <obstacle>
     <type>0</type>
@@ -314,11 +189,6 @@
   <obstacle>
     <type>0</type>
     <x>5</x>
-    <y>7</y>
-  </obstacle>
-  <obstacle>
-    <type>0</type>
-    <x>8</x>
     <y>7</y>
   </obstacle>
   <obstacle>
@@ -330,6 +200,86 @@
     <type>2</type>
     <x>3</x>
     <y>5</y>
+  </obstacle>
+  <obstacle>
+    <type>0</type>
+    <x>1</x>
+    <y>1</y>
+  </obstacle>
+  <obstacle>
+    <type>0</type>
+    <x>5</x>
+    <y>3</y>
+  </obstacle>
+  <obstacle>
+    <type>0</type>
+    <x>8</x>
+    <y>4</y>
+  </obstacle>
+  <obstacle>
+    <type>0</type>
+    <x>9</x>
+    <y>5</y>
+  </obstacle>
+  <obstacle>
+    <type>0</type>
+    <x>9</x>
+    <y>3</y>
+  </obstacle>
+  <obstacle>
+    <type>0</type>
+    <x>8</x>
+    <y>2</y>
+  </obstacle>
+  <obstacle>
+    <type>0</type>
+    <x>11</x>
+    <y>9</y>
+  </obstacle>
+  <obstacle>
+    <type>0</type>
+    <x>10</x>
+    <y>9</y>
+  </obstacle>
+  <obstacle>
+    <type>0</type>
+    <x>10</x>
+    <y>8</y>
+  </obstacle>
+  <obstacle>
+    <type>0</type>
+    <x>14</x>
+    <y>8</y>
+  </obstacle>
+  <obstacle>
+    <type>0</type>
+    <x>13</x>
+    <y>9</y>
+  </obstacle>
+  <obstacle>
+    <type>0</type>
+    <x>14</x>
+    <y>7</y>
+  </obstacle>
+  <obstacle>
+    <type>0</type>
+    <x>5</x>
+    <y>0</y>
+  </obstacle>
+  <obstacle>
+    <type>0</type>
+    <x>6</x>
+    <y>1</y>
+  </obstacle>
+  <obstacle>
+    <type>0</type>
+    <x>8</x>
+    <y>1</y>
+  </obstacle>
+  <obstacle>
+    <type>0</type>
+    <x>7</x>
+    <y>1</y>
   </obstacle>
   <treasure>
     <x>301</x>
@@ -344,43 +294,48 @@
     <y>13</y>
   </guard>
   <thief>
-    <time>0</time>
-    <x>496</x>
-    <y>208</y>
-  </thief>
-  <thief>
-    <time>0</time>
-    <x>-16</x>
-    <y>158</y>
-  </thief>
-  <thief>
-    <time>0</time>
-    <x>218</x>
-    <y>320</y>
-  </thief>
-  <thief>
-    <time>0</time>
-    <x>264</x>
-    <y>-32</y>
-  </thief>
-  <thief>
-    <time>2</time>
-    <x>193</x>
-    <y>-32</y>
-  </thief>
-  <thief>
-    <time>4</time>
-    <x>293</x>
-    <y>320</y>
-  </thief>
-  <thief>
     <time>6</time>
     <x>496</x>
     <y>119</y>
   </thief>
   <thief>
-    <time>8</time>
+    <time>1</time>
+    <x>255</x>
+    <y>320</y>
+  </thief>
+  <thief>
+    <time>2</time>
+    <x>260</x>
+    <y>-32</y>
+  </thief>
+  <thief>
+    <time>3</time>
     <x>-16</x>
-    <y>115</y>
+    <y>153</y>
+  </thief>
+  <thief>
+    <time>4</time>
+    <x>-16</x>
+    <y>98</y>
+  </thief>
+  <thief>
+    <time>5</time>
+    <x>496</x>
+    <y>63</y>
+  </thief>
+  <thief>
+    <time>5</time>
+    <x>496</x>
+    <y>211</y>
+  </thief>
+  <thief>
+    <time>6</time>
+    <x>337</x>
+    <y>320</y>
+  </thief>
+  <thief>
+    <time>7</time>
+    <x>150</x>
+    <y>-32</y>
   </thief>
 </level>

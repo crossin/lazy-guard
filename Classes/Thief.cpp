@@ -142,7 +142,7 @@ void Thief::findGem()
 		}
 		else
 		{
-			if (status != BACKING)
+			if (status != BACKING || numberOfRunningActions()==0)
 			{
 				findHome();
 			}

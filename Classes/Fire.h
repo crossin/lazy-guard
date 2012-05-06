@@ -15,7 +15,7 @@ public:
 	virtual bool init();
 	void update(ccTime dt);
 	void kill();
-
+	CCRect getRectIn();
 	Character* owner;
 	Obstacle* terrain;
 	float spreadInterval;

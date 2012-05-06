@@ -33,7 +33,7 @@ bool Fire::init()
 		addChild(sprite);
 		owner = NULL;
 		terrain = NULL;
-		lifetime = 5;
+		timeLife = 5;
 		INTERVAL = 1;
 		spreadInterval = INTERVAL;
 		scheduleUpdate();
@@ -61,8 +61,8 @@ void Fire::kill()
 
 void Fire::update(ccTime dt)
 {
-	lifetime -= dt;
-	if (lifetime < 0)
+	timeLife -= dt;
+	if (timeLife < 0)
 	{
 		kill();
 		return;
@@ -78,6 +78,7 @@ void Fire::update(ccTime dt)
 	{
 		spreadInterval = INTERVAL;
 		Gameplay* gp = (Gameplay*)getParent();
+		CCPoint posFire = ccp(getPosition().x, getPosition().y+10);
 		//obstacle
 		CCMutableArray<Obstacle*>::CCMutableArrayIterator iobs;
 		Obstacle* obs;
@@ -85,7 +86,7 @@ void Fire::update(ccTime dt)
 		{
 			obs = *iobs;
 			if((obs->typeIndex==0 || obs->typeIndex==1) && !obs->onFire 
-				&& CCRect::CCRectContainsPoint(obs->getRectOut(), ccpAdd(getPosition(), sprite->getPosition()))
+				&& CCRect::CCRectIntersectsRect(obs->getRectOut(), getRectIn())
 				&& CCRANDOM_0_1() < 0.5)
 			{
 				int tWidth = PathFinder::getInstance()->tileWidth;
@@ -94,50 +95,52 @@ void Fire::update(ccTime dt)
 				obs->onFire = true;
 				gp->addChild(fr, 900);
 				fr->setPosition(ccpAdd(obs->getPosition(), ccp(tWidth/2,0)));
-				return;
+				//return;
+			}
+		}
+		// guard
+		CCMutableArray<Guard*>::CCMutableArrayIterator igd;
+		Guard* gd;
+		for (igd = gp->guards->begin(); igd != gp->guards->end(); igd++)
+		{
+			gd = *igd;
+			if (!gd->inAction
+				&& CCRect::CCRectIntersectsRect(gd->getRectOut(), getRectIn())
+				&& CCRANDOM_0_1() < 0.3){
+				Fire* fr = Fire::fire();
+				fr->owner = gd;
+				gp->addChild(fr, 900);
+				gd->setFire(true);
+			}
+		}
+		// thief
+		CCMutableArray<Thief*>::CCMutableArrayIterator itf;
+		Thief* tf;
+		for (itf = gp->thieves->begin(); itf != gp->thieves->end(); itf++)
+		{
+			tf = *itf;
+			if (!tf->inAction
+				&& CCRect::CCRectIntersectsRect(tf->getRectOut(), getRectIn())
+				&& CCRANDOM_0_1() < 0.3){
+				Fire* fr = Fire::fire();
+				fr->owner = tf;
+				gp->addChild(fr, 900);
+				if (tf->gem)
+				{
+					gp->reorderChild(tf->gem, 0);
+					tf->gem->setPosition(tf->getPosition());
+					gp->gemsOutside->addObject(tf->gem);
+					tf->gem = NULL;
+				}
+				tf->setFire(true);
 			}
 		}
 	}
-	
-	/*
-	// guard
-	CCMutableArray<Guard*>::CCMutableArrayIterator igd;
-	Guard* gd;
-	for (igd = guards->begin(); igd != guards->end(); igd++)
-	{
-		gd = *igd;
-		if( CCRect::CCRectContainsPoint(gd->getRectOut(), posTouch) && !gd->inAction){
-			Fire* fr = Fire::fire();
-			fr->owner = gd;
-			addChild(fr, 900);
-			gd->setFire(true);
-			toolSelected->unselected();
-			toolSelected = NULL;
-			return;
-		}
-	}
-	// thief
-	CCMutableArray<Thief*>::CCMutableArrayIterator itf;
-	Thief* tf;
-	for (itf = thieves->begin(); itf != thieves->end(); itf++)
-	{
-		tf = *itf;
-		if( CCRect::CCRectContainsPoint(tf->getRectOut(), posTouch) && !tf->inAction){
-			Fire* fr = Fire::fire();
-			fr->owner = tf;
-			addChild(fr, 900);
-			if (tf->gem)
-			{
-				reorderChild(tf->gem, 0);
-				tf->gem->setPosition(tf->getPosition());
-				gemsOutside->addObject(tf->gem);
-				tf->gem = NULL;
-			}
-			tf->setFire(true);
-			//tf->clock = clk;
-			toolSelected->unselected();
-			toolSelected = NULL;
-			return;
-		}
-	}*/
+}
+
+CCRect Fire::getRectIn()
+{
+	//int w = sprite->getContentSize().width/2;
+	//int h = PathFinder::getInstance()->tileHeight;
+	return CCRectMake(getPosition().x - 10, getPosition().y + 6, 20, 20);	
 }
