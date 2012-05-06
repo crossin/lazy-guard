@@ -30,7 +30,7 @@ bool Clock::init()
 		sprite->setPosition(ccp(0, 50));
 		addChild(sprite);
 		owner = NULL;
-		lifetime = 5;
+		timeLife = 5;
 		scheduleUpdate();
 
 		bRet=true;
@@ -47,8 +47,8 @@ void Clock::kill()
 
 void Clock::update(ccTime dt)
 {
-	lifetime -= dt;
-	if (lifetime < 0)
+	timeLife -= dt;
+	if (timeLife < 0)
 	{
 		kill();
 	}
