@@ -17,6 +17,7 @@
 #include "Tool.h"
 #include "Clock.h"
 #include "Fire.h"
+#include "Bomb.h"
 
 using namespace cocos2d;
 
@@ -563,6 +564,9 @@ void Gameplay::ccTouchesEnded(CCSet* touches, CCEvent* event)
 		case Tool::TORCH:
 			useTorch(m_tTouchPos);
 			break;
+		case Tool::BOMB:
+			useBomb(m_tTouchPos);
+			break;
 		}
 	}
 	else
@@ -952,6 +956,26 @@ void Gameplay::useTorch(CCPoint posTouch)
 		}
 	}
 }
+
+void Gameplay::useBomb( CCPoint posTouch )
+{
+	// put bomb
+	int tWidth = PathFinder::getInstance()->tileWidth;
+	int tHeight = PathFinder::getInstance()->tileHeight;
+	int posX = (int)posTouch.x / tWidth;
+	int posY = (int)posTouch.y / tHeight;
+	if (!PathFinder::getInstance()->isUnwalkable(posX, posY))
+	{
+		Bomb* bb = Bomb::bomb();
+		bb->setPosition(ccp((posX+0.5)*tWidth, (posY+0.5)*tHeight));
+		addChild(bb, 900);
+		toolSelected->unselected();
+		toolSelected = NULL;
+		return;
+	}
+}
+
+
 /*
 void Gameplay::updateThieves()
 {
