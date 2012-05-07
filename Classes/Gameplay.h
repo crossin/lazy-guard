@@ -63,6 +63,7 @@ private:
 	void btnClicked(CCObject * pSender);
 	void useClock(CCPoint posTouch);
 	void useTorch(CCPoint posTouch);
+	void useBomb(CCPoint posTouch);
 };
 
 #endif
