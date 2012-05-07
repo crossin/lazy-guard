@@ -204,6 +204,14 @@
             <spriteFrame>fire3.png</spriteFrame>
             <spriteFrame>fire4.png</spriteFrame>
         </animation>
+        <animation>
+            <name>flame</name>
+            <delay>0.1</delay>
+            <spriteFrame>flame1.png</spriteFrame>
+            <spriteFrame>flame2.png</spriteFrame>
+            <spriteFrame>flame3.png</spriteFrame>
+            <spriteFrame>flame4.png</spriteFrame>
+        </animation>
     </animations>
     <sprites>
         <sprite>guard/guard-walk-down-0.png</sprite>
@@ -286,5 +294,9 @@
         <sprite>fire2.png</sprite>
         <sprite>fire3.png</sprite>
         <sprite>fire4.png</sprite>
+        <sprite>flame1.png</sprite>
+        <sprite>flame2.png</sprite>
+        <sprite>flame3.png</sprite>
+        <sprite>flame4.png</sprite>
     </sprites>
 </root>

@@ -249,7 +249,7 @@ int PathFinder::FindPath (int startingX, int startingY,
 									if (b == parentYval-1)
 									{
 										if (walkability[parentXval-1][parentYval] == unwalkable
-											|| walkability[parentXval][parentYval-1] == unwalkable) \
+											|| walkability[parentXval][parentYval-1] == unwalkable) 
 											corner = unwalkable;
 									}
 									else if (b == parentYval+1)

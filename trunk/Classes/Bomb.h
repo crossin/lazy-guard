@@ -16,3 +16,11 @@ public:
 
 };
 
+class Flame :
+	public CCSprite
+{
+public:
+	static Flame* flame();
+	void kill();
+};
+
