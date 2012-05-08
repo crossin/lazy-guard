@@ -263,19 +263,9 @@
     <y>133</y>
   </guard>
   <thief>
-    <time>6</time>
-    <x>496</x>
-    <y>119</y>
-  </thief>
-  <thief>
     <time>1</time>
     <x>255</x>
     <y>320</y>
-  </thief>
-  <thief>
-    <time>2</time>
-    <x>260</x>
-    <y>-32</y>
   </thief>
   <thief>
     <time>3</time>
@@ -283,28 +273,33 @@
     <y>153</y>
   </thief>
   <thief>
-    <time>4</time>
+    <time>7</time>
+    <x>150</x>
+    <y>-32</y>
+  </thief>
+  <thief>
+    <time>100</time>
     <x>-16</x>
-    <y>98</y>
-  </thief>
-  <thief>
-    <time>5</time>
-    <x>496</x>
-    <y>63</y>
-  </thief>
-  <thief>
-    <time>5</time>
-    <x>496</x>
-    <y>211</y>
-  </thief>
-  <thief>
-    <time>6</time>
-    <x>337</x>
     <y>320</y>
   </thief>
   <thief>
+    <time>4</time>
+    <x>496</x>
+    <y>235</y>
+  </thief>
+  <thief>
+    <time>5</time>
+    <x>496</x>
+    <y>76</y>
+  </thief>
+  <thief>
     <time>7</time>
-    <x>150</x>
+    <x>295</x>
+    <y>-32</y>
+  </thief>
+  <thief>
+    <time>9</time>
+    <x>5</x>
     <y>-32</y>
   </thief>
 </level>

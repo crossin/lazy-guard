@@ -401,20 +401,27 @@ void Guard::setBomb(CCPoint bPos)
 	status = STUNNING;
 	inAction = true;
 
-	CCPoint dist = ccpSub(getPosition(), bPos);
-	CCPoint newPos;
+	CCPoint direct = ccpSub(getPosition(), bPos);
+	CCPoint newPos = getPosition();
+	CCPoint dist = CCPointZero;
 	CCPoint tempPos;
+	int tWidth = PathFinder::getInstance()->tileWidth;
+	int tHeight = PathFinder::getInstance()->tileHeight;
 	for (int i=1; i<=4; i++)
 	{
-		dist = ccpMult(ccpNormalize(dist),100);
-
-		newPos = ccpAdd(getPosition(), dist);
+		dist = ccpMult(ccpNormalize(direct), i*tWidth/2);
+		tempPos = ccpAdd(getPosition(), dist);
+		if (PathFinder::getInstance()->isUnwalkable((int)tempPos.x/tWidth, (int)tempPos.y/tHeight))
+		{
+			break;
+		}
+		newPos = tempPos;
 	}
-	
-	CCFiniteTimeAction* actionPush = CCMoveTo::actionWithDuration(0.3, dist);
+	CCFiniteTimeAction* actionPush = CCMoveTo::actionWithDuration(ccpLength(dist)/300, newPos);
+	runAction(actionPush);
 	CCFiniteTimeAction* actionStun = CCDelayTime::actionWithDuration(2);
 	CCFiniteTimeAction* actionWake = CCCallFunc::actionWithTarget( this, callfunc_selector(Guard::stunOver));
-	runAction( CCSequence::actions(actionPush, actionStun, actionWake, NULL) );
+	runAction( CCSequence::actions(actionStun, actionWake, NULL) );
 
 
 // 	inAction = on;
