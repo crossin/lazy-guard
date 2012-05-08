@@ -731,7 +731,7 @@ void Gameplay::overlapped(Thing* t1, Thing* t2)
 void Gameplay::caughtThief(Guard* gd, Thief* tf)
 {
 	if (tf->status != Thief::FLEEING && !tf->onFire && tf->inScreen()
-		&& gd->status != Guard::SLEEPING && ccpDistance(gd->getPosition(), tf->getPosition()) < gd->range)
+		&& gd->status != Guard::SLEEPING && gd->status != Guard::STUNNING && ccpDistance(gd->getPosition(), tf->getPosition()) < gd->range)
 	{
 		if (tf->gem)
 		{
@@ -742,7 +742,7 @@ void Gameplay::caughtThief(Guard* gd, Thief* tf)
 		}
 		tf->fleeHome();
 		gd->stopAllActions();
-	}				
+	}
 }
 
 void Gameplay::robbedPorter( Thief* tf, Porter* pt )
