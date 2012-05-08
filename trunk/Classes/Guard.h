@@ -23,9 +23,10 @@ public:
 	void runWithFire();
 	void setClock(bool on);
 	void setFire(bool on);
+	void setBomb(CCPoint bPos);
 	CCRect getRectClick();
-
-	static const int SLEEPING = 0, WAITING = 1, CHASING = 2, PATROLING = 3, BURNING = 4; 
+	void stunOver();
+	static const int SLEEPING = 0, WAITING = 1, CHASING = 2, PATROLING = 3, BURNING = 4, STUNNING = 5; 
 
 	CCSprite * bar;
 	//bool isAwake;

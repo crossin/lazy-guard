@@ -33,7 +33,7 @@ bool Bomb::init()
 		sprite = CCSprite::spriteWithSpriteFrameName("bomb.png");
 		//sprite->setPosition(ccp(0, 20));
 		addChild(sprite);
-		timeLife = 5;
+		timeLife = 0.5;
 		scheduleUpdate();
 
 		bRet=true;
@@ -58,6 +58,17 @@ void Bomb::kill()
 			Flame* fm = Flame::flame();
 			fm->setPosition(ccp((posX+i+0.5)*tWidth, (posY+j+0.5)*tHeight));
 			gp->addChild(fm, 901);
+		}
+	}
+
+	// push guard
+	CCMutableArray<Guard*>::CCMutableArrayIterator igd;
+	Guard* gd;
+	for (igd = gp->guards->begin(); igd != gp->guards->end(); igd++)
+	{
+		gd = *igd;
+		if (abs(gd->getPosition().x-getPosition().x) + abs(gd->getPosition().y-getPosition().y) <= 2.5*tWidth){
+			gd->setBomb(getPosition());
 		}
 	}
 

@@ -258,6 +258,10 @@
     <x>75</x>
     <y>13</y>
   </guard>
+  <guard>
+    <x>238</x>
+    <y>133</y>
+  </guard>
   <thief>
     <time>6</time>
     <x>496</x>

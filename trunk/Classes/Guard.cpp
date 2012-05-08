@@ -288,7 +288,7 @@ void Guard::updateFrame(ccTime dt)
 		bar->setIsVisible(false);
 		runWithFire();
 	}
-	else							// waiting chasing patroling
+	else if (status != STUNNING)   // waiting chasing patroling
 	{
 		if (pointWake <= 0)
 		{
@@ -392,3 +392,42 @@ void Guard::setFire( bool on )
 	status = on ? BURNING : SLEEPING;
 	stopAllActions();
 }
+
+void Guard::setBomb(CCPoint bPos)
+{
+	stopAllActions();
+	bar->setIsVisible(false);
+	sprite->stopAction(actionWalk);
+	status = STUNNING;
+	inAction = true;
+
+	CCPoint dist = ccpSub(getPosition(), bPos);
+	CCPoint newPos;
+	CCPoint tempPos;
+	for (int i=1; i<=4; i++)
+	{
+		dist = ccpMult(ccpNormalize(dist),100);
+
+		newPos = ccpAdd(getPosition(), dist);
+	}
+	
+	CCFiniteTimeAction* actionPush = CCMoveTo::actionWithDuration(0.3, dist);
+	CCFiniteTimeAction* actionStun = CCDelayTime::actionWithDuration(2);
+	CCFiniteTimeAction* actionWake = CCCallFunc::actionWithTarget( this, callfunc_selector(Guard::stunOver));
+	runAction( CCSequence::actions(actionPush, actionStun, actionWake, NULL) );
+
+
+// 	inAction = on;
+// 	setAwake(onClock);
+// 	status = on ? BURNING : SLEEPING;
+// 	stopAllActions();
+}
+
+void Guard::stunOver()
+{
+	inAction = false;
+	setAwake(true);
+}
+
+
+
