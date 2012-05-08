@@ -48,12 +48,12 @@ void Clock::kill()
 void Clock::update(ccTime dt)
 {
 	timeLife -= dt;
-	if (timeLife < 0)
-	{
-		kill();
-	}
 	if (owner)
 	{
 		setPosition(owner->getPosition());
+	}
+	if (timeLife < 0)
+	{
+		kill();
 	}
 }
