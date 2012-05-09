@@ -67,8 +67,10 @@ bool Guard::init()
 		//timeRot = 0.5;
 		findingInterval = INTERVAL;
 		//numClock = 0;
-		onClock = false;
 		inAction = false;
+		onBomb = false;
+		fire = NULL;
+		clock = NULL;
 		//behaviour=STAND;
 		//direction=DOWN;
 
@@ -95,7 +97,7 @@ void Guard::findThief()
 	for (it = thieves->begin(); it != thieves->end(); it++ )
 	{
 		thiefTemp = *it;
-		if (thiefTemp->status != Thief::FLEEING && !thiefTemp->onFire && thiefTemp->inScreen())
+		if (thiefTemp->status != Thief::FLEEING && !thiefTemp->fire && thiefTemp->inScreen())
 		{
 			dist = ccpDistance(getPosition(), thiefTemp->getPosition());
 			if (dist < dist_min)
@@ -269,6 +271,16 @@ void Guard::runWithFire()
 
 void Guard::updateFrame(ccTime dt)
 {
+	if (onBomb)
+	{
+		return;
+	}
+	else if (fire)
+	{
+		bar->setIsVisible(false);
+		runWithFire();
+		return;
+	}
 	// update sleep/wake point
 	if (status == SLEEPING)    // sleeping
 	{
@@ -283,12 +295,11 @@ void Guard::updateFrame(ccTime dt)
 			pointSleep -= (50 * dt);
 		}
 	}
-	else if (status == BURNING)    // burning
-	{
-		bar->setIsVisible(false);
-		runWithFire();
-	}
-	else if (status != STUNNING)   // waiting chasing patroling
+// 	else if (status == BURNING)    // burning
+// 	{
+// 
+// 	}
+	else   // waiting chasing patroling
 	{
 		if (pointWake <= 0)
 		{
@@ -301,7 +312,7 @@ void Guard::updateFrame(ccTime dt)
 			// awake
 			findingInterval -= dt;
 			// clock
-			if (onClock)
+			if (clock)
 			{
 				bar->setIsVisible(false);
 			}
@@ -376,21 +387,37 @@ CCRect Guard::getRectClick()
 		sprite->getContentSize().height + border * 2);
 }
 
-void Guard::setClock( bool on )
+void Guard::setClock( Clock* clk )
 {
-	onClock = on;
-	inAction = on;
-	setAwake(onClock);
-	//numClock = on ? numClock+1 : numClock-1;
-	//setAwake(numClock > 0);
+	if (clk)
+	{
+		clock = clk;
+		inAction = true;
+		setAwake(true);
+	} 
+	else
+	{
+		clock = NULL;
+		inAction = false;
+		setAwake(false);
+	}
 }
 
-void Guard::setFire( bool on )
+void Guard::setFire( Fire* fr )
 {
-	inAction = on;
-	setAwake(onClock);
-	status = on ? BURNING : SLEEPING;
 	stopAllActions();
+	if (fr)
+	{
+		fire = fr;
+		inAction = true;
+		status = WAITING;
+	}
+	else
+	{
+		fire = NULL;
+		inAction = false;
+		setAwake(false);
+	}
 }
 
 void Guard::setBomb(CCPoint bPos)
@@ -398,7 +425,7 @@ void Guard::setBomb(CCPoint bPos)
 	stopAllActions();
 	bar->setIsVisible(false);
 	sprite->stopAction(actionWalk);
-	status = STUNNING;
+	onBomb = true;
 	inAction = true;
 
 	CCPoint direct = ccpSub(getPosition(), bPos);
@@ -433,6 +460,7 @@ void Guard::setBomb(CCPoint bPos)
 void Guard::stunOver()
 {
 	inAction = false;
+	onBomb = false;
 	setAwake(true);
 }
 

@@ -48,7 +48,7 @@ bool Obstacle::init()
 		}
 		sprite->setAnchorPoint(CCPointZero);
 		addChild(sprite);
-		onFire = false;
+		fire = NULL;
 
 		bRet=true;
 	}while(0);
@@ -65,6 +65,12 @@ bool Obstacle::init(int t, CCPoint pos)
 
 void Obstacle::kill()
 {
+	if (fire)
+	{
+		fire->terrain = NULL;
+		fire->kill();
+	}
+
 	Gameplay* gp = (Gameplay*)getParent();
 	gp->obstacles->removeObject(this);
 	gp->things->removeObject(this);

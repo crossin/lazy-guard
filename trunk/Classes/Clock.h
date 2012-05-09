@@ -2,6 +2,8 @@
 #include "Tool.h"
 #include "Character.h"
 
+class Character;
+
 class Clock :
 	public Tool
 {

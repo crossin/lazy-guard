@@ -3,6 +3,9 @@
 #include "Character.h"
 #include "Obstacle.h"
 
+class Character;
+class Obstacle;
+
 class Fire :
 	public Tool
 {

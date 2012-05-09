@@ -62,12 +62,12 @@ CCRect Character::getRectIn()
 	return CCRectMake(getPosition().x - w/2, getPosition().y - w/4,	w, w/2);	
 }
 
-void Character::setClock( bool on )
+void Character::setClock( Clock* clk )
 {
 	// to be override
 }
 
-void Character::setFire( bool on )
+void Character::setFire( Fire* fr )
 {
 	// to be override
 }
