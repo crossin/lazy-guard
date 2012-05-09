@@ -246,6 +246,36 @@
     <x>6</x>
     <y>4</y>
   </obstacle>
+  <obstacle>
+    <type>1</type>
+    <x>8</x>
+    <y>0</y>
+  </obstacle>
+  <obstacle>
+    <type>1</type>
+    <x>3</x>
+    <y>0</y>
+  </obstacle>
+  <obstacle>
+    <type>1</type>
+    <x>2</x>
+    <y>7</y>
+  </obstacle>
+  <obstacle>
+    <type>2</type>
+    <x>13</x>
+    <y>5</y>
+  </obstacle>
+  <obstacle>
+    <type>2</type>
+    <x>4</x>
+    <y>9</y>
+  </obstacle>
+  <obstacle>
+    <type>2</type>
+    <x>6</x>
+    <y>9</y>
+  </obstacle>
   <treasure>
     <x>301</x>
     <y>139</y>
@@ -276,11 +306,6 @@
     <time>7</time>
     <x>150</x>
     <y>-32</y>
-  </thief>
-  <thief>
-    <time>100</time>
-    <x>-16</x>
-    <y>320</y>
   </thief>
   <thief>
     <time>4</time>

@@ -30,16 +30,11 @@ public:
 
 	CCSprite * bar;
 	//bool isAwake;
-	int status;
 	float pointSleep;
 	float pointSleepMax;
 	float pointWake;
 	float pointWakeMax;
 	int range; 
-	float findingInterval;
-	bool inAction;
-	Fire* fire;
-	Clock* clock;
 	//int numClock;
 	//CCAction* actionWalk;
 };

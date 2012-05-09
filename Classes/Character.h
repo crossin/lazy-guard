@@ -30,5 +30,10 @@ public:
 	CCFiniteTimeAction* actionWalks[8];
 	CCFiniteTimeAction* actionWalk;
 	CCSpeed* actionSpeed;
+	float findingInterval;
+	int status;
+	bool inAction;
 	bool onBomb;
+	Fire* fire;
+	Clock* clock;
 };

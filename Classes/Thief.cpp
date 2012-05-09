@@ -75,7 +75,7 @@ bool Thief::init()
 		findingInterval = INTERVAL;
 		hasVisited = false;
 		inAction = false;
-
+		onBomb = false;
 		schedule( schedule_selector(Thief::updateFrame));
 
 		bRet=true;
@@ -357,7 +357,11 @@ void Thief::fleeHome()
 
 void Thief::updateFrame(ccTime dt)
 {
-	if (fire)
+	if (onBomb)
+	{
+		return;
+	}
+	else if (fire)
 	{
 		runWithFire();
 	}
@@ -416,17 +420,23 @@ bool Thief::inScreen()
 // 	}
 // }
 
-void Thief::setClock( bool on )
+void Thief::setClock( Clock* clk )
 {
-	speedFactor = on ? 2 : 1;
-	inAction = on;
+	if (clk)
+	{
+		speedFactor = 2;
+		inAction = true;
+		clock = clk;
+	} 
+	else
+	{
+		speedFactor = 1;
+		inAction = false;
+		clock = NULL;
+	}
 	if (actionSpeed)
 	{
 		actionSpeed->setSpeed(speedFactor);
-	}
-	if (!on)
-	{
-		clock = NULL;
 	}
 }
 
@@ -451,4 +461,55 @@ void Thief::setFire( Fire* fr )
 		}
 		findingInterval = 0;
 	}
+}
+
+void Thief::setBomb( CCPoint bPos )
+{
+	if (fire)
+	{
+		fire->kill();
+	}
+	if (clock)
+	{
+		clock->kill();
+	}
+
+	stopAllActions();
+	sprite->stopAction(actionWalk);
+	onBomb = true;
+	inAction = true;
+
+	CCPoint direct = ccpSub(getPosition(), bPos);
+	CCPoint newPos = getPosition();
+	CCPoint dist = CCPointZero;
+	CCPoint tempPos;
+	int tWidth = PathFinder::getInstance()->tileWidth;
+	int tHeight = PathFinder::getInstance()->tileHeight;
+	for (int i=1; i<=4; i++)
+	{
+		dist = ccpMult(ccpNormalize(direct), i*tWidth/2);
+		tempPos = ccpAdd(getPosition(), dist);
+		if (PathFinder::getInstance()->isUnwalkable((int)tempPos.x/tWidth, (int)tempPos.y/tHeight))
+		{
+			break;
+		}
+		newPos = tempPos;
+	}
+	CCFiniteTimeAction* actionPush = CCMoveTo::actionWithDuration(ccpLength(dist)/300, newPos);
+	runAction(actionPush);
+	CCFiniteTimeAction* actionStun = CCDelayTime::actionWithDuration(2);
+	CCFiniteTimeAction* actionWake = CCCallFunc::actionWithTarget( this, callfunc_selector(Thief::stunOver));
+	runAction( CCSequence::actions(actionStun, actionWake, NULL) );
+}
+
+void Thief::stunOver()
+{
+	inAction = false;
+	onBomb = false;
+	if (status == FLEEING)
+	{
+		findHome();
+		status = FLEEING;
+	}
+	findingInterval = 0;
 }

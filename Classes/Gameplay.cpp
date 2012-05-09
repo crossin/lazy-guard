@@ -730,7 +730,7 @@ void Gameplay::overlapped(Thing* t1, Thing* t2)
 
 void Gameplay::caughtThief(Guard* gd, Thief* tf)
 {
-	if (tf->status != Thief::FLEEING && !tf->fire && tf->inScreen()
+	if (tf->status != Thief::FLEEING && !tf->fire && !tf->onBomb && tf->inScreen()
 		&& gd->status != Guard::SLEEPING && !gd->onBomb && ccpDistance(gd->getPosition(), tf->getPosition()) < gd->range)
 	{
 		if (tf->gem)
@@ -747,7 +747,7 @@ void Gameplay::caughtThief(Guard* gd, Thief* tf)
 
 void Gameplay::robbedPorter( Thief* tf, Porter* pt )
 {
-	if (tf->status != Thief::FLEEING && pt->status != Porter::STUNNING
+	if (tf->status != Thief::FLEEING && tf->onBomb && pt->status != Porter::STUNNING
 		&& CCRect::CCRectIntersectsRect(tf->getRectIn(), pt->getRectIn()))
 	{
 		if (pt->gem)
@@ -764,11 +764,9 @@ void Gameplay::robbedPorter( Thief* tf, Porter* pt )
 
 void Gameplay::thiefGotGem(Thief* tf)
 {
-	if (tf->gem || tf->fire)
-	{
-		return;
-	}
-	if (tf->status == Thief::FINDING || tf->status == Thief::BACKING)
+
+	if (!tf->gem && !tf->fire && !tf->onBomb
+		&& (tf->status == Thief::FINDING || tf->status == Thief::BACKING))
 	{
 		Gem* gm;
 		// outside
@@ -865,8 +863,7 @@ void Gameplay::useClock(CCPoint posTouch)
 			Clock* clk = Clock::clock();
 			clk->owner = tf;
 			addChild(clk, 900);
-			tf->setClock(true);
-			tf->clock = clk;
+			tf->setClock(clk);
 			toolSelected->unselected();
 			toolSelected = NULL;
 			return;
