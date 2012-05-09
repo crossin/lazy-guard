@@ -2,8 +2,13 @@
 
 #include "Thing.h"
 #include "CCAction.h"
+#include "Fire.h"
+#include "Clock.h"
 
 using namespace cocos2d;
+
+class Fire;
+class Clock;
 
 class Character :
 	public Thing
@@ -15,8 +20,8 @@ public:
 	static const float INTERVAL;
 
 	virtual bool init() = 0;
-	virtual void setClock(bool on);
-	virtual void setFire(bool on);
+	virtual void setClock(Clock* clk);
+	virtual void setFire(Fire* fr);
 	CCFiniteTimeAction* makeAction(CCPoint from, CCPoint target);
 	void changeDirection(CCNode *node, void *param);
 	CCRect getRectIn();
@@ -25,4 +30,5 @@ public:
 	CCFiniteTimeAction* actionWalks[8];
 	CCFiniteTimeAction* actionWalk;
 	CCSpeed* actionSpeed;
+	bool onBomb;
 };

@@ -67,6 +67,7 @@ bool Thief::init()
 
 		gem = NULL;
 		clock = NULL;
+		fire = NULL;
 		actionSpeed = NULL;
 		speed = 50;
 		speedFactor = 1;
@@ -74,7 +75,6 @@ bool Thief::init()
 		findingInterval = INTERVAL;
 		hasVisited = false;
 		inAction = false;
-		onFire = false;
 
 		schedule( schedule_selector(Thief::updateFrame));
 
@@ -357,7 +357,7 @@ void Thief::fleeHome()
 
 void Thief::updateFrame(ccTime dt)
 {
-	if (onFire)
+	if (fire)
 	{
 		runWithFire();
 	}
@@ -430,15 +430,20 @@ void Thief::setClock( bool on )
 	}
 }
 
-void Thief::setFire( bool on )
+void Thief::setFire( Fire* fr )
 {
-	inAction = on;
-	onFire = on;
 // 	setAwake(onClock);
 // 	status = on ? BURNING : SLEEPING;
- 	stopAllActions();
-	if (!on)
+	stopAllActions();
+	if (fr)
 	{
+		fire = fr;
+		inAction = true;
+	} 
+	else
+	{
+		fire = NULL;
+		inAction = false;
 		if (status == FLEEING)
 		{
 			findHome();

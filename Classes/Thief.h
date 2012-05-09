@@ -28,7 +28,7 @@ public:
 	//void checkStart(ccTime dt);
 	bool inScreen();
 	void setClock( bool on );
-	void setFire( bool on );
+	void setFire( Fire* fr );
 
 	// 	void updateTarget();
 
@@ -42,7 +42,8 @@ public:
 	float findingInterval;
 	int timeStart;
 	Clock* clock;
+	Fire* fire;
 	bool inAction;
-	bool onFire;
+	//bool onFire;
 	//float timeLife;
 };

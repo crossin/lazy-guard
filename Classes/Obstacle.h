@@ -1,8 +1,11 @@
 #pragma once
 
 #include "Thing.h"
+#include "Fire.h"
 
 using namespace cocos2d;
+
+class Fire;
 
 class Obstacle :
 	public Thing
@@ -19,5 +22,5 @@ public:
 	void kill();
 
 	int typeIndex;
-	bool onFire;
+	Fire* fire;
 };

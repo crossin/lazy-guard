@@ -50,10 +50,11 @@ void Fire::kill()
 {
 	if (owner)
 	{
-		owner->setFire(false);
+		owner->setFire(NULL);
 	}
 	if (terrain)
 	{
+		terrain->fire = NULL;
 		terrain->kill();
 	}
 	removeFromParentAndCleanup(true);
@@ -61,15 +62,15 @@ void Fire::kill()
 
 void Fire::update(ccTime dt)
 {
+	if (owner)
+	{
+		setPosition(owner->getPosition());
+	}
 	timeLife -= dt;
 	if (timeLife < 0)
 	{
 		kill();
 		return;
-	}
-	if (owner)
-	{
-		setPosition(owner->getPosition());
 	}
 
 	// spread
@@ -85,14 +86,14 @@ void Fire::update(ccTime dt)
 		for (iobs = gp->obstacles->begin(); iobs != gp->obstacles->end(); iobs++)
 		{
 			obs = *iobs;
-			if((obs->typeIndex==0 || obs->typeIndex==1) && !obs->onFire 
+			if((obs->typeIndex==0 || obs->typeIndex==1) && !obs->fire 
 				&& CCRect::CCRectIntersectsRect(obs->getRectOut(), getRectIn())
 				&& CCRANDOM_0_1() < 0.5)
 			{
 				int tWidth = PathFinder::getInstance()->tileWidth;
 				Fire* fr = Fire::fire();
 				fr->terrain = obs;
-				obs->onFire = true;
+				obs->fire = fr;
 				gp->addChild(fr, 900);
 				fr->setPosition(ccpAdd(obs->getPosition(), ccp(tWidth/2,0)));
 				//return;
@@ -110,7 +111,7 @@ void Fire::update(ccTime dt)
 				Fire* fr = Fire::fire();
 				fr->owner = gd;
 				gp->addChild(fr, 900);
-				gd->setFire(true);
+				gd->setFire(fr);
 			}
 		}
 		// thief
@@ -132,7 +133,7 @@ void Fire::update(ccTime dt)
 					gp->gemsOutside->addObject(tf->gem);
 					tf->gem = NULL;
 				}
-				tf->setFire(true);
+				tf->setFire(fr);
 			}
 		}
 	}

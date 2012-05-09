@@ -21,12 +21,12 @@ public:
 	void setAwake(bool w);
 	void patrol();
 	void runWithFire();
-	void setClock(bool on);
-	void setFire(bool on);
+	void setClock(Clock* clk);
+	void setFire(Fire* fr);
 	void setBomb(CCPoint bPos);
 	CCRect getRectClick();
 	void stunOver();
-	static const int SLEEPING = 0, WAITING = 1, CHASING = 2, PATROLING = 3, BURNING = 4, STUNNING = 5; 
+	static const int SLEEPING = 0, WAITING = 1, CHASING = 2, PATROLING = 3;/*, BURNING = 4;*/
 
 	CCSprite * bar;
 	//bool isAwake;
@@ -37,8 +37,9 @@ public:
 	float pointWakeMax;
 	int range; 
 	float findingInterval;
-	bool onClock;
 	bool inAction;
+	Fire* fire;
+	Clock* clock;
 	//int numClock;
 	//CCAction* actionWalk;
 };
