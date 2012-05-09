@@ -41,7 +41,7 @@ bool Clock::init()
 
 void Clock::kill()
 {
-	owner->setClock(false);
+	owner->setClock(NULL);
 	removeFromParentAndCleanup(true);
 }
 

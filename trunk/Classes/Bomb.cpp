@@ -71,6 +71,43 @@ void Bomb::kill()
 			gd->setBomb(getPosition());
 		}
 	}
+	// push thief
+	CCMutableArray<Thief*>::CCMutableArrayIterator itf;
+	Thief* tf;
+	for (itf = gp->thieves->begin(); itf != gp->thieves->end(); itf++)
+	{
+		tf = *itf;
+		if (abs(tf->getPosition().x-getPosition().x) + abs(tf->getPosition().y-getPosition().y) <= 2.5*tWidth)
+		{
+			if (tf->gem)
+			{
+				gp->reorderChild(tf->gem, 0);
+				tf->gem->setPosition(tf->getPosition());
+				gp->gemsOutside->addObject(tf->gem);
+				tf->gem = NULL;
+			}
+			tf->setBomb(getPosition());
+		}
+	}
+	// destroy obstacle
+	CCMutableArray<Obstacle*>::CCMutableArrayIterator iobs;
+	CCMutableArray<Obstacle*>* toDestroy = new CCMutableArray<Obstacle*>;
+	Obstacle* obs;
+	for (iobs = gp->obstacles->begin(); iobs != gp->obstacles->end(); iobs++)
+	{
+		obs = *iobs;
+		if((obs->typeIndex==1 || obs->typeIndex==2)
+			&& abs(obs->getPosition().x+tWidth/2-getPosition().x) + abs(obs->getPosition().y+tHeight/2-getPosition().y) <= 2.5*tWidth)
+		{
+			toDestroy->addObject(obs);
+		}
+	}
+	for (iobs = toDestroy->begin(); iobs != toDestroy->end(); iobs++)
+	{
+		obs = *iobs;
+		obs->kill();
+	}
+	toDestroy->release();
 
 	removeFromParentAndCleanup(true);
 }

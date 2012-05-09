@@ -27,9 +27,10 @@ public:
 	void updateFrame(ccTime dt);
 	//void checkStart(ccTime dt);
 	bool inScreen();
-	void setClock( bool on );
+	void setClock( Clock* clk );
 	void setFire( Fire* fr );
-
+	void setBomb( CCPoint bPos );
+	void stunOver();
 	// 	void updateTarget();
 
 	static const int FINDING = 0, FLEEING = 1, BACKING = 2, BURNING = 3;
@@ -38,12 +39,8 @@ public:
 	float startX;
 	float startY;
  	bool hasVisited;
-	int status;
-	float findingInterval;
 	int timeStart;
-	Clock* clock;
-	Fire* fire;
-	bool inAction;
+
 	//bool onFire;
 	//float timeLife;
 };

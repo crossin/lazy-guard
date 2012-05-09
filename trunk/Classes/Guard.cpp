@@ -422,11 +422,21 @@ void Guard::setFire( Fire* fr )
 
 void Guard::setBomb(CCPoint bPos)
 {
+	if (fire)
+	{
+		fire->kill();
+	}
+	if (clock)
+	{
+		clock->kill();
+	}
+
 	stopAllActions();
 	bar->setIsVisible(false);
 	sprite->stopAction(actionWalk);
 	onBomb = true;
 	inAction = true;
+
 
 	CCPoint direct = ccpSub(getPosition(), bPos);
 	CCPoint newPos = getPosition();
@@ -449,12 +459,6 @@ void Guard::setBomb(CCPoint bPos)
 	CCFiniteTimeAction* actionStun = CCDelayTime::actionWithDuration(2);
 	CCFiniteTimeAction* actionWake = CCCallFunc::actionWithTarget( this, callfunc_selector(Guard::stunOver));
 	runAction( CCSequence::actions(actionStun, actionWake, NULL) );
-
-
-// 	inAction = on;
-// 	setAwake(onClock);
-// 	status = on ? BURNING : SLEEPING;
-// 	stopAllActions();
 }
 
 void Guard::stunOver()
