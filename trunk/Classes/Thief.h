@@ -22,14 +22,12 @@ public:
 	void moveFinished();
 //  	void getGem(CCNode* sender);
 	void fleeHome();
-	void runWithFire();
 	void kill();
 	void updateFrame(ccTime dt);
 	//void checkStart(ccTime dt);
 	bool inScreen();
 	void setClock( Clock* clk );
 	void setFire( Fire* fr );
-	void setBomb( CCPoint bPos );
 	void stunOver();
 	// 	void updateTarget();
 

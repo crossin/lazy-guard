@@ -236,38 +236,7 @@ _itoa_s(pathfinder->pathLength,textout,10);
 */
 }
 
-void Guard::runWithFire() 
-{
-	if (numberOfRunningActions() > 0)
-	{
-		return;
-	}
-	CCSize size = CCDirector::sharedDirector()->getWinSize();
-	int randX = CCRANDOM_0_1() * size.width;
-	int randY = CCRANDOM_0_1() * size.height;
-	PathFinder *pathfinder = PathFinder::getInstance();
-	if (PathFinder::found != pathfinder->FindPath(getPosition().x, getPosition().y, randX, randY))
-	{
-		return;
-	}
 
-	CCArray* pathGo = CCArray::array();
-	CCPoint target, from;
-	CCFiniteTimeAction* actionGo;
-
-	for (int i = 0; i < pathfinder->pathLength; i++)
-	{
-		from = (i == 0) ? getPosition() : (ccp((pathfinder->pathBank[2*i-2]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[2*i-1]+0.5) * pathfinder->tileHeight));
-		target = ccp((pathfinder->pathBank[2*i]+0.5) * pathfinder->tileWidth, (pathfinder->pathBank[2*i+1]+0.5) * pathfinder->tileHeight);
-		pathGo->addObject(makeAction(from, target));
-	}
-
-	actionGo = CCSequence::actionsWithArray(pathGo);
-	//CCFiniteTimeAction* actionWait = CCDelayTime::actionWithDuration(1);
-	//	CCFiniteTimeAction* actionOver = CCCallFuncN::actionWithTarget( this, callfuncN_selector(Thief::moveFinished));
-	//stopAllActions();
-	runAction( CCSequence::actions(actionGo, NULL) );
-}
 
 void Guard::updateFrame(ccTime dt)
 {
@@ -422,43 +391,8 @@ void Guard::setFire( Fire* fr )
 
 void Guard::setBomb(CCPoint bPos)
 {
-	if (fire)
-	{
-		fire->kill();
-	}
-	if (clock)
-	{
-		clock->kill();
-	}
-
-	stopAllActions();
 	bar->setIsVisible(false);
-	sprite->stopAction(actionWalk);
-	onBomb = true;
-	inAction = true;
-
-
-	CCPoint direct = ccpSub(getPosition(), bPos);
-	CCPoint newPos = getPosition();
-	CCPoint dist = CCPointZero;
-	CCPoint tempPos;
-	int tWidth = PathFinder::getInstance()->tileWidth;
-	int tHeight = PathFinder::getInstance()->tileHeight;
-	for (int i=1; i<=4; i++)
-	{
-		dist = ccpMult(ccpNormalize(direct), i*tWidth/2);
-		tempPos = ccpAdd(getPosition(), dist);
-		if (PathFinder::getInstance()->isUnwalkable((int)tempPos.x/tWidth, (int)tempPos.y/tHeight))
-		{
-			break;
-		}
-		newPos = tempPos;
-	}
-	CCFiniteTimeAction* actionPush = CCMoveTo::actionWithDuration(ccpLength(dist)/300, newPos);
-	runAction(actionPush);
-	CCFiniteTimeAction* actionStun = CCDelayTime::actionWithDuration(2);
-	CCFiniteTimeAction* actionWake = CCCallFunc::actionWithTarget( this, callfunc_selector(Guard::stunOver));
-	runAction( CCSequence::actions(actionStun, actionWake, NULL) );
+	Character::setBomb(bPos);
 }
 
 void Guard::stunOver()
