@@ -747,7 +747,8 @@ void Gameplay::caughtThief(Guard* gd, Thief* tf)
 
 void Gameplay::robbedPorter( Thief* tf, Porter* pt )
 {
-	if (tf->status != Thief::FLEEING && tf->onBomb && pt->status != Porter::STUNNING
+	if (tf->status != Thief::FLEEING && !tf->onBomb 
+		&& pt->status != Porter::STUNNING && !pt->fire && !pt->onBomb
 		&& CCRect::CCRectIntersectsRect(tf->getRectIn(), pt->getRectIn()))
 	{
 		if (pt->gem)
@@ -805,7 +806,8 @@ void Gameplay::thiefGotGem(Thief* tf)
 void Gameplay::porterGotGem(Porter* pt)
 {
 	// get gem outside
-	if (pt->status == Porter::FINDING || pt->status == Porter::PATROLING || pt->status == Porter::WAITING)
+	if (!pt->fire && !pt->onBomb
+		&& pt->status == Porter::FINDING || pt->status == Porter::PATROLING || pt->status == Porter::WAITING)
 	{
 		Gem* gm;
 		for (int i=0; i<gemsOutside->count(); i++)
@@ -859,7 +861,7 @@ void Gameplay::useClock(CCPoint posTouch)
 	for (itf = thieves->begin(); itf != thieves->end(); itf++)
 	{
 		tf = *itf;
-		if( CCRect::CCRectContainsPoint(tf->getRectOut(), posTouch) && !tf->clock){
+		if( CCRect::CCRectContainsPoint(tf->getRectOut(), posTouch) && !tf->inAction){
 			Clock* clk = Clock::clock();
 			clk->owner = tf;
 			addChild(clk, 900);
@@ -868,6 +870,17 @@ void Gameplay::useClock(CCPoint posTouch)
 			toolSelected = NULL;
 			return;
 		}
+	}
+	// porter
+	if (porter && !porter->inAction && CCRect::CCRectContainsPoint(porter->getRectOut(), posTouch))
+	{
+		Clock* clk = Clock::clock();
+		clk->owner = porter;
+		addChild(clk, 900);
+		porter->setClock(clk);
+		toolSelected->unselected();
+		toolSelected = NULL;
+		return;
 	}
 }
 
@@ -951,6 +964,24 @@ void Gameplay::useTorch(CCPoint posTouch)
 			toolSelected = NULL;
 			return;
 		}
+	}
+	// porter
+	if (porter && !porter->inAction && CCRect::CCRectContainsPoint(porter->getRectOut(), posTouch))
+	{
+		Fire* fr = Fire::fire();
+		fr->owner = porter;
+		addChild(fr, 900);
+		if (porter->gem)
+		{
+			porter->gem->setPosition(porter->getPosition());
+			reorderChild(porter->gem, 0);
+			gemsOutside->addObject(porter->gem);
+			porter->gem = NULL;
+		}
+		porter->setFire(fr);
+		toolSelected->unselected();
+		toolSelected = NULL;
+		return;
 	}
 }
 

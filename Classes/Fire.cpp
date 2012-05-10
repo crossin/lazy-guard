@@ -107,7 +107,8 @@ void Fire::update(ccTime dt)
 			gd = *igd;
 			if (!gd->inAction
 				&& CCRect::CCRectIntersectsRect(gd->getRectOut(), getRectIn())
-				&& CCRANDOM_0_1() < 0.3){
+				&& CCRANDOM_0_1() < 0.3)
+			{
 				Fire* fr = Fire::fire();
 				fr->owner = gd;
 				gp->addChild(fr, 900);
@@ -122,7 +123,8 @@ void Fire::update(ccTime dt)
 			tf = *itf;
 			if (!tf->inAction
 				&& CCRect::CCRectIntersectsRect(tf->getRectOut(), getRectIn())
-				&& CCRANDOM_0_1() < 0.3){
+				&& CCRANDOM_0_1() < 0.3)
+			{
 				Fire* fr = Fire::fire();
 				fr->owner = tf;
 				gp->addChild(fr, 900);
@@ -135,6 +137,24 @@ void Fire::update(ccTime dt)
 				}
 				tf->setFire(fr);
 			}
+		}
+		// porter
+		Porter* pt = gp->porter;
+		if (pt && !pt->inAction
+			&& CCRect::CCRectIntersectsRect(pt->getRectOut(), getRectIn())
+			&& CCRANDOM_0_1() < 0.3)
+		{
+			Fire* fr = Fire::fire();
+			fr->owner = pt;
+			gp->addChild(fr, 900);
+			if (pt->gem)
+			{
+				pt->gem->setPosition(pt->getPosition());
+				gp->reorderChild(pt->gem, 0);
+				gp->gemsOutside->addObject(pt->gem);
+				pt->gem = NULL;
+			}
+			pt->setFire(fr);
 		}
 	}
 }

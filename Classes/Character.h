@@ -22,9 +22,12 @@ public:
 	virtual bool init() = 0;
 	virtual void setClock(Clock* clk);
 	virtual void setFire(Fire* fr);
+	virtual void setBomb(CCPoint bPos);
+	virtual void stunOver() = 0;
 	CCFiniteTimeAction* makeAction(CCPoint from, CCPoint target);
 	void changeDirection(CCNode *node, void *param);
 	CCRect getRectIn();
+	void runWithFire();
 	int speed;
 	float speedFactor;
 	CCFiniteTimeAction* actionWalks[8];

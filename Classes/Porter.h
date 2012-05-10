@@ -19,8 +19,10 @@ public:
 	void findHome();
 	void patrol();
 	void stun();
+	void stunOver();
 	void updateFrame(ccTime dt);
-
+	void setClock( Clock* clk );
+	void setFire( Fire* fr );
 	//bool inScreen();
 // 	void updateTarget();
 

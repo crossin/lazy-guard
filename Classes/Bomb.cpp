@@ -89,6 +89,19 @@ void Bomb::kill()
 			tf->setBomb(getPosition());
 		}
 	}
+	// push porter
+	Porter* pt = gp->porter;
+	if (abs(pt->getPosition().x-getPosition().x) + abs(pt->getPosition().y-getPosition().y) <= 2.5*tWidth)
+	{
+		if (pt->gem)
+		{
+			gp->reorderChild(pt->gem, 0);
+			pt->gem->setPosition(pt->getPosition());
+			gp->gemsOutside->addObject(pt->gem);
+			pt->gem = NULL;
+		}
+		pt->setBomb(getPosition());
+	}
 	// destroy obstacle
 	CCMutableArray<Obstacle*>::CCMutableArrayIterator iobs;
 	CCMutableArray<Obstacle*>* toDestroy = new CCMutableArray<Obstacle*>;

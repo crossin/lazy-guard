@@ -47,6 +47,12 @@ bool Porter::init()
 
 		//setPosition(ccp(240, 120));
 		gem = NULL;
+		actionSpeed = NULL;
+		clock = NULL;
+		fire = NULL;
+		onBomb = false;
+		speedFactor = 1;
+		inAction = false;
 		speed = 50;
 		status = WAITING;
 		findingInterval = INTERVAL;
@@ -118,9 +124,9 @@ void Porter::findGem()
 	actionGo = CCSequence::actionsWithArray(pathGo);
 
 	//CCFiniteTimeAction* steal = CCCallFuncN::actionWithTarget( this, callfuncN_selector(Thief::getGem));
-
+	actionSpeed = CCSpeed::actionWithAction((CCActionInterval*)actionGo, speedFactor);
 	stopAllActions();
-	runAction(actionGo);
+	runAction(actionSpeed);
 	status = FINDING;
 //	findingInterval = INTERVAL;
 
@@ -171,9 +177,9 @@ void Porter::findHome()
 
 	actionGo = CCSequence::actionsWithArray(pathGo);
 	//CCFiniteTimeAction* actionOver = CCCallFunc::actionWithTarget( this, callfunc_selector(Porter::returnGem));
-
+	actionSpeed = CCSpeed::actionWithAction((CCActionInterval*)actionGo, speedFactor);
 	stopAllActions();
-	runAction(actionGo);
+	runAction(actionSpeed);
 	status = BACKING;
 	//runAction( CCSequence::actions(actionGo, actionOver, NULL) );
 
@@ -221,7 +227,8 @@ void Porter::patrol()
 	CCFiniteTimeAction* actionWait = CCDelayTime::actionWithDuration(1);
 	//	CCFiniteTimeAction* actionOver = CCCallFuncN::actionWithTarget( this, callfuncN_selector(Thief::moveFinished));
 	stopAllActions();
-	runAction( CCSequence::actions(actionGo, actionWait, NULL) );
+	actionSpeed = CCSpeed::actionWithAction((CCActionInterval*)CCSequence::actions(actionGo, actionWait, NULL), speedFactor);
+	runAction(actionSpeed);
 	status = PATROLING;
 //	findingInterval = INTERVAL;
 }
@@ -237,6 +244,16 @@ void Porter::stun()
 
 void Porter::updateFrame(ccTime dt)
 {
+	if (onBomb)
+	{
+		return;
+	}
+	else if (fire)
+	{
+		runWithFire();
+		return;
+	}
+
 	if (gem)
 	{
 		gem->setPosition(ccp(getPosition().x, getPosition().y+16));
@@ -261,3 +278,49 @@ void Porter::updateFrame(ccTime dt)
 
 }
 
+void Porter::setClock( Clock* clk )
+{
+	if (clk)
+	{
+		speedFactor = 2;
+		inAction = true;
+		clock = clk;
+	} 
+	else
+	{
+		speedFactor = 1;
+		inAction = false;
+		clock = NULL;
+	}
+	if (actionSpeed)
+	{
+		actionSpeed->setSpeed(speedFactor);
+	}
+}
+
+void Porter::setFire( Fire* fr )
+{
+	stopAllActions();
+	if (fr)
+	{
+		fire = fr;
+		inAction = true;
+	} 
+	else
+	{
+		fire = NULL;
+		inAction = false;
+// 		if (status == FLEEING)
+// 		{
+// 			findHome();
+// 			status = FLEEING;
+// 		}
+// 		findingInterval = 0;
+	}
+}
+
+void Porter::stunOver()
+{
+	inAction = false;
+	onBomb = false;
+}

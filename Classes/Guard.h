@@ -20,7 +20,6 @@ public:
 	void updateFrame(ccTime dt);
 	void setAwake(bool w);
 	void patrol();
-	void runWithFire();
 	void setClock(Clock* clk);
 	void setFire(Fire* fr);
 	void setBomb(CCPoint bPos);
