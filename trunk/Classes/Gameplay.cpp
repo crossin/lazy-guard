@@ -578,7 +578,7 @@ void Gameplay::ccTouchesEnded(CCSet* touches, CCEvent* event)
 		for (git = guards->begin(); git != guards->end(); git++)
 		{
 			gd = *git;
-			if (!gd->status != Guard::SLEEPING && CCRect::CCRectContainsPoint(gd->getRectClick(), m_tTouchPos))
+			if (gd->status == Guard::SLEEPING && !gd->inAction && CCRect::CCRectContainsPoint(gd->getRectClick(), m_tTouchPos))
 			{
 				gd->onHit();
 				break;
@@ -586,6 +586,7 @@ void Gameplay::ccTouchesEnded(CCSet* touches, CCEvent* event)
 		}
 
 //////////////////////////////////////////////////////////////////////////
+/*
 CCMutableArray<Thief*>::CCMutableArrayIterator tt;
 Thief* thief;
 for (tt = thieves->begin(); tt != thieves->end(); tt++)
@@ -607,6 +608,7 @@ for (tt = thieves->begin(); tt != thieves->end(); tt++)
 char textout[10];
 _itoa_s(gemsOutside->count(),textout,10);
 pLabel->setString(textout);
+*/
 //////////////////////////////////////////////////////////////////////////
 
 	}
