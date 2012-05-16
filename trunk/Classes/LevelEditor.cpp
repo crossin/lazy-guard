@@ -207,10 +207,10 @@ bool LevelEditor::init()
 		// thief
 		layerThief = CCLayer::node();
 
-		textBack = CCSprite::spriteWithFile("blank.png");
-		textBack->setTextureRect(CCRectMake(0, 0, 80, 20));
-		textBack->setPosition(ccp(434, 304));
-		layerThief->addChild(textBack);
+		startTimeBack = CCSprite::spriteWithFile("blank.png");
+		startTimeBack->setTextureRect(CCRectMake(0, 0, 80, 20));
+		startTimeBack->setPosition(ccp(434, 304));
+		layerThief->addChild(startTimeBack);
 
 		buttonThief = CCArray::array();
 		buttonThief->retain();
@@ -447,7 +447,7 @@ void LevelEditor::editObstacle(CCPoint posTouch, CCPoint posInMap)
 
 void LevelEditor::editThief(CCPoint posTouch, CCPoint posInMap)
 {
-	if (CCRect::CCRectContainsPoint(textBack->boundingBox(), posTouch))
+	if (CCRect::CCRectContainsPoint(startTimeBack->boundingBox(), posTouch))
 	{
 		startTime->attachWithIME();
 		startTime->setString("");
