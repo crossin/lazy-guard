@@ -45,7 +45,7 @@ public:
 	Thing* buttonGem;
 	CCSprite* background;
 	CCSprite* canvas;
-	CCSprite* textBack;
+	CCSprite* startTimeBack;
 	CCTextFieldTTF*  startTime; 
 	//CCSprite* frameSelect;
 //	int** obstacles;
